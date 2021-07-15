@@ -3,6 +3,16 @@
 require 'singleton'
 
 class HTMLRenderer < Redcarpet::Render::HTML
+  def preprocess(document)
+    # Rich text lists suck! And federating with them sucks!
+    #
+    # Finds anything at the start of a line that gets parsed as a list,
+    # and escapes it with backslashes
+    #
+    # https://git.hollymcfarland.com/monorail/mastodon/commit/6280a7f3a332ccf085993b043d6e9697f3970703
+    document.gsub(/^(\s*)(-|\+|\*) /, '\1\\\\\2 ').gsub(/^(\s*\d+)\. /, '\1\. ')
+  end
+
   def block_code(code, language)
     "<pre><code>#{encode(code).gsub("\n", "<br/>")}</code></pre>"
   end
