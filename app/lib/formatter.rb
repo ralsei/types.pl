@@ -10,7 +10,11 @@ class HTMLRenderer < Redcarpet::Render::HTML
     # and escapes it with backslashes
     #
     # https://git.hollymcfarland.com/monorail/mastodon/commit/6280a7f3a332ccf085993b043d6e9697f3970703
-    document.gsub(/^(\s*)(-|\+|\*) /, '\1\\\\\2 ').gsub(/^(\s*\d+)\. /, '\1\. ')
+    #
+    # awful monkeypatch fix later for latex stuff
+    document.gsub(/^(\s*)(-|\+|\*) /, '\1\\\\\2 ') \
+      .gsub(/^(\s*\d+)\. /, '\1\. ') \
+      .gsub(/(\^|_|\\[\[\]\(\)])/) {|s| '\\' + s}
   end
 
   def block_code(code, language)
