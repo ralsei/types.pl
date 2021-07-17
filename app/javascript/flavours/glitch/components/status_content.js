@@ -180,8 +180,17 @@ export default class StatusContent extends React.PureComponent {
     }
   }
 
+  _renderMathJax() {
+    try {
+      MathJax.typeset([this.contentsNode]);
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   componentDidMount () {
     this._updateStatusLinks();
+    this._renderMathJax();
   }
 
   componentDidUpdate () {

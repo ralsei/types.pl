@@ -31,10 +31,10 @@ if Rails.env.production?
     p.base_uri        :none
     p.default_src     :none
     p.frame_ancestors :none
-    p.script_src      :self, assets_host
+    p.script_src      :self, :unsafe_eval, assets_host
     p.font_src        :self, assets_host
     p.img_src         :self, :data, :blob, *data_hosts
-    p.style_src       :self, assets_host
+    p.style_src       :self, :unsafe_inline
     p.media_src       :self, :data, *data_hosts
     p.frame_src       :self, :https
     p.child_src       :self, :blob, assets_host
@@ -44,6 +44,9 @@ if Rails.env.production?
   end
 end
 
+# Monkey-patch
+Rails.application.config.content_security_policy_nonce_directives = %w(style-src)
+
 # Report CSP violations to a specified URI
 # For further information see the following documentation:
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only
@@ -51,7 +54,7 @@ end
 
 Rails.application.config.content_security_policy_nonce_generator = -> request { SecureRandom.base64(16) }
 
-Rails.application.config.content_security_policy_nonce_directives = %w(style-src)
+Rails.application.config.content_security_policy_nonce_directives = %w()
 
 Rails.application.reloader.to_prepare do
   PgHero::HomeController.content_security_policy do |p|
