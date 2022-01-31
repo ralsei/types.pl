@@ -42,7 +42,10 @@
 
   .fields-group
     = f.input :require_invite_text, as: :boolean, wrapper: :with_label, label: t('admin.settings.registrations.require_invite_text.title'), hint: t('admin.settings.registrations.require_invite_text.desc_html'), disabled: !approved_registrations?
-  .fields-group
+
+  - if captcha_available?
+    .fields-group
+      = f.input :captcha_enabled, as: :boolean, wrapper: :with_label, label: t('admin.settings.captcha_enabled.title'), hint: t('admin.settings.captcha_enabled.desc_html')
 
   %hr.spacer/
 
@@ -88,9 +91,6 @@
 
   .fields-group
     = f.input :hide_followers_count, as: :boolean, wrapper: :with_label, label: t('admin.settings.hide_followers_count.title'), hint: t('admin.settings.hide_followers_count.desc_html')
-
-  .fields-group
-    = f.input :enable_keybase, as: :boolean, wrapper: :with_label, label: t('admin.settings.enable_keybase.title'), hint: t('admin.settings.enable_keybase.desc_html')
 
   .fields-group
     = f.input :show_reblogs_in_public_timelines, as: :boolean, wrapper: :with_label, label: t('admin.settings.show_reblogs_in_public_timelines.title'), hint: t('admin.settings.show_reblogs_in_public_timelines.desc_html')

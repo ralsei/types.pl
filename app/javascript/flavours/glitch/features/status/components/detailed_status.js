@@ -7,7 +7,7 @@ import StatusContent from 'flavours/glitch/components/status_content';
 import MediaGallery from 'flavours/glitch/components/media_gallery';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
 import { Link } from 'react-router-dom';
-import { FormattedDate } from 'react-intl';
+import { injectIntl, FormattedDate, FormattedMessage } from 'react-intl';
 import Card from './card';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import Video from 'flavours/glitch/features/video';
@@ -20,7 +20,8 @@ import Icon from 'flavours/glitch/components/icon';
 import AnimatedNumber from 'flavours/glitch/components/animated_number';
 import PictureInPicturePlaceholder from 'flavours/glitch/components/picture_in_picture_placeholder';
 
-export default class DetailedStatus extends ImmutablePureComponent {
+export default @injectIntl
+class DetailedStatus extends ImmutablePureComponent {
 
   static contextTypes = {
     router: PropTypes.object,
@@ -40,6 +41,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
     showMedia: PropTypes.bool,
     usingPiP: PropTypes.bool,
     onToggleMediaVisibility: PropTypes.func,
+    intl: PropTypes.object.isRequired,
   };
 
   state = {
@@ -51,7 +53,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
       e.preventDefault();
       let state = {...this.context.router.history.location.state};
       state.mastodonBackSteps = (state.mastodonBackSteps || 0) + 1;
-      this.context.router.history.push(`/accounts/${this.props.status.getIn(['account', 'id'])}`, state);
+      this.context.router.history.push(`/@${this.props.status.getIn(['account', 'acct'])}`, state);
     }
 
     e.stopPropagation();
@@ -111,7 +113,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
 
   render () {
     const status = (this.props.status && this.props.status.get('reblog')) ? this.props.status.get('reblog') : this.props.status;
-    const { expanded, onToggleHidden, settings, usingPiP } = this.props;
+    const { expanded, onToggleHidden, settings, usingPiP, intl } = this.props;
     const outerStyle = { boxSizing: 'border-box' };
     const { compact } = this.props;
 
@@ -119,30 +121,32 @@ export default class DetailedStatus extends ImmutablePureComponent {
       return null;
     }
 
-    let media           = null;
-    let mediaIcon       = null;
+    let media           = [];
+    let mediaIcons      = [];
     let applicationLink = '';
     let reblogLink = '';
     let reblogIcon = 'retweet';
     let favouriteLink = '';
+    let edited = '';
 
     if (this.props.measureHeight) {
       outerStyle.height = `${this.state.height}px`;
     }
 
     if (status.get('poll')) {
-      media = <PollContainer pollId={status.get('poll')} />;
-      mediaIcon = 'tasks';
-    } else if (usingPiP) {
-      media = <PictureInPicturePlaceholder />;
-      mediaIcon = 'video-camera';
+      media.push(<PollContainer pollId={status.get('poll')} />);
+      mediaIcons.push('tasks');
+    }
+    if (usingPiP) {
+      media.push(<PictureInPicturePlaceholder />);
+      mediaIcons.push('video-camera');
     } else if (status.get('media_attachments').size > 0) {
       if (status.get('media_attachments').some(item => item.get('type') === 'unknown')) {
-        media = <AttachmentList media={status.get('media_attachments')} />;
+        media.push(<AttachmentList media={status.get('media_attachments')} />);
       } else if (status.getIn(['media_attachments', 0, 'type']) === 'audio') {
         const attachment = status.getIn(['media_attachments', 0]);
 
-        media = (
+        media.push(
           <Audio
             src={attachment.get('url')}
             alt={attachment.get('description')}
@@ -152,12 +156,12 @@ export default class DetailedStatus extends ImmutablePureComponent {
             foregroundColor={attachment.getIn(['meta', 'colors', 'foreground'])}
             accentColor={attachment.getIn(['meta', 'colors', 'accent'])}
             height={150}
-          />
+          />,
         );
-        mediaIcon = 'music';
+        mediaIcons.push('music');
       } else if (status.getIn(['media_attachments', 0, 'type']) === 'video') {
         const attachment = status.getIn(['media_attachments', 0]);
-        media = (
+        media.push(
           <Video
             preview={attachment.get('preview_url')}
             frameRate={attachment.getIn(['meta', 'original', 'frame_rate'])}
@@ -173,11 +177,11 @@ export default class DetailedStatus extends ImmutablePureComponent {
             autoplay
             visible={this.props.showMedia}
             onToggleVisibility={this.props.onToggleMediaVisibility}
-          />
+          />,
         );
-        mediaIcon = 'video-camera';
+        mediaIcons.push('video-camera');
       } else {
-        media = (
+        media.push(
           <MediaGallery
             standalone
             sensitive={status.get('sensitive')}
@@ -188,13 +192,13 @@ export default class DetailedStatus extends ImmutablePureComponent {
             onOpenMedia={this.props.onOpenMedia}
             visible={this.props.showMedia}
             onToggleVisibility={this.props.onToggleMediaVisibility}
-          />
+          />,
         );
-        mediaIcon = 'picture-o';
+        mediaIcons.push('picture-o');
       }
     } else if (status.get('card')) {
-      media = <Card sensitive={status.get('sensitive')} onOpenMedia={this.props.onOpenMedia} card={status.get('card')} />;
-      mediaIcon = 'link';
+      media.push(<Card sensitive={status.get('sensitive')} onOpenMedia={this.props.onOpenMedia} card={status.get('card')} />);
+      mediaIcons.push('link');
     }
 
     if (status.get('application')) {
@@ -215,7 +219,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
       reblogLink = (
         <React.Fragment>
           <React.Fragment> · </React.Fragment>
-          <Link to={`/statuses/${status.get('id')}/reblogs`} className='detailed-status__link'>
+          <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/reblogs`} className='detailed-status__link'>
             <Icon id={reblogIcon} />
             <span className='detailed-status__reblogs'>
               <AnimatedNumber value={status.get('reblogs_count')} />
@@ -239,7 +243,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
 
     if (this.context.router) {
       favouriteLink = (
-        <Link to={`/statuses/${status.get('id')}/favourites`} className='detailed-status__link'>
+        <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/favourites`} className='detailed-status__link'>
           <Icon id='star' />
           <span className='detailed-status__favorites'>
             <AnimatedNumber value={status.get('favourites_count')} />
@@ -257,6 +261,15 @@ export default class DetailedStatus extends ImmutablePureComponent {
       );
     }
 
+    if (status.get('edited_at')) {
+      edited = (
+        <React.Fragment>
+          <React.Fragment> · </React.Fragment>
+          <FormattedMessage id='status.edited' defaultMessage='Edited {date}' values={{ date: intl.formatDate(status.get('edited_at'), { hour12: false, month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) }} />
+        </React.Fragment>
+      );
+    }
+
     return (
       <div style={outerStyle}>
         <div ref={this.setRef} className={classNames('detailed-status', `detailed-status-${status.get('visibility')}`, { compact })} data-status-by={status.getIn(['account', 'acct'])}>
@@ -268,7 +281,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
           <StatusContent
             status={status}
             media={media}
-            mediaIcon={mediaIcon}
+            mediaIcons={mediaIcons}
             expanded={expanded}
             collapsed={false}
             onExpandedToggle={onToggleHidden}
@@ -282,7 +295,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
           <div className='detailed-status__meta'>
             <a className='detailed-status__datetime' href={status.get('url')} target='_blank' rel='noopener noreferrer'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
-            </a>{visibilityLink}{applicationLink}{reblogLink} · {favouriteLink}
+            </a>{edited}{visibilityLink}{applicationLink}{reblogLink} · {favouriteLink}
           </div>
         </div>
       </div>
