@@ -203,15 +203,9 @@ en:
         follow_request: Someone requested to follow you
         mention: Someone mentioned you
         pending_account: New account needs review
-<<<<<<< HEAD
         reblog: Someone boosted your toot
         report: New report is submitted
         trending_tag: An unreviewed hashtag is trending
-=======
-        reblog: Someone boosted your post
-        report: A new report is submitted
-        trending_tag: A new trend requires approval
->>>>>>> main
       rule:
         text: Rule
       tag:

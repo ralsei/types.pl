@@ -203,7 +203,7 @@ en:
         targeted_reports: Reported by others
       silence: Limit
       silenced: Limited
-      statuses: Posts
+      statuses: Toots
       strikes: Previous strikes
       subscribe: Subscribe
       suspended: Suspended
@@ -712,14 +712,9 @@ en:
       deleted: Deleted
       media:
         title: Media
-<<<<<<< HEAD
       no_media: No media
       no_status_selected: No toots were changed as none were selected
       title: Account toots
-=======
-      no_status_selected: No posts were changed as none were selected
-      title: Account posts
->>>>>>> main
       with_media: With media
     system_checks:
       database_schema_check:
@@ -731,14 +726,11 @@ en:
         message_html: No Sidekiq process running for the %{value} queue(s). Please review your Sidekiq configuration
     tags:
       review: Review status
-<<<<<<< HEAD
       reviewed: Reviewed
       title: Hashtags
       trending_right_now: Trending right now
       unique_uses_today: "%{count} tooting today"
       unreviewed: Not reviewed
-=======
->>>>>>> main
       updated_msg: Hashtag settings updated successfully
     title: Administration
     trends:
@@ -1331,15 +1323,10 @@ en:
     open_in_web: Open in web
     over_character_limit: character limit of %{max} exceeded
     pin_errors:
-<<<<<<< HEAD
       limit: You have already pinned the maximum number of toots
       ownership: Someone else's toot cannot be pinned
       private: Non-public toots cannot be pinned
-=======
-      direct: Posts that are only visible to mentioned users cannot be pinned
-      limit: You have already pinned the maximum number of posts
-      ownership: Someone else's post cannot be pinned
->>>>>>> main
+      direct: Toots that are only visible to mentioned users cannot be pinned
       reblog: A boost cannot be pinned
     poll:
       total_people:
@@ -1526,32 +1513,20 @@ en:
         spam: Spam
         violation: Content violates the following community guidelines
       explanation:
-<<<<<<< HEAD
         disable: You can no longer login to your account or use it in any other way, but your profile and other data remains intact.
         sensitive: Your uploaded media files and linked media will be treated as sensitive.
         silence: You can still use your account but only people who are already following you will see your toots on this server, and you may be excluded from various public listings. However, others may still manually follow you.
         suspend: You can no longer use your account, and your profile and other data are no longer accessible. You can still login to request a backup of your data until the data is fully removed, but we will retain some data to prevent you from evading the suspension.
-      get_in_touch: You can reply to this e-mail to get in touch with the staff of %{instance}.
-=======
-        delete_statuses: Some of your posts have been found to violate one or more community guidelines and have been subsequently removed by the moderators of %{instance}. Future violations may result in harsher punitive actions against your account.
-        disable: You can no longer use your account, but your profile and other data remains intact. You can request a backup of your data, change account settings or delete your account.
-        sensitive: From now on, all your uploaded media files will be marked as sensitive and hidden behind a click-through warning.
-        silence: You can still use your account but only people who are already following you will see your posts on this server, and you may be excluded from various discovery features. However, others may still manually follow you.
-        suspend: You can no longer use your account, and your profile and other data are no longer accessible. You can still login to request a backup of your data until the data is fully removed in about 30 days, but we will retain some basic data to prevent you from evading the suspension.
+      delete_statuses: Some of your posts have been found to violate one or more community guidelines and have been subsequently removed by the moderators of %{instance}. Future violations may result in harsher punitive actions against your account.
       get_in_touch: If you believe this is an error, you can reply to this e-mail to get in touch with the staff of %{instance}.
       reason: 'Reason:'
->>>>>>> main
       review_server_policies: Review server policies
       statuses: 'Posts that have been found in violation:'
       subject:
         delete_statuses: Your posts on %{acct} have been removed
         disable: Your account %{acct} has been frozen
         none: Warning for %{acct}
-<<<<<<< HEAD
-        sensitive: Your account %{acct} tooting media has been marked as sensitive
-=======
         sensitive: Your media files on %{acct} will be marked as sensitive from now on
->>>>>>> main
         silence: Your account %{acct} has been limited
         suspend: Your account %{acct} has been suspended
       title:
