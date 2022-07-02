@@ -11,6 +11,7 @@
 #
 
 class DomainAllow < ApplicationRecord
+  include Paginable
   include DomainNormalizable
   include DomainMaterializable
 
@@ -21,6 +22,10 @@ class DomainAllow < ApplicationRecord
   class << self
     def allowed?(domain)
       !rule_for(domain).nil?
+    end
+
+    def allowed_domains
+      select(:domain)
     end
 
     def rule_for(domain)

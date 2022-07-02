@@ -48,12 +48,13 @@ export const COMPOSE_MOUNT   = 'COMPOSE_MOUNT';
 export const COMPOSE_UNMOUNT = 'COMPOSE_UNMOUNT';
 
 export const COMPOSE_ADVANCED_OPTIONS_CHANGE = 'COMPOSE_ADVANCED_OPTIONS_CHANGE';
-export const COMPOSE_SENSITIVITY_CHANGE = 'COMPOSE_SENSITIVITY_CHANGE';
-export const COMPOSE_SPOILERNESS_CHANGE = 'COMPOSE_SPOILERNESS_CHANGE';
+export const COMPOSE_SENSITIVITY_CHANGE  = 'COMPOSE_SENSITIVITY_CHANGE';
+export const COMPOSE_SPOILERNESS_CHANGE  = 'COMPOSE_SPOILERNESS_CHANGE';
 export const COMPOSE_SPOILER_TEXT_CHANGE = 'COMPOSE_SPOILER_TEXT_CHANGE';
-export const COMPOSE_VISIBILITY_CHANGE  = 'COMPOSE_VISIBILITY_CHANGE';
-export const COMPOSE_LISTABILITY_CHANGE = 'COMPOSE_LISTABILITY_CHANGE';
+export const COMPOSE_VISIBILITY_CHANGE   = 'COMPOSE_VISIBILITY_CHANGE';
+export const COMPOSE_LISTABILITY_CHANGE  = 'COMPOSE_LISTABILITY_CHANGE';
 export const COMPOSE_CONTENT_TYPE_CHANGE = 'COMPOSE_CONTENT_TYPE_CHANGE';
+export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
 
 export const COMPOSE_EMOJI_INSERT = 'COMPOSE_EMOJI_INSERT';
 
@@ -75,6 +76,8 @@ export const INIT_MEDIA_EDIT_MODAL = 'INIT_MEDIA_EDIT_MODAL';
 export const COMPOSE_CHANGE_MEDIA_DESCRIPTION = 'COMPOSE_CHANGE_MEDIA_DESCRIPTION';
 export const COMPOSE_CHANGE_MEDIA_FOCUS       = 'COMPOSE_CHANGE_MEDIA_FOCUS';
 
+export const COMPOSE_SET_STATUS = 'COMPOSE_SET_STATUS';
+
 const messages = defineMessages({
   uploadErrorLimit: { id: 'upload_error.limit', defaultMessage: 'File upload limit exceeded.' },
   uploadErrorPoll:  { id: 'upload_error.poll', defaultMessage: 'File upload not allowed with polls.' },
@@ -86,6 +89,15 @@ export const ensureComposeIsVisible = (getState, routerHistory) => {
   if (!getState().getIn(['compose', 'mounted']) && window.innerWidth < COMPOSE_PANEL_BREAKPOINT) {
     routerHistory.push('/publish');
   }
+};
+
+export function setComposeToStatus(status, text, spoiler_text) {
+  return{
+    type: COMPOSE_SET_STATUS,
+    status,
+    text,
+    spoiler_text,
+  };
 };
 
 export function changeCompose(text) {
@@ -150,8 +162,9 @@ export function directCompose(account, routerHistory) {
 
 export function submitCompose(routerHistory) {
   return function (dispatch, getState) {
-    let status = getState().getIn(['compose', 'text'], '');
-    let media  = getState().getIn(['compose', 'media_attachments']);
+    let status     = getState().getIn(['compose', 'text'], '');
+    const media    = getState().getIn(['compose', 'media_attachments']);
+    const statusId = getState().getIn(['compose', 'id'], null);
     const spoilers = getState().getIn(['compose', 'spoiler']) || getState().getIn(['local_settings', 'always_show_spoilers_field']);
     let spoilerText = spoilers ? getState().getIn(['compose', 'spoiler_text'], '') : '';
 
@@ -159,20 +172,26 @@ export function submitCompose(routerHistory) {
       return;
     }
 
-    dispatch(submitComposeRequest());
     if (getState().getIn(['compose', 'advanced_options', 'do_not_federate'])) {
       status = status + ' 👁️';
     }
-    api(getState).post('/api/v1/statuses', {
-      status,
-      content_type: getState().getIn(['compose', 'content_type']),
-      in_reply_to_id: getState().getIn(['compose', 'in_reply_to'], null),
-      media_ids: media.map(item => item.get('id')),
-      sensitive: getState().getIn(['compose', 'sensitive']) || (spoilerText.length > 0 && media.size !== 0),
-      spoiler_text: spoilerText,
-      visibility: getState().getIn(['compose', 'privacy']),
-      poll: getState().getIn(['compose', 'poll'], null),
-    }, {
+
+    dispatch(submitComposeRequest());
+
+    api(getState).request({
+      url: statusId === null ? '/api/v1/statuses' : `/api/v1/statuses/${statusId}`,
+      method: statusId === null ? 'post' : 'put',
+      data: {
+        status,
+        content_type: getState().getIn(['compose', 'content_type']),
+        in_reply_to_id: getState().getIn(['compose', 'in_reply_to'], null),
+        media_ids: media.map(item => item.get('id')),
+        sensitive: getState().getIn(['compose', 'sensitive']) || (spoilerText.length > 0 && media.size !== 0),
+        spoiler_text: spoilerText,
+        visibility: getState().getIn(['compose', 'privacy']),
+        poll: getState().getIn(['compose', 'poll'], null),
+        language: getState().getIn(['compose', 'language']),
+      },
       headers: {
         'Idempotency-Key': getState().getIn(['compose', 'idempotencyKey']),
       },
@@ -202,14 +221,16 @@ export function submitCompose(routerHistory) {
         }
       };
 
-      insertIfOnline('home');
+      if (statusId === null) {
+        insertIfOnline('home');
+      }
 
-      if (response.data.in_reply_to_id === null && response.data.visibility === 'public') {
+      if (statusId === null && response.data.in_reply_to_id === null && response.data.visibility === 'public') {
         insertIfOnline('community');
         if (!response.data.local_only) {
           insertIfOnline('public');
         }
-      } else if (response.data.visibility === 'direct') {
+      } else if (statusId === null && response.data.visibility === 'direct') {
         insertIfOnline('direct');
       }
     }).catch(function (error) {
@@ -655,6 +676,11 @@ export function changeComposeSensitivity() {
     type: COMPOSE_SENSITIVITY_CHANGE,
   };
 };
+
+export const changeComposeLanguage = language => ({
+  type: COMPOSE_LANGUAGE_CHANGE,
+  language,
+});
 
 export function changeComposeSpoilerness() {
   return {

@@ -30,6 +30,7 @@ export default class IconButton extends React.PureComponent {
     label: PropTypes.string,
     counter: PropTypes.number,
     obfuscateCount: PropTypes.bool,
+    href: PropTypes.string,
   };
 
   static defaultProps = {
@@ -85,13 +86,13 @@ export default class IconButton extends React.PureComponent {
   render () {
     let style = {
       fontSize: `${this.props.size}px`,
-      height: `${this.props.size * 1.28571429}px`,
+      height: '1.28571429em',
       lineHeight: `${this.props.size}px`,
       ...this.props.style,
       ...(this.props.active ? this.props.activeStyle : {}),
     };
     if (!this.props.label) {
-      style.width = `${this.props.size * 1.28571429}px`;
+      style.width = '1.28571429em';
     } else {
       style.textAlign = 'left';
     }
@@ -109,6 +110,7 @@ export default class IconButton extends React.PureComponent {
       title,
       counter,
       obfuscateCount,
+      href,
     } = this.props;
 
     const {
@@ -130,6 +132,29 @@ export default class IconButton extends React.PureComponent {
       style.width = 'auto';
     }
 
+    let contents = (
+      <React.Fragment>
+        <Icon id={icon} fixedWidth aria-hidden='true' /> {typeof counter !== 'undefined' && <span className='icon-button__counter'><AnimatedNumber value={counter} obfuscate={obfuscateCount} /></span>}
+        {this.props.label}
+      </React.Fragment>
+    );
+
+    if (href) {
+      return (
+        <a
+          href={href}
+          aria-label={title}
+          title={title}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={classes}
+          style={style}
+        >
+          {contents}
+        </a>
+      );
+    }
+
     return (
       <button
         aria-label={title}
@@ -145,8 +170,7 @@ export default class IconButton extends React.PureComponent {
         tabIndex={tabIndex}
         disabled={disabled}
       >
-        <Icon id={icon} fixedWidth aria-hidden='true' /> {typeof counter !== 'undefined' && <span className='icon-button__counter'><AnimatedNumber value={counter} obfuscate={obfuscateCount} /></span>}
-        {this.props.label}
+        {contents}
       </button>
     );
   }

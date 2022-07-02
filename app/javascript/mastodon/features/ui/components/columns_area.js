@@ -50,10 +50,10 @@ const componentMap = {
 };
 
 const messages = defineMessages({
-  publish: { id: 'compose_form.publish', defaultMessage: 'Toot' },
+  publish: { id: 'compose_form.publish', defaultMessage: 'Publish' },
 });
 
-const shouldHideFAB = path => path.match(/^\/statuses\/|^\/@[^/]+\/\d+|^\/publish|^\/search|^\/getting-started|^\/start/);
+const shouldHideFAB = path => path.match(/^\/statuses\/|^\/@[^/]+\/\d+|^\/publish|^\/explore|^\/getting-started|^\/start/);
 
 export default @(component => injectIntl(component, { withRef: true }))
 class ColumnsArea extends ImmutablePureComponent {
@@ -234,7 +234,7 @@ class ColumnsArea extends ImmutablePureComponent {
             </div>
           </div>
 
-          <div className='columns-area__panels__main'>
+          <div className={`columns-area__panels__main ${floatingActionButton && 'with-fab'}`}>
             <TabsBar key='tabs' />
             {content}
           </div>

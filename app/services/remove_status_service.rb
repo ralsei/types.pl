@@ -3,6 +3,7 @@
 class RemoveStatusService < BaseService
   include Redisable
   include Payloadable
+  include Lockable
 
   # Delete a status
   # @param   [Status] status
@@ -17,38 +18,34 @@ class RemoveStatusService < BaseService
     @account  = status.account
     @options  = options
 
-    @status.discard
+    with_lock("distribute:#{@status.id}") do
+      @status.discard
 
-    RedisLock.acquire(lock_options) do |lock|
-      if lock.acquired?
-        remove_from_self if @account.local?
-        remove_from_followers
-        remove_from_lists
+      remove_from_self if @account.local?
+      remove_from_followers
+      remove_from_lists
 
-        # There is no reason to send out Undo activities when the
-        # cause is that the original object has been removed, since
-        # original object being removed implicitly removes reblogs
-        # of it. The Delete activity of the original is forwarded
-        # separately.
-        remove_from_remote_reach if @account.local? && !@options[:original_removed]
+      # There is no reason to send out Undo activities when the
+      # cause is that the original object has been removed, since
+      # original object being removed implicitly removes reblogs
+      # of it. The Delete activity of the original is forwarded
+      # separately.
+      remove_from_remote_reach if @account.local? && !@options[:original_removed]
 
-        # Since reblogs don't mention anyone, don't get reblogged,
-        # favourited and don't contain their own media attachments
-        # or hashtags, this can be skipped
-        unless @status.reblog?
-          remove_from_mentions
-          remove_reblogs
-          remove_from_hashtags
-          remove_from_public
-          remove_from_media if @status.media_attachments.any?
-          remove_from_direct if status.direct_visibility?
-          remove_media
-        end
-
-        @status.destroy! if permanently?
-      else
-        raise Mastodon::RaceConditionError
+      # Since reblogs don't mention anyone, don't get reblogged,
+      # favourited and don't contain their own media attachments
+      # or hashtags, this can be skipped
+      unless @status.reblog?
+        remove_from_mentions
+        remove_reblogs
+        remove_from_hashtags
+        remove_from_public
+        remove_from_media if @status.with_media?
+        remove_from_direct if status.direct_visibility?
+        remove_media
       end
+
+      @status.destroy! if permanently?
     end
   end
 
@@ -97,7 +94,7 @@ class RemoveStatusService < BaseService
   end
 
   def signed_activity_json
-    @signed_activity_json ||= Oj.dump(serialize_payload(@status, @status.reblog? ? ActivityPub::UndoAnnounceSerializer : ActivityPub::DeleteSerializer, signer: @account))
+    @signed_activity_json ||= Oj.dump(serialize_payload(@status, @status.reblog? ? ActivityPub::UndoAnnounceSerializer : ActivityPub::DeleteSerializer, signer: @account, always_sign: true))
   end
 
   def remove_reblogs
@@ -151,9 +148,5 @@ class RemoveStatusService < BaseService
 
   def permanently?
     @options[:immediate] || !(@options[:preserve] || @status.reported?)
-  end
-
-  def lock_options
-    { redis: Redis.current, key: "distribute:#{@status.id}", autorelease: 5.minutes.seconds }
   end
 end

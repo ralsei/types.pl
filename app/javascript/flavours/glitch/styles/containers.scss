@@ -1,7 +1,6 @@
 .container-alt {
   width: 700px;
   margin: 0 auto;
-  margin-top: 40px;
 
   @media screen and (max-width: 740px) {
     width: 100%;
@@ -21,8 +20,7 @@
     justify-content: center;
     align-items: center;
 
-    svg {
-      fill: $primary-text-color;
+    .logo {
       height: 42px;
       margin-right: 10px;
     }
@@ -67,23 +65,21 @@
   line-height: 18px;
   box-sizing: border-box;
   padding: 20px 0;
-  padding-bottom: 0;
-  margin-bottom: -30px;
   margin-top: 40px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid $ui-base-color;
 
   @media screen and (max-width: 440px) {
     width: 100%;
     margin: 0;
-    margin-bottom: 10px;
     padding: 20px;
-    padding-bottom: 0;
   }
 
   .avatar {
     width: 40px;
     height: 40px;
     @include avatar-size(40px);
-    margin-right: 8px;
+    margin-right: 10px;
 
     img {
       width: 100%;
@@ -98,7 +94,7 @@
   .name {
     flex: 1 1 auto;
     color: $secondary-text-color;
-    width: calc(100% - 88px);
+    width: calc(100% - 90px);
 
     .username {
       display: block;
@@ -112,7 +108,7 @@
     display: block;
     font-size: 32px;
     line-height: 40px;
-    margin-left: 8px;
+    margin-left: 10px;
   }
 }
 
@@ -325,7 +321,7 @@
       display: block;
       padding: 15px;
 
-      svg {
+      .logo {
         display: block;
         height: 18px;
         width: auto;
@@ -411,14 +407,6 @@
       .column-1 {
         display: none;
       }
-    }
-  }
-
-  .directory__card {
-    border-radius: 4px;
-
-    @media screen and (max-width: $no-gap-breakpoint) {
-      border-radius: 0;
     }
   }
 
@@ -809,7 +797,7 @@
       border-top: 0;
 
       a {
-        color: lighten($ui-highlight-color, 8%);
+        color: $highlight-text-color;
       }
 
       dl:first-child .verified {
@@ -844,17 +832,19 @@
     grid-gap: 10px;
     grid-template-columns: minmax(0, 50%) minmax(0, 50%);
 
+    .account-card {
+      display: flex;
+      flex-direction: column;
+    }
+
     @media screen and (max-width: $no-gap-breakpoint) {
       display: block;
-    }
 
-    .icon-button {
-      font-size: 18px;
+      .account-card {
+        margin-bottom: 10px;
+        display: block;
+      }
     }
-  }
-
-  .directory__card {
-    margin-bottom: 0;
   }
 
   .card-grid {

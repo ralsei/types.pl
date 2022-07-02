@@ -3,6 +3,7 @@ import loadPolyfills from '../mastodon/load_polyfills';
 import ready from '../mastodon/ready';
 import { start } from '../mastodon/common';
 import loadKeyboardExtensions from '../mastodon/load_keyboard_extensions';
+import 'cocoon-js-vanilla';
 
 start();
 
@@ -151,13 +152,7 @@ function main() {
   });
 
   delegate(document, '.sidebar__toggle__icon', 'click', () => {
-    const target = document.querySelector('.sidebar ul');
-
-    if (target.style.display === 'block') {
-      target.style.display = 'none';
-    } else {
-      target.style.display = 'block';
-    }
+    document.querySelector('.sidebar ul').classList.toggle('visible');
   });
 
   // Empty the honeypot fields in JS in case something like an extension

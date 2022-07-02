@@ -38,7 +38,7 @@ export default class StatusPrepend extends React.PureComponent {
     switch (type) {
     case 'featured':
       return (
-        <FormattedMessage id='status.pinned' defaultMessage='Pinned toot' />
+        <FormattedMessage id='status.pinned' defaultMessage='Pinned post' />
       );
     case 'reblogged_by':
       return (
@@ -88,6 +88,14 @@ export default class StatusPrepend extends React.PureComponent {
           />
         );
       }
+    case 'update':
+      return (
+        <FormattedMessage
+          id='notification.update'
+          defaultMessage='{name} edited a post'
+          values={{ name: link }}
+        />
+      );
     }
     return null;
   }
@@ -114,6 +122,9 @@ export default class StatusPrepend extends React.PureComponent {
       break;
     case 'status':
       iconId = 'bell';
+      break;
+    case 'update':
+      iconId = 'pencil';
       break;
     };
 

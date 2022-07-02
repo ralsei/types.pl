@@ -3,7 +3,7 @@ da:
   activerecord:
     attributes:
       poll:
-        expires_at: Tidsfrist
+        expires_at: Deadline
         options: Valgmuligheder
       user:
         agreement: Tjenesteaftale
@@ -21,6 +21,14 @@ da:
             username:
               invalid: må kun indeholde cifre, bogstaver og understreger
               reserved: er reserveret
+        admin/webhook:
+          attributes:
+            url:
+              invalid: "'er ikke en gyldig URL"
+        doorkeeper/application:
+          attributes:
+            website:
+              invalid: "'er ikke en gyldig URL"
         status:
           attributes:
             reblog:
@@ -29,4 +37,4 @@ da:
           attributes:
             email:
               blocked: bruger en ikke-tilladt e-mailudbyder
-              unreachable: synes ikke at findes
+              unreachable: ser ikke ud til at eksistere

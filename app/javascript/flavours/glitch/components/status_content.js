@@ -276,6 +276,7 @@ export default class StatusContent extends React.PureComponent {
 
     const content = { __html: status.get('contentHtml') };
     const spoilerContent = { __html: status.get('spoilerHtml') };
+    const lang = status.get('language');
     const classNames = classnames('status__content', {
       'status__content--with-action': parseClick && !disabled,
       'status__content--with-spoiler': status.get('spoiler_text').length > 0,
@@ -336,7 +337,7 @@ export default class StatusContent extends React.PureComponent {
           <p
             style={{ marginBottom: hidden && status.get('mentions').isEmpty() ? '0px' : null }}
           >
-            <span dangerouslySetInnerHTML={spoilerContent} className='translate' />
+            <span dangerouslySetInnerHTML={spoilerContent} className='translate' lang={lang} />
             {' '}
             <button tabIndex='0' className='status__content__spoiler-link' onClick={this.handleSpoilerClick}>
               {toggleText}
@@ -354,6 +355,7 @@ export default class StatusContent extends React.PureComponent {
               className='status__content__text translate'
               onMouseEnter={this.handleMouseEnter}
               onMouseLeave={this.handleMouseLeave}
+              lang={lang}
             />
             {media}
           </div>
@@ -376,6 +378,7 @@ export default class StatusContent extends React.PureComponent {
             tabIndex='0'
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
+            lang={lang}
           />
           {media}
         </div>
@@ -394,6 +397,7 @@ export default class StatusContent extends React.PureComponent {
             tabIndex='0'
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
+            lang={lang}
           />
           {media}
         </div>

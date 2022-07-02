@@ -26,7 +26,6 @@
 #  otp_required_for_login    :boolean          default(FALSE), not null
 #  last_emailed_at           :datetime
 #  otp_backup_codes          :string           is an Array
-#  filtered_languages        :string           default([]), not null, is an Array
 #  account_id                :bigint(8)        not null
 #  disabled                  :boolean          default(FALSE), not null
 #  moderator                 :boolean          default(FALSE), not null
@@ -38,7 +37,6 @@
 #  sign_in_token_sent_at     :datetime
 #  webauthn_id               :string
 #  sign_up_ip                :inet
-#  skip_sign_in_token        :boolean
 #
 
 class User < ApplicationRecord
@@ -47,10 +45,14 @@ class User < ApplicationRecord
     remember_token
     current_sign_in_ip
     last_sign_in_ip
+    skip_sign_in_token
+    filtered_languages
   )
 
   include Settings::Extend
   include UserRoles
+  include Redisable
+  include LanguagesHelper
 
   # The home and list feeds will be stored in Redis for this amount
   # of time, and status fan-out to followers will include only people
@@ -91,11 +93,11 @@ class User < ApplicationRecord
   validates :invite_request, presence: true, on: :create, if: :invite_text_required?
 
   validates :locale, inclusion: I18n.available_locales.map(&:to_s), if: :locale?
-  validates_with BlacklistedEmailValidator, on: :create
+  validates_with BlacklistedEmailValidator, if: -> { !confirmed? }
   validates_with EmailMxValidator, if: :validate_email_dns?
   validates :agreement, acceptance: { allow_nil: false, accept: [true, 'true', '1'] }, on: :create
 
-  # Those are honeypot/antispam fields
+  # Honeypot/anti-spam fields
   attr_accessor :registration_form_time, :website, :confirm_password
 
   validates_with RegistrationFormTimeValidator, on: :create
@@ -111,12 +113,13 @@ class User < ApplicationRecord
   scope :inactive, -> { where(arel_table[:current_sign_in_at].lt(ACTIVE_DURATION.ago)) }
   scope :active, -> { confirmed.where(arel_table[:current_sign_in_at].gteq(ACTIVE_DURATION.ago)).joins(:account).where(accounts: { suspended_at: nil }) }
   scope :matches_email, ->(value) { where(arel_table[:email].matches("#{value}%")) }
-  scope :matches_ip, ->(value) { left_joins(:ips).where('user_ips.ip <<= ?', value) }
+  scope :matches_ip, ->(value) { left_joins(:ips).where('user_ips.ip <<= ?', value).group('users.id') }
   scope :emailable, -> { confirmed.enabled.joins(:account).merge(Account.searchable) }
 
   before_validation :sanitize_languages
   before_create :set_approved
   after_commit :send_pending_devise_notifications
+  after_create_commit :trigger_webhooks
 
   # This avoids a deprecation warning from Rails 5.1
   # It seems possible that a future release of devise-two-factor will
@@ -126,13 +129,13 @@ class User < ApplicationRecord
   has_many :session_activations, dependent: :destroy
 
   delegate :auto_play_gif, :default_sensitive, :unfollow_modal, :boost_modal, :favourite_modal, :delete_modal,
-           :reduce_motion, :system_font_ui, :noindex, :flavour, :skin, :display_media, :hide_network, :hide_followers_count,
+           :reduce_motion, :system_font_ui, :noindex, :flavour, :skin, :display_media, :hide_followers_count,
            :expand_spoilers, :default_language, :aggregate_reblogs, :show_application,
            :advanced_layout, :use_blurhash, :use_pending_items, :trends, :crop_images,
-           :disable_swiping, :default_content_type, :system_emoji_font,
+           :disable_swiping, :always_send_emails, :default_content_type, :system_emoji_font,
            to: :settings, prefix: :setting, allow_nil: false
 
-  attr_reader :invite_code, :sign_in_token_attempt
+  attr_reader :invite_code
   attr_writer :external, :bypass_invite_request_check
 
   def confirmed?
@@ -179,7 +182,9 @@ class User < ApplicationRecord
   end
 
   def update_sign_in!(new_sign_in: false)
-    old_current, new_current = current_sign_in_at, Time.now.utc
+    old_current = current_sign_in_at
+    new_current = Time.now.utc
+
     self.last_sign_in_at     = old_current || new_current
     self.current_sign_in_at  = new_current
 
@@ -200,16 +205,16 @@ class User < ApplicationRecord
     !account.memorial?
   end
 
-  def suspicious_sign_in?(ip)
-    !otp_required_for_login? && !skip_sign_in_token? && current_sign_in_at.present? && !ips.where(ip: ip).exists?
-  end
-
   def functional?
     confirmed? && approved? && !disabled? && !account.suspended? && !account.memorial?
   end
 
+  def unconfirmed?
+    !confirmed?
+  end
+
   def unconfirmed_or_pending?
-    !(confirmed? && approved?)
+    unconfirmed? || pending?
   end
 
   def inactive_message
@@ -245,6 +250,10 @@ class User < ApplicationRecord
     save!
   end
 
+  def preferred_posting_language
+    valid_locale_cascade(settings.default_language, locale)
+  end
+
   def setting_default_privacy
     settings.default_privacy || (account.locked? ? 'private' : 'public')
   end
@@ -261,12 +270,20 @@ class User < ApplicationRecord
     settings.notification_emails['pending_account']
   end
 
-  def allows_trending_tag_emails?
+  def allows_appeal_emails?
+    settings.notification_emails['appeal']
+  end
+
+  def allows_trending_tags_review_emails?
     settings.notification_emails['trending_tag']
   end
 
-  def hides_network?
-    @hides_network ||= settings.hide_network
+  def allows_trending_links_review_emails?
+    settings.notification_emails['trending_link']
+  end
+
+  def allows_trending_statuses_review_emails?
+    settings.notification_emails['trending_status']
   end
 
   def aggregates_reblogs?
@@ -360,15 +377,6 @@ class User < ApplicationRecord
     setting_display_media == 'hide_all'
   end
 
-  def sign_in_token_expired?
-    sign_in_token_sent_at.nil? || sign_in_token_sent_at < 5.minutes.ago
-  end
-
-  def generate_sign_in_token
-    self.sign_in_token         = Devise.friendly_token(6)
-    self.sign_in_token_sent_at = Time.now.utc
-  end
-
   protected
 
   def send_devise_notification(notification, *args, **kwargs)
@@ -460,7 +468,7 @@ class User < ApplicationRecord
   end
 
   def regenerate_feed!
-    RegenerationWorker.perform_async(account_id) if Redis.current.set("account:#{account_id}:regeneration", true, nx: true, ex: 1.day.seconds)
+    RegenerationWorker.perform_async(account_id) if redis.set("account:#{account_id}:regeneration", true, nx: true, ex: 1.day.seconds)
   end
 
   def needs_feed_update?
@@ -473,5 +481,9 @@ class User < ApplicationRecord
 
   def invite_text_required?
     Setting.require_invite_text && !invited? && !external? && !bypass_invite_request_check?
+  end
+
+  def trigger_webhooks
+    TriggerWebhookWorker.perform_async('account.created', 'Account', account_id)
   end
 end

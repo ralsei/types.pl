@@ -3,6 +3,7 @@
 class ActivityPub::Activity
   include JsonLdHelper
   include Redisable
+  include Lockable
 
   SUPPORTED_TYPES = %w(Note Question).freeze
   CONVERTED_TYPES = %w(Image Audio Video Article Page Event).freeze
@@ -71,15 +72,7 @@ class ActivityPub::Activity
   end
 
   def object_uri
-    @object_uri ||= begin
-      str = value_or_id(@object)
-
-      if str&.start_with?('bear:')
-        Addressable::URI.parse(str).query_values['u']
-      else
-        str
-      end
-    end
+    @object_uri ||= uri_from_bearcap(value_or_id(@object))
   end
 
   def unsupported_object_type?
@@ -162,22 +155,6 @@ class ActivityPub::Activity
       ActivityPub::FetchRemoteStatusService.new.call(object_uri, id: true, on_behalf_of: @account.followers.local.first)
     elsif @object['url'].present?
       ::FetchRemoteStatusService.new.call(@object['url'])
-    end
-  end
-
-  def lock_or_return(key, expire_after = 2.hours.seconds)
-    yield if redis.set(key, true, nx: true, ex: expire_after)
-  ensure
-    redis.del(key)
-  end
-
-  def lock_or_fail(key, expire_after = 15.minutes.seconds)
-    RedisLock.acquire({ redis: Redis.current, key: key, autorelease: expire_after }) do |lock|
-      if lock.acquired?
-        yield
-      else
-        raise Mastodon::RaceConditionError
-      end
     end
   end
 

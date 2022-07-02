@@ -30,6 +30,7 @@ import {
   COMPOSE_SPOILERNESS_CHANGE,
   COMPOSE_SPOILER_TEXT_CHANGE,
   COMPOSE_VISIBILITY_CHANGE,
+  COMPOSE_LANGUAGE_CHANGE,
   COMPOSE_CONTENT_TYPE_CHANGE,
   COMPOSE_EMOJI_INSERT,
   COMPOSE_UPLOAD_CHANGE_REQUEST,
@@ -46,6 +47,7 @@ import {
   INIT_MEDIA_EDIT_MODAL,
   COMPOSE_CHANGE_MEDIA_DESCRIPTION,
   COMPOSE_CHANGE_MEDIA_FOCUS,
+  COMPOSE_SET_STATUS,
 } from 'flavours/glitch/actions/compose';
 import { TIMELINE_DELETE } from 'flavours/glitch/actions/timelines';
 import { STORE_HYDRATE } from 'flavours/glitch/actions/store';
@@ -75,6 +77,7 @@ const initialState = ImmutableMap({
   spoiler: false,
   spoiler_text: '',
   privacy: null,
+  id: null,
   content_type: defaultContentType || 'text/plain',
   text: '',
   focusDate: null,
@@ -98,6 +101,7 @@ const initialState = ImmutableMap({
   }),
   default_privacy: 'public',
   default_sensitive: false,
+  default_language: 'en',
   resetFileKey: Math.floor((Math.random() * 0x10000)),
   idempotencyKey: null,
   tagHistory: ImmutableList(),
@@ -160,6 +164,7 @@ function apiStatusToTextHashtags (state, status) {
 
 function clearAll(state) {
   return state.withMutations(map => {
+    map.set('id', null);
     map.set('text', '');
     if (defaultContentType) map.set('content_type', defaultContentType);
     map.set('spoiler', false);
@@ -172,7 +177,8 @@ function clearAll(state) {
       map => map.mergeWith(overwrite, state.get('default_advanced_options'))
     );
     map.set('privacy', state.get('default_privacy'));
-    map.set('sensitive', false);
+    map.set('sensitive', state.get('default_sensitive'));
+    map.set('language', state.get('default_language'));
     map.update('media_attachments', list => list.clear());
     map.set('poll', null);
     map.set('idempotencyKey', uuid());
@@ -400,6 +406,7 @@ export default function compose(state = initialState, action) {
       .set('elefriend', (state.get('elefriend') + 1) % totalElefriends);
   case COMPOSE_REPLY:
     return state.withMutations(map => {
+      map.set('id', null);
       map.set('in_reply_to', action.status.get('id'));
       map.set('text', statusToTextMentions(state, action.status));
       map.set('privacy', privacyPreference(action.status.get('visibility'), state.get('default_privacy')));
@@ -411,6 +418,10 @@ export default function compose(state = initialState, action) {
       map.set('caretPosition', null);
       map.set('preselectDate', new Date());
       map.set('idempotencyKey', uuid());
+
+      if (action.status.get('language')) {
+        map.set('language', action.status.get('language'));
+      }
 
       if (action.status.get('spoiler_text').length > 0) {
         let spoiler_text = action.status.get('spoiler_text');
@@ -434,6 +445,7 @@ export default function compose(state = initialState, action) {
       map.set('spoiler', false);
       map.set('spoiler_text', '');
       map.set('privacy', state.get('default_privacy'));
+      map.set('id', null);
       map.set('poll', null);
       map.update(
         'advanced_options',
@@ -552,6 +564,7 @@ export default function compose(state = initialState, action) {
       map.set('caretPosition', null);
       map.set('idempotencyKey', uuid());
       map.set('sensitive', action.status.get('sensitive'));
+      map.set('language', action.status.get('language'));
       map.update(
         'advanced_options',
         map => map.merge(new ImmutableMap({ do_not_federate }))
@@ -560,6 +573,35 @@ export default function compose(state = initialState, action) {
       if (action.status.get('spoiler_text').length > 0) {
         map.set('spoiler', true);
         map.set('spoiler_text', action.status.get('spoiler_text'));
+      } else {
+        map.set('spoiler', false);
+        map.set('spoiler_text', '');
+      }
+
+      if (action.status.get('poll')) {
+        map.set('poll', ImmutableMap({
+          options: action.status.getIn(['poll', 'options']).map(x => x.get('title')),
+          multiple: action.status.getIn(['poll', 'multiple']),
+          expires_in: expiresInFromExpiresAt(action.status.getIn(['poll', 'expires_at'])),
+        }));
+      }
+    });
+  case COMPOSE_SET_STATUS:
+    return state.withMutations(map => {
+      map.set('id', action.status.get('id'));
+      map.set('text', action.text);
+      map.set('in_reply_to', action.status.get('in_reply_to_id'));
+      map.set('privacy', action.status.get('visibility'));
+      map.set('media_attachments', action.status.get('media_attachments'));
+      map.set('focusDate', new Date());
+      map.set('caretPosition', null);
+      map.set('idempotencyKey', uuid());
+      map.set('sensitive', action.status.get('sensitive'));
+      map.set('language', action.status.get('language'));
+
+      if (action.spoiler_text.length > 0) {
+        map.set('spoiler', true);
+        map.set('spoiler_text', action.spoiler_text);
       } else {
         map.set('spoiler', false);
         map.set('spoiler_text', '');
@@ -585,6 +627,8 @@ export default function compose(state = initialState, action) {
     return state.updateIn(['poll', 'options'], options => options.delete(action.index));
   case COMPOSE_POLL_SETTINGS_CHANGE:
     return state.update('poll', poll => poll.set('expires_in', action.expiresIn).set('multiple', action.isMultiple));
+  case COMPOSE_LANGUAGE_CHANGE:
+    return state.set('language', action.language);
   default:
     return state;
   }

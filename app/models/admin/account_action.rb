@@ -22,6 +22,16 @@ class Admin::AccountAction
 
   attr_reader :warning, :send_email_notification, :include_statuses
 
+  alias send_email_notification? send_email_notification
+  alias include_statuses? include_statuses
+
+  def initialize(attributes = {})
+    @send_email_notification = true
+    @include_statuses        = true
+
+    super
+  end
+
   def send_email_notification=(value)
     @send_email_notification = ActiveModel::Type::Boolean.new.cast(value)
   end
@@ -82,6 +92,10 @@ class Admin::AccountAction
       text: text_for_warning,
       status_ids: status_ids
     )
+
+    # A log entry is only interesting if the warning contains
+    # custom text from someone. Otherwise it's just noise.
+    log_action(:create, @warning) if @warning.text.present? && type == 'none'
   end
 
   def process_reports!
@@ -141,17 +155,17 @@ class Admin::AccountAction
   end
 
   def warnable?
-    send_email_notification && target_account.local?
+    send_email_notification? && target_account.local?
   end
 
   def status_ids
-    report.status_ids if with_report? && include_statuses
+    report.status_ids if with_report? && include_statuses?
   end
 
   def reports
     @reports ||= begin
-      if type == 'none' && with_report?
-        [report]
+      if type == 'none'
+        with_report? ? [report] : []
       else
         Report.where(target_account: target_account).unresolved
       end

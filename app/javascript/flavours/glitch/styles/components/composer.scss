@@ -206,7 +206,12 @@
 
     sub {
       font-size: smaller;
-      text-align: sub;
+      vertical-align: sub;
+    }
+
+    sup {
+      font-size: smaller;
+      vertical-align: super;
     }
 
     ul, ol {
@@ -425,54 +430,12 @@
     background-repeat: no-repeat;
     overflow: hidden;
 
-    textarea {
-      display: block;
-      position: absolute;
-      box-sizing: border-box;
-      bottom: 0;
-      left: 0;
-      margin: 0;
-      border: 0;
-      padding: 10px;
-      width: 100%;
-      color: $secondary-text-color;
-      background: linear-gradient(0deg, rgba($base-shadow-color, 0.8) 0, rgba($base-shadow-color, 0.35) 80%, transparent);
-      font-size: 14px;
-      font-family: inherit;
-      font-weight: 500;
-      opacity: 0;
-      z-index: 2;
-      transition: opacity .1s ease;
-
-      &:focus { color: $white }
-
-      &::placeholder {
-        opacity: 0.54;
-        color: $secondary-text-color;
-      }
-    }
-
     & > .close { mix-blend-mode: difference }
   }
 
-  &.active {
-    & > div {
-      textarea { opacity: 1 }
-    }
-  }
-}
-
-.composer--upload_form--actions {
-  background: linear-gradient(180deg, rgba($base-shadow-color, 0.8) 0, rgba($base-shadow-color, 0.35) 80%, transparent);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  opacity: 0;
-  transition: opacity .1s ease;
-
   .icon-button {
     flex: 0 1 auto;
-    color: $ui-secondary-color;
+    color: $secondary-text-color;
     font-size: 14px;
     font-weight: 500;
     padding: 10px;
@@ -481,13 +444,26 @@
     &:hover,
     &:focus,
     &:active {
-      color: lighten($ui-secondary-color, 4%);
+      color: lighten($secondary-text-color, 7%);
     }
   }
 
-  &.active {
-    opacity: 1;
+  &__warning {
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    background: linear-gradient(0deg, rgba($base-shadow-color, 0.8) 0, rgba($base-shadow-color, 0.35) 80%, transparent);
   }
+}
+
+.composer--upload_form--actions {
+  background: linear-gradient(180deg, rgba($base-shadow-color, 0.8) 0, rgba($base-shadow-color, 0.35) 80%, transparent);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .composer--upload_form--progress {
@@ -652,19 +628,84 @@
   & > .primary {
     display: inline-block;
     margin: 0;
-    padding: 0 10px;
+    padding: 7px 10px;
     text-align: center;
   }
 
   & > .side_arm {
     display: inline-block;
     margin: 0 2px;
-    padding: 0;
+    padding: 7px 0;
     width: 36px;
     text-align: center;
   }
 
   &.over {
     & > .count { color: $warning-red }
+  }
+}
+
+.language-dropdown {
+  &__dropdown {
+    position: absolute;
+    background: $simple-background-color;
+    box-shadow: 2px 4px 15px rgba($base-shadow-color, 0.4);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 2;
+
+    &.top {
+      transform-origin: 50% 100%;
+    }
+
+    &.bottom {
+      transform-origin: 50% 0;
+    }
+
+    .emoji-mart-search {
+      padding-right: 10px;
+    }
+
+    .emoji-mart-search-icon {
+      right: 10px + 5px;
+    }
+
+    .emoji-mart-scroll {
+      padding: 0 10px 10px;
+    }
+
+    &__results {
+      &__item {
+        cursor: pointer;
+        color: $inverted-text-color;
+        font-weight: 500;
+        padding: 10px;
+        border-radius: 4px;
+
+        &:focus,
+        &:active,
+        &:hover {
+          background: $ui-secondary-color;
+        }
+
+        &__common-name {
+          color: $darker-text-color;
+        }
+
+        &.active {
+          background: $ui-highlight-color;
+          color: $primary-text-color;
+          outline: 0;
+
+          .language-dropdown__dropdown__results__item__common-name {
+            color: $secondary-text-color;
+          }
+
+          &:hover {
+            background: lighten($ui-highlight-color, 4%);
+          }
+        }
+      }
+    }
   }
 }

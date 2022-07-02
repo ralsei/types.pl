@@ -34,7 +34,7 @@
 class PreviewCard < ApplicationRecord
   include Attachmentable
 
-  IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'].freeze
+  IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
   LIMIT = 1.megabytes
 
   BLURHASH_OPTIONS = {
@@ -78,6 +78,10 @@ class PreviewCard < ApplicationRecord
     else
       attributes['trendable']
     end
+  end
+
+  def requires_review?
+    attributes['trendable'].nil? && (provider.nil? || provider.requires_review?)
   end
 
   def requires_review_notification?

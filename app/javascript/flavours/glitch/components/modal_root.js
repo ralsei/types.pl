@@ -18,6 +18,7 @@ export default class ModalRoot extends React.PureComponent {
       b: PropTypes.number,
     }),
     noEsc: PropTypes.bool,
+    ignoreFocus: PropTypes.bool,
   };
 
   activeElement = this.props.children ? document.activeElement : null;
@@ -54,6 +55,10 @@ export default class ModalRoot extends React.PureComponent {
     window.addEventListener('keyup', this.handleKeyUp, false);
     window.addEventListener('keydown', this.handleKeyDown, false);
     this.history = this.context.router ? this.context.router.history : createBrowserHistory();
+
+    if (this.props.children) {
+      this._handleModalOpen();
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -72,7 +77,9 @@ export default class ModalRoot extends React.PureComponent {
       // immediately selectable, we have to wait for observers to run, as
       // described in https://github.com/WICG/inert#performance-and-gotchas
       Promise.resolve().then(() => {
-        this.activeElement.focus({ preventScroll: true });
+        if (!this.props.ignoreFocus) {
+          this.activeElement.focus({ preventScroll: true });
+        }
         this.activeElement = null;
       }).catch(console.error);
 

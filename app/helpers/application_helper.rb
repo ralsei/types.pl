@@ -9,9 +9,9 @@ module ApplicationHelper
 
   RTL_LOCALES = %i(
     ar
+    ckb
     fa
     he
-    ku
   ).freeze
 
   def friendly_number_to_human(number, **options)
@@ -19,8 +19,11 @@ module ApplicationHelper
     # is looked up from the locales definition, and rails-i18n comes with
     # values that don't seem to make much sense for many languages, so
     # override these values with a default of 3 digits of precision.
-    options[:precision] = 3
-    options[:strip_insignificant_zeros] = true
+    options = options.merge(
+      precision: 3,
+      strip_insignificant_zeros: true,
+      significant: true
+    )
 
     number_to_human(number, **options)
   end
@@ -80,7 +83,8 @@ module ApplicationHelper
   end
 
   def provider_sign_in_link(provider)
-    link_to I18n.t("auth.providers.#{provider}", default: provider.to_s.chomp('_oauth2').capitalize), omniauth_authorize_path(:user, provider), class: "button button-#{provider}", method: :post
+    label = Devise.omniauth_configs[provider]&.strategy&.display_name.presence || I18n.t("auth.providers.#{provider}", default: provider.to_s.chomp('_oauth2').capitalize)
+    link_to label, omniauth_authorize_path(:user, provider), class: "button button-#{provider}", method: :post
   end
 
   def open_deletion?
@@ -93,11 +97,6 @@ module ApplicationHelper
     else
       'ltr'
     end
-  end
-
-  def favicon_path
-    env_suffix = Rails.env.production? ? '' : '-dev'
-    "/favicon#{env_suffix}.ico"
   end
 
   def title
@@ -129,7 +128,7 @@ module ApplicationHelper
     elsif status.private_visibility? || status.limited_visibility?
       fa_icon('lock', title: I18n.t('statuses.visibilities.private'))
     elsif status.direct_visibility?
-      fa_icon('envelope', title: I18n.t('statuses.visibilities.direct'))
+      fa_icon('at', title: I18n.t('statuses.visibilities.direct'))
     end
   end
 
@@ -143,8 +142,8 @@ module ApplicationHelper
     end
   end
 
-  def custom_emoji_tag(custom_emoji, animate = true)
-    if animate
+  def custom_emoji_tag(custom_emoji)
+    if prefers_autoplay?
       image_tag(custom_emoji.image.url, class: 'emojione', alt: ":#{custom_emoji.shortcode}:")
     else
       image_tag(custom_emoji.image.url(:static), class: 'emojione custom-emoji', alt: ":#{custom_emoji.shortcode}", 'data-original' => full_asset_url(custom_emoji.image.url), 'data-static' => full_asset_url(custom_emoji.image.url(:static)))
@@ -195,7 +194,7 @@ module ApplicationHelper
 
   def quote_wrap(text, line_width: 80, break_sequence: "\n")
     text = word_wrap(text, line_width: line_width - 2, break_sequence: break_sequence)
-    text.split("\n").map { |line| '> ' + line }.join("\n")
+    text.split("\n").map { |line| "> #{line}" }.join("\n")
   end
 
   def render_initial_state
@@ -224,5 +223,24 @@ module ApplicationHelper
     # rubocop:disable Rails/OutputSafety
     content_tag(:script, json_escape(json).html_safe, id: 'initial-state', type: 'application/json')
     # rubocop:enable Rails/OutputSafety
+  end
+
+  def grouped_scopes(scopes)
+    scope_parser      = ScopeParser.new
+    scope_transformer = ScopeTransformer.new
+
+    scopes.each_with_object({}) do |str, h|
+      scope = scope_transformer.apply(scope_parser.parse(str))
+
+      if h[scope.key]
+        h[scope.key].merge!(scope)
+      else
+        h[scope.key] = scope
+      end
+    end.values
+  end
+
+  def prerender_custom_emojis(html, custom_emojis, other_options = {})
+    EmojiFormatter.new(html, custom_emojis, other_options.merge(animate: prefers_autoplay?)).to_s
   end
 end

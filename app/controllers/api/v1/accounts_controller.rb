@@ -2,13 +2,15 @@
 
 class Api::V1::AccountsController < Api::BaseController
   before_action -> { authorize_if_got_token! :read, :'read:accounts' }, except: [:create, :follow, :unfollow, :remove_from_followers, :block, :unblock, :mute, :unmute]
-  before_action -> { doorkeeper_authorize! :follow, :'write:follows' }, only: [:follow, :unfollow, :remove_from_followers]
-  before_action -> { doorkeeper_authorize! :follow, :'write:mutes' }, only: [:mute, :unmute]
-  before_action -> { doorkeeper_authorize! :follow, :'write:blocks' }, only: [:block, :unblock]
+  before_action -> { doorkeeper_authorize! :follow, :write, :'write:follows' }, only: [:follow, :unfollow, :remove_from_followers]
+  before_action -> { doorkeeper_authorize! :follow, :write, :'write:mutes' }, only: [:mute, :unmute]
+  before_action -> { doorkeeper_authorize! :follow, :write, :'write:blocks' }, only: [:block, :unblock]
   before_action -> { doorkeeper_authorize! :write, :'write:accounts' }, only: [:create]
 
   before_action :require_user!, except: [:show, :create]
   before_action :set_account, except: [:create]
+  before_action :check_account_approval, except: [:create]
+  before_action :check_account_confirmation, except: [:create]
   before_action :check_enabled_registrations, only: [:create]
 
   skip_before_action :require_authenticated_user!, only: :create
@@ -72,6 +74,14 @@ class Api::V1::AccountsController < Api::BaseController
 
   def set_account
     @account = Account.find(params[:id])
+  end
+
+  def check_account_approval
+    raise(ActiveRecord::RecordNotFound) if @account.local? && @account.user_pending?
+  end
+
+  def check_account_confirmation
+    raise(ActiveRecord::RecordNotFound) if @account.local? && !@account.user_confirmed?
   end
 
   def relationships(**options)

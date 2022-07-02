@@ -5,7 +5,10 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 
 //  Our imports
+import { expandSpoilers, disableSwiping } from 'flavours/glitch/util/initial_state';
+import { preferenceLink } from 'flavours/glitch/util/backend_links';
 import LocalSettingsPageItem from './item';
+import DeprecatedLocalSettingsPageItem from './deprecated_item';
 
 //  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -114,6 +117,50 @@ class LocalSettingsPage extends React.PureComponent {
             <span className='hint'><FormattedMessage id='settings.notifications.favicon_badge.hint' defaultMessage="Add a badge for unread notifications to the favicon" /></span>
           </LocalSettingsPageItem>
         </section>
+
+        <section>
+          <h2><FormattedMessage id='settings.status_icons' defaultMessage='Toot icons' /></h2>
+          <LocalSettingsPageItem
+            settings={settings}
+            item={['status_icons', 'language']}
+            id='mastodon-settings--status-icons-language'
+            onChange={onChange}
+          >
+            <FormattedMessage id='settings.status_icons_language' defaultMessage='Language indicator' />
+          </LocalSettingsPageItem>
+          <LocalSettingsPageItem
+            settings={settings}
+            item={['status_icons', 'reply']}
+            id='mastodon-settings--status-icons-reply'
+            onChange={onChange}
+          >
+            <FormattedMessage id='settings.status_icons_reply' defaultMessage='Reply indicator' />
+          </LocalSettingsPageItem>
+          <LocalSettingsPageItem
+            settings={settings}
+            item={['status_icons', 'local_only']}
+            id='mastodon-settings--status-icons-local_only'
+            onChange={onChange}
+          >
+            <FormattedMessage id='settings.status_icons_local_only' defaultMessage='Local-only indicator' />
+          </LocalSettingsPageItem>
+          <LocalSettingsPageItem
+            settings={settings}
+            item={['status_icons', 'media']}
+            id='mastodon-settings--status-icons-media'
+            onChange={onChange}
+          >
+            <FormattedMessage id='settings.status_icons_media' defaultMessage='Media and poll indicators' />
+          </LocalSettingsPageItem>
+          <LocalSettingsPageItem
+            settings={settings}
+            item={['status_icons', 'visibility']}
+            id='mastodon-settings--status-icons-visibility'
+            onChange={onChange}
+          >
+            <FormattedMessage id='settings.status_icons_visibility' defaultMessage='Toot privacy indicator' />
+          </LocalSettingsPageItem>
+        </section>
         <section>
           <h2><FormattedMessage id='settings.layout_opts' defaultMessage='Layout options' /></h2>
           <LocalSettingsPageItem
@@ -146,14 +193,28 @@ class LocalSettingsPage extends React.PureComponent {
           >
             <FormattedMessage id='settings.navbar_under' defaultMessage='Navbar at the bottom (Mobile only)' />
           </LocalSettingsPageItem>
-          <LocalSettingsPageItem
-            settings={settings}
-            item={['swipe_to_change_columns']}
+          <DeprecatedLocalSettingsPageItem
             id='mastodon-settings--swipe_to_change_columns'
-            onChange={onChange}
+            value={!disableSwiping}
           >
             <FormattedMessage id='settings.swipe_to_change_columns' defaultMessage='Allow swiping to change columns (Mobile only)' />
-          </LocalSettingsPageItem>
+            <span className='hint'>
+              <FormattedMessage
+                id='settings.deprecated_setting'
+                defaultMessage="This setting is now controlled from Mastodon's {settings_page_link}"
+                values={{
+                  settings_page_link: (
+                    <a href={preferenceLink('user_setting_disable_swiping')}>
+                      <FormattedMessage
+                        id='settings.shared_settings_link'
+                        defaultMessage='user preferences'
+                      />
+                    </a>
+                  )
+                }}
+              />
+            </span>
+          </DeprecatedLocalSettingsPageItem>
         </section>
       </div>
     ),
@@ -242,21 +303,35 @@ class LocalSettingsPage extends React.PureComponent {
     ({ intl, onChange, settings }) => (
       <div className='glitch local-settings__page content_warnings'>
         <h1><FormattedMessage id='settings.content_warnings' defaultMessage='Content warnings' /></h1>
-        <LocalSettingsPageItem
-          settings={settings}
-          item={['content_warnings', 'auto_unfold']}
+        <DeprecatedLocalSettingsPageItem
           id='mastodon-settings--content_warnings-auto_unfold'
-          onChange={onChange}
+          value={expandSpoilers}
         >
           <FormattedMessage id='settings.enable_content_warnings_auto_unfold' defaultMessage='Automatically unfold content-warnings' />
-        </LocalSettingsPageItem>
+          <span className='hint'>
+            <FormattedMessage
+              id='settings.deprecated_setting'
+              defaultMessage="This setting is now controlled from Mastodon's {settings_page_link}"
+              values={{
+                settings_page_link: (
+                  <a href={preferenceLink('user_setting_expand_spoilers')}>
+                    <FormattedMessage
+                      id='settings.shared_settings_link'
+                      defaultMessage='user preferences'
+                    />
+                  </a>
+                )
+              }}
+            />
+          </span>
+        </DeprecatedLocalSettingsPageItem>
         <LocalSettingsPageItem
           settings={settings}
           item={['content_warnings', 'filter']}
           id='mastodon-settings--content_warnings-auto_unfold'
           onChange={onChange}
-          dependsOn={[['content_warnings', 'auto_unfold']]}
           placeholder={intl.formatMessage(messages.regexp)}
+          disabled={!expandSpoilers}
         >
           <FormattedMessage id='settings.content_warnings_filter' defaultMessage='Content warnings to not automatically unfold:' />
         </LocalSettingsPageItem>

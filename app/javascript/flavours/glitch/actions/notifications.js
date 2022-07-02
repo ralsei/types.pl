@@ -47,7 +47,6 @@ export const NOTIFICATIONS_UNMOUNT = 'NOTIFICATIONS_UNMOUNT';
 
 export const NOTIFICATIONS_SET_VISIBILITY = 'NOTIFICATIONS_SET_VISIBILITY';
 
-
 export const NOTIFICATIONS_MARK_AS_READ = 'NOTIFICATIONS_MARK_AS_READ';
 
 export const NOTIFICATIONS_SET_BROWSER_SUPPORT    = 'NOTIFICATIONS_SET_BROWSER_SUPPORT';
@@ -58,7 +57,7 @@ defineMessages({
 });
 
 const fetchRelatedRelationships = (dispatch, notifications) => {
-  const accountIds = notifications.filter(item => item.type === 'follow').map(item => item.account.id);
+  const accountIds = notifications.filter(item => ['follow', 'follow_request', 'admin.sign_up'].indexOf(item.type) !== -1).map(item => item.account.id);
 
   if (accountIds > 0) {
     dispatch(fetchRelationships(accountIds));
@@ -71,7 +70,8 @@ export const loadPending = () => ({
 
 export function updateNotifications(notification, intlMessages, intlLocale) {
   return (dispatch, getState) => {
-    const showInColumn = getState().getIn(['settings', 'notifications', 'shows', notification.type], true);
+    const activeFilter = getState().getIn(['settings', 'notifications', 'quickFilter', 'active']);
+    const showInColumn = activeFilter === 'all' ? getState().getIn(['settings', 'notifications', 'shows', notification.type], true) : activeFilter === notification.type;
     const showAlert    = getState().getIn(['settings', 'notifications', 'alerts', notification.type], true);
     const playSound    = getState().getIn(['settings', 'notifications', 'sounds', notification.type], true);
     const filters      = getFiltersRegex(getState(), { contextType: 'notifications' });
@@ -101,6 +101,10 @@ export function updateNotifications(notification, intlMessages, intlLocale) {
 
       if (notification.status) {
         dispatch(importFetchedStatus(notification.status));
+      }
+
+      if (notification.report) {
+        dispatch(importFetchedAccount(notification.report.target_account));
       }
 
       dispatch({
@@ -136,7 +140,19 @@ const excludeTypesFromSettings = state => state.getIn(['settings', 'notification
 
 
 const excludeTypesFromFilter = filter => {
-  const allTypes = ImmutableList(['follow', 'follow_request', 'favourite', 'reblog', 'mention', 'poll']);
+  const allTypes = ImmutableList([
+    'follow',
+    'follow_request',
+    'favourite',
+    'reblog',
+    'mention',
+    'poll',
+    'status',
+    'update',
+    'admin.sign_up',
+    'admin.report',
+  ]);
+
   return allTypes.filterNot(item => item === filter).toJS();
 };
 
@@ -180,6 +196,7 @@ export function expandNotifications({ maxId } = {}, done = noOp) {
 
       dispatch(importFetchedAccounts(response.data.map(item => item.account)));
       dispatch(importFetchedStatuses(response.data.map(item => item.status).filter(status => !!status)));
+      dispatch(importFetchedAccounts(response.data.filter(item => item.report).map(item => item.report.target_account)));
 
       dispatch(expandNotificationsSuccess(response.data, next ? next.uri : null, isLoadingMore, isLoadingRecent, isLoadingRecent && preferPendingItems));
       fetchRelatedRelationships(dispatch, response.data);
