@@ -38,36 +38,23 @@ class Sanitize
     MATH_TAG_ATTRS = {
       'annotation' => %w(encoding),
       'annotation-xml' => %w(encoding),
-      # we remove all attributes from maction
       'maction' => %w(),
       'math' => %w(display alttext),
       'merror' => %w(),
-      # see below
+      # See below
       'mfrac' => %w(linethickness),
       'mi' => %w(),
       'mmultiscripts' => %w(),
       'mn' => %w(),
-      'mo' => %w(
-        form
-        fence
-        separator
-        stretchy
-        symmetric
-        largeop
-        movablelimits
-      ),
+      'mo' => %w(form fence separator stretchy symmetric largeop movablelimits lspace rspace minsize),
       'mover' => %w(accent),
-      'munderover' => %w(accent accentunder),
-      # see <mspace>
-      'mpadded' => %w(),
+      'mpadded' => %w(width height depth lspace voffset),
       'mphantom' => %w(),
       'mprescripts' => %w(),
       'mroot' => %w(),
       'mrow' => %w(),
       'ms' => %w(),
-      # mspace is only described by its `width`, `depth` and `height` attributes.
-      # If these are removed, perhaps we should remove the element in general?
-      'mspace' => %w(),
+      'mspace' => %w(width height depth),
       'msqrt' => %w(),
       'mstyle' => %w(),
       'msub' => %w(),
@@ -78,6 +65,7 @@ class Sanitize
       'mtext' => %w(),
       'mtr' => %w(),
       'munder' => %w(accentunder),
+      'munderover' => %w(accent accentunder),
       'semantics' => %w(),
     }.transform_values { |attr_list| attr_list + COMMON_MATH_ATTRS }.freeze
 
