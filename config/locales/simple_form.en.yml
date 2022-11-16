@@ -78,7 +78,7 @@ en:
       imports:
         data: CSV file exported from another Mastodon server
       invite_request:
-        text: This will help us review your application
+        text: In a few sentences, tell us a little about yourself and why you want to join types.pl. You may include links to personal websites or other social media if you wish. This helps us review your application.
       ip_block:
         comment: Optional. Remember why you added this rule.
         expires_in: IP addresses are a finite resource, they are sometimes shared and often change hands. For this reason, indefinite IP blocks are not recommended.
