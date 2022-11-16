@@ -689,8 +689,8 @@ const startWorker = async (workerId) => {
           queries.push(client.query('SELECT 1 FROM account_domain_blocks WHERE account_id = $1 AND domain = $2', [req.accountId, accountDomain]));
         }
 
-        if (!unpackedPayload.filter_results && !req.cachedFilters) {
-          queries.push(client.query('SELECT filter.id AS id, filter.phrase AS title, filter.context AS context, filter.expires_at AS expires_at, filter.action AS filter_action, keyword.keyword AS keyword, keyword.whole_word AS whole_word FROM custom_filter_keywords keyword JOIN custom_filters filter ON keyword.custom_filter_id = filter.id WHERE filter.account_id = $1 AND filter.expires_at IS NULL OR filter.expires_at > NOW()', [req.accountId]));
+        if (!unpackedPayload.filtered && !req.cachedFilters) {
+          queries.push(client.query('SELECT filter.id AS id, filter.phrase AS title, filter.context AS context, filter.expires_at AS expires_at, filter.action AS filter_action, keyword.keyword AS keyword, keyword.whole_word AS whole_word FROM custom_filter_keywords keyword JOIN custom_filters filter ON keyword.custom_filter_id = filter.id WHERE filter.account_id = $1 AND (filter.expires_at IS NULL OR filter.expires_at > NOW())', [req.accountId]));
         }
 
         Promise.all(queries).then(values => {
@@ -700,7 +700,7 @@ const startWorker = async (workerId) => {
             return;
           }
 
-          if (!unpackedPayload.filter_results && !req.cachedFilters) {
+          if (!unpackedPayload.filtered && !req.cachedFilters) {
             const filterRows = values[accountDomain ? 2 : 1].rows;
 
             req.cachedFilters = filterRows.reduce((cache, row) => {
@@ -715,7 +715,7 @@ const startWorker = async (workerId) => {
                     title: row.title,
                     context: row.context,
                     expires_at: row.expires_at,
-                    filter_action: row.filter_action,
+                    filter_action: ['warn', 'hide'][row.filter_action],
                   },
                 };
               }
@@ -743,18 +743,18 @@ const startWorker = async (workerId) => {
           }
 
           // Check filters
-          if (req.cachedFilters && !unpackedPayload.filter_results) {
+          if (req.cachedFilters && !unpackedPayload.filtered) {
             const status = unpackedPayload;
             const searchContent = ([status.spoiler_text || '', status.content].concat((status.poll && status.poll.options) ? status.poll.options.map(option => option.title) : [])).concat(status.media_attachments.map(att => att.description)).join('\n\n').replace(/<br\s*\/?>/g, '\n').replace(/<\/p><p>/g, '\n\n');
             const searchIndex = JSDOM.fragment(searchContent).textContent;
 
             const now = new Date();
-            payload.filter_results = [];
+            payload.filtered = [];
             Object.values(req.cachedFilters).forEach((cachedFilter) => {
               if ((cachedFilter.expires_at === null || cachedFilter.expires_at > now)) {
                 const keyword_matches = searchIndex.match(cachedFilter.regexp);
                 if (keyword_matches) {
-                  payload.filter_results.push({
+                  payload.filtered.push({
                     filter: cachedFilter.repr,
                     keyword_matches,
                   });
@@ -901,6 +901,34 @@ const startWorker = async (workerId) => {
   };
 
   /**
+   * See app/lib/ascii_folder.rb for the canon definitions
+   * of these constants
+   */
+  const NON_ASCII_CHARS        = 'ÀÁÂÃÄÅàáâãäåĀāĂăĄąÇçĆćĈĉĊċČčÐðĎďĐđÈÉÊËèéêëĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħÌÍÎÏìíîïĨĩĪīĬĭĮįİıĴĵĶķĸĹĺĻļĽľĿŀŁłÑñŃńŅņŇňŉŊŋÒÓÔÕÖØòóôõöøŌōŎŏŐőŔŕŖŗŘřŚśŜŝŞşŠšſŢţŤťŦŧÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųŴŵÝýÿŶŷŸŹźŻżŽž';
+  const EQUIVALENT_ASCII_CHARS = 'AAAAAAaaaaaaAaAaAaCcCcCcCcCcDdDdDdEEEEeeeeEeEeEeEeEeGgGgGgGgHhHhIIIIiiiiIiIiIiIiIiJjKkkLlLlLlLlLlNnNnNnNnnNnOOOOOOooooooOoOoOoRrRrRrSsSsSsSssTtTtTtUUUUuuuuUuUuUuUuUuUuWwYyyYyYZzZzZz';
+
+  /**
+   * @param {string} str
+   * @return {string}
+   */
+  const foldToASCII = str => {
+    const regex = new RegExp(NON_ASCII_CHARS.split('').join('|'), 'g');
+
+    return str.replace(regex, match => {
+      const index = NON_ASCII_CHARS.indexOf(match);
+      return EQUIVALENT_ASCII_CHARS[index];
+    });
+  };
+
+  /**
+   * @param {string} str
+   * @return {string}
+   */
+  const normalizeHashtag = str => {
+    return foldToASCII(str.normalize('NFKC').toLowerCase()).replace(/[^\p{L}\p{N}_\u00b7\u200c]/gu, '');
+  };
+
+  /**
    * @param {any} req
    * @param {string} name
    * @param {StreamParams} params
@@ -990,7 +1018,7 @@ const startWorker = async (workerId) => {
         reject('No tag for stream provided');
       } else {
         resolve({
-          channelIds: [`timeline:hashtag:${params.tag.toLowerCase()}`],
+          channelIds: [`timeline:hashtag:${normalizeHashtag(params.tag)}`],
           options: { needsFiltering: true, allowLocalOnly: true },
         });
       }
@@ -1001,7 +1029,7 @@ const startWorker = async (workerId) => {
         reject('No tag for stream provided');
       } else {
         resolve({
-          channelIds: [`timeline:hashtag:${params.tag.toLowerCase()}:local`],
+          channelIds: [`timeline:hashtag:${normalizeHashtag(params.tag)}:local`],
           options: { needsFiltering: true, allowLocalOnly: true },
         });
       }

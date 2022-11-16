@@ -4,12 +4,14 @@ on:
   push:
     branches:
       - 'main'
-    tags:
-      - '*'
   pull_request:
     paths:
       - .github/workflows/build-image.yml
       - Dockerfile
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-image:
     runs-on: ubuntu-latest
@@ -27,17 +29,15 @@ jobs:
         id: meta
         with:
           images: ghcr.io/${{ github.repository_owner }}/mastodon
-          flavor: |
-            latest=auto
           tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
             type=edge,branch=main
-            type=match,pattern=v(.*),group=0
-            type=ref,event=pr
+            type=sha,prefix=,format=long
       - uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/mastodon:latest
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/mastodon:edge
           cache-to: type=inline
