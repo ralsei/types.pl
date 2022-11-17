@@ -1399,7 +1399,6 @@ en:
     descriptions:
       account: Public posts from @%{acct}
       tag: 'Public posts tagged #%{hashtag}'
->>>>>>> upstream/main
   scheduled_statuses:
     over_daily_limit: You have exceeded the limit of %{limit} scheduled toots for today
     over_total_limit: You have exceeded the limit of %{limit} scheduled toots
@@ -1700,20 +1699,12 @@ en:
         spam: Spam
         violation: Content violates the following community guidelines
       explanation:
-        disable: You can no longer login to your account or use it in any other way, but your profile and other data remains intact.
-        sensitive: Your uploaded media files and linked media will be treated as sensitive.
-        silence: You can still use your account but only people who are already following you will see your toots on this server, and you may be excluded from various public listings. However, others may still manually follow you.
-        suspend: You can no longer use your account, and your profile and other data are no longer accessible. You can still login to request a backup of your data until the data is fully removed, but we will retain some data to prevent you from evading the suspension.
-      delete_statuses: Some of your posts have been found to violate one or more community guidelines and have been subsequently removed by the moderators of %{instance}. Future violations may result in harsher punitive actions against your account.
-      get_in_touch: If you believe this is an error, you can reply to this e-mail to get in touch with the staff of %{instance}.
-=======
         delete_statuses: Some of your posts have been found to violate one or more community guidelines and have been subsequently removed by the moderators of %{instance}.
         disable: You can no longer use your account, but your profile and other data remains intact. You can request a backup of your data, change account settings or delete your account.
         mark_statuses_as_sensitive: Some of your posts have been marked as sensitive by the moderators of %{instance}. This means that people will need to tap the media in the posts before a preview is displayed. You can mark media as sensitive yourself when posting in the future.
         sensitive: From now on, all your uploaded media files will be marked as sensitive and hidden behind a click-through warning.
         silence: You can still use your account but only people who are already following you will see your posts on this server, and you may be excluded from various discovery features. However, others may still manually follow you.
         suspend: You can no longer use your account, and your profile and other data are no longer accessible. You can still login to request a backup of your data until the data is fully removed in about 30 days, but we will retain some basic data to prevent you from evading the suspension.
->>>>>>> upstream/main
       reason: 'Reason:'
       statuses: 'Posts cited:'
       subject:
