@@ -13,7 +13,7 @@ Differences from glitch-soc:
 - LaTeX support is provided, with `\( this for inline math \)`, and either `$$ this $$` or `\[ this \]`
   for display math. This uses MathJax.
   - This syntax may change for Markdown posts in the future.
-- "Post" changed to "toot", despite being on version 3.4.
+- "Post" changed to "toot", despite being on version 4.1.3.
 - Oatstodon theme, provided by [oat](https://hellsite.site/@oat).
 - Various branding assets changed.
 
