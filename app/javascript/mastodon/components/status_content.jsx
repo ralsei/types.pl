@@ -154,8 +154,17 @@ class StatusContent extends PureComponent {
     }
   };
 
+  _renderMathJax() {
+    try {
+      MathJax.typeset([this.contentsNode]);
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   componentDidMount () {
     this._updateStatusLinks();
+    this._renderMathJax();
   }
 
   componentDidUpdate () {
