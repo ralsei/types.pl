@@ -12,14 +12,17 @@ class RemoveStatusService < BaseService
   # @option  [Boolean] :immediate
   # @option  [Boolean] :preserve
   # @option  [Boolean] :original_removed
+  # @option  [Boolean] :skip_streaming
   def call(status, **options)
     @payload  = Oj.dump(event: :delete, payload: status.id.to_s)
     @status   = status
     @account  = status.account
     @options  = options
 
-    with_lock("distribute:#{@status.id}") do
-      @status.discard
+    with_redis_lock("distribute:#{@status.id}") do
+      @status.discard_with_reblogs
+
+      StatusPin.find_by(status: @status)&.destroy
 
       remove_from_self if @account.local?
       remove_from_followers
@@ -51,19 +54,22 @@ class RemoveStatusService < BaseService
 
   private
 
+  # The following FeedManager calls all do not result in redis publishes for
+  # streaming, as the `:update` option is false
+
   def remove_from_self
     FeedManager.instance.unpush_from_home(@account, @status)
     FeedManager.instance.unpush_from_direct(@account, @status) if @status.direct_visibility?
   end
 
   def remove_from_followers
-    @account.followers_for_local_distribution.reorder(nil).find_each do |follower|
+    @account.followers_for_local_distribution.includes(:user).reorder(nil).find_each do |follower|
       FeedManager.instance.unpush_from_home(follower, @status)
     end
   end
 
   def remove_from_lists
-    @account.lists_for_local_distribution.select(:id, :account_id).reorder(nil).find_each do |list|
+    @account.lists_for_local_distribution.select(:id, :account_id).includes(account: :user).reorder(nil).find_each do |list|
       FeedManager.instance.unpush_from_list(list, @status)
     end
   end
@@ -74,6 +80,8 @@ class RemoveStatusService < BaseService
     # and therefore the delete is already handled by sending it to all
     # followers. Here we send a delete to actively mentioned accounts
     # that may not follow the account
+
+    return if skip_streaming?
 
     @status.active_mentions.find_each do |mention|
       redis.publish("timeline:#{mention.account_id}", @payload)
@@ -88,7 +96,7 @@ class RemoveStatusService < BaseService
 
     status_reach_finder = StatusReachFinder.new(@status, unsafe: true)
 
-    ActivityPub::DeliveryWorker.push_bulk(status_reach_finder.inboxes) do |inbox_url|
+    ActivityPub::DeliveryWorker.push_bulk(status_reach_finder.inboxes, limit: 1_000) do |inbox_url|
       [signed_activity_json, @account.id, inbox_url]
     end
   end
@@ -102,8 +110,8 @@ class RemoveStatusService < BaseService
     # because once original status is gone, reblogs will disappear
     # without us being able to do all the fancy stuff
 
-    @status.reblogs.includes(:account).reorder(nil).find_each do |reblog|
-      RemoveStatusService.new.call(reblog, original_removed: true)
+    @status.reblogs.rewhere(deleted_at: [nil, @status.deleted_at]).includes(:account).reorder(nil).find_each do |reblog|
+      RemoveStatusService.new.call(reblog, original_removed: true, skip_streaming: skip_streaming?)
     end
   end
 
@@ -114,6 +122,8 @@ class RemoveStatusService < BaseService
 
     return unless @status.public_visibility?
 
+    return if skip_streaming?
+
     @status.tags.map(&:name).each do |hashtag|
       redis.publish("timeline:hashtag:#{hashtag.mb_chars.downcase}", @payload)
       redis.publish("timeline:hashtag:#{hashtag.mb_chars.downcase}:local", @payload) if @status.local?
@@ -123,12 +133,16 @@ class RemoveStatusService < BaseService
   def remove_from_public
     return unless @status.public_visibility?
 
+    return if skip_streaming?
+
     redis.publish('timeline:public', @payload)
     redis.publish(@status.local? ? 'timeline:public:local' : 'timeline:public:remote', @payload)
   end
 
   def remove_from_media
     return unless @status.public_visibility?
+
+    return if skip_streaming?
 
     redis.publish('timeline:public:media', @payload)
     redis.publish(@status.local? ? 'timeline:public:local:media' : 'timeline:public:remote:media', @payload)
@@ -148,5 +162,9 @@ class RemoveStatusService < BaseService
 
   def permanently?
     @options[:immediate] || !(@options[:preserve] || @status.reported?)
+  end
+
+  def skip_streaming?
+    !!@options[:skip_streaming]
   end
 end

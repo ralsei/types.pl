@@ -21,32 +21,31 @@
 
     %link{ rel: 'mask-icon', href: asset_pack_path('media/images/logo-symbol-icon.svg'), color: '#6364FF' }/
     %link{ rel: 'manifest', href: manifest_path(format: :json) }/
-    %meta{ name: 'theme-color', content: '#6364FF' }/
+    %meta{ name: 'theme-color', content: '#191b22' }/
     %meta{ name: 'apple-mobile-web-app-capable', content: 'yes' }/
     %script{ src: '/MathJax/config.js' }
     %script{ src: '/MathJax/es5/tex-chtml.js' }
 
     %title= content_for?(:page_title) ? safe_join([yield(:page_title).chomp.html_safe, title], ' - ') : title
 
-    = javascript_pack_tag "locales", crossorigin: 'anonymous'
+    = javascript_pack_tag "common", crossorigin: 'anonymous'
     - if @theme
       - if @theme[:supported_locales].include? I18n.locale.to_s
-        = javascript_pack_tag "locales/#{@theme[:flavour]}/#{I18n.locale}", crossorigin: 'anonymous'
+        = preload_pack_asset "locales/#{@theme[:flavour]}/#{I18n.locale}-json.js", crossorigin: 'anonymous'
       - elsif @theme[:supported_locales].include? 'en'
-        = javascript_pack_tag "locales/#{@theme[:flavour]}/en", crossorigin: 'anonymous'
-    = csrf_meta_tags
+        = preload_pack_asset "locales/#{@theme[:flavour]}/en-json.js", crossorigin: 'anonymous'
+    = csrf_meta_tags unless skip_csrf_meta_tags?
     %meta{ name: 'style-nonce', content: request.content_security_policy_nonce }
 
     = stylesheet_link_tag '/inert.css', skip_pipeline: true, media: 'all', id: 'inert-style'
 
     = yield :header_tags
 
-    -#  These must come after :header_tags to ensure our initial state has been defined.
+    -# These must come after :header_tags to ensure our initial state has been defined.
     = render partial: 'layouts/theme', object: @core
     = render partial: 'layouts/theme', object: @theme
 
-    - if Setting.custom_css.present?
-      = stylesheet_link_tag custom_css_path, host: request.host, media: 'all'
+    = stylesheet_link_tag custom_css_path, skip_pipeline: true, host: root_url, media: 'all'
 
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield

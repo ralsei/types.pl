@@ -1,4 +1,5 @@
-import api from 'flavours/glitch/util/api';
+import api from '../api';
+
 import { fetchRelationships } from './accounts';
 import { importFetchedAccounts, importFetchedStatuses } from './importer';
 
@@ -19,17 +20,18 @@ export function changeSearch(value) {
     type: SEARCH_CHANGE,
     value,
   };
-};
+}
 
 export function clearSearch() {
   return {
     type: SEARCH_CLEAR,
   };
-};
+}
 
 export function submitSearch() {
   return (dispatch, getState) => {
-    const value = getState().getIn(['search', 'value']);
+    const value    = getState().getIn(['search', 'value']);
+    const signedIn = !!getState().getIn(['meta', 'me']);
 
     if (value.length === 0) {
       dispatch(fetchSearchSuccess({ accounts: [], statuses: [], hashtags: [] }, ''));
@@ -41,7 +43,7 @@ export function submitSearch() {
     api(getState).get('/api/v2/search', {
       params: {
         q: value,
-        resolve: true,
+        resolve: signedIn,
         limit: 10,
       },
     }).then(response => {
@@ -59,13 +61,13 @@ export function submitSearch() {
       dispatch(fetchSearchFail(error));
     });
   };
-};
+}
 
 export function fetchSearchRequest() {
   return {
     type: SEARCH_FETCH_REQUEST,
   };
-};
+}
 
 export function fetchSearchSuccess(results, searchTerm) {
   return {
@@ -73,14 +75,14 @@ export function fetchSearchSuccess(results, searchTerm) {
     results,
     searchTerm,
   };
-};
+}
 
 export function fetchSearchFail(error) {
   return {
     type: SEARCH_FETCH_FAIL,
     error,
   };
-};
+}
 
 export const expandSearch = type => (dispatch, getState) => {
   const value  = getState().getIn(['search', 'value']);

@@ -1,18 +1,21 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe Disputes::AppealsController, type: :controller do
+RSpec.describe Disputes::AppealsController do
   render_views
 
   before { sign_in current_user, scope: :user }
 
-  let!(:admin) { Fabricate(:user, admin: true) }
+  let!(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   describe '#create' do
     let(:current_user) { Fabricate(:user) }
     let(:strike) { Fabricate(:account_warning, target_account: current_user.account) }
 
     before do
-      allow(AdminMailer).to receive(:new_appeal).and_return(double('email', deliver_later: nil))
+      allow(AdminMailer).to receive(:new_appeal)
+        .and_return(instance_double(ActionMailer::MessageDelivery, deliver_later: nil))
       post :create, params: { strike_id: strike.id, appeal: { text: 'Foo' } }
     end
 

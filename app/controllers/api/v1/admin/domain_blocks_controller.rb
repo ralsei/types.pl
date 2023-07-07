@@ -8,13 +8,23 @@ class Api::V1::Admin::DomainBlocksController < Api::BaseController
 
   before_action -> { authorize_if_got_token! :'admin:read', :'admin:read:domain_blocks' }, only: [:index, :show]
   before_action -> { authorize_if_got_token! :'admin:write', :'admin:write:domain_blocks' }, except: [:index, :show]
-  before_action :require_staff!
   before_action :set_domain_blocks, only: :index
   before_action :set_domain_block, only: [:show, :update, :destroy]
 
+  after_action :verify_authorized
   after_action :insert_pagination_headers, only: :index
 
   PAGINATION_PARAMS = %i(limit).freeze
+
+  def index
+    authorize :domain_block, :index?
+    render json: @domain_blocks, each_serializer: REST::Admin::DomainBlockSerializer
+  end
+
+  def show
+    authorize @domain_block, :show?
+    render json: @domain_block, serializer: REST::Admin::DomainBlockSerializer
+  end
 
   def create
     authorize :domain_block, :create?
@@ -28,23 +38,10 @@ class Api::V1::Admin::DomainBlocksController < Api::BaseController
     render json: @domain_block, serializer: REST::Admin::DomainBlockSerializer
   end
 
-  def index
-    authorize :domain_block, :index?
-    render json: @domain_blocks, each_serializer: REST::Admin::DomainBlockSerializer
-  end
-
-  def show
-    authorize @domain_block, :show?
-    render json: @domain_block, serializer: REST::Admin::DomainBlockSerializer
-  end
-
   def update
     authorize @domain_block, :update?
-
-    @domain_block.update(domain_block_params)
-    severity_changed = @domain_block.severity_changed?
-    @domain_block.save!
-    DomainBlockWorker.perform_async(@domain_block.id, severity_changed)
+    @domain_block.update!(domain_block_params)
+    DomainBlockWorker.perform_async(@domain_block.id, @domain_block.severity_previously_changed?)
     log_action :update, @domain_block
     render json: @domain_block, serializer: REST::Admin::DomainBlockSerializer
   end
@@ -53,7 +50,7 @@ class Api::V1::Admin::DomainBlocksController < Api::BaseController
     authorize @domain_block, :destroy?
     UnblockDomainService.new.call(@domain_block)
     log_action :destroy, @domain_block
-    render json: @domain_block, serializer: REST::Admin::DomainBlockSerializer
+    render_empty
   end
 
   private

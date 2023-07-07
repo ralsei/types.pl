@@ -8,43 +8,61 @@ class PermalinkRedirector
   end
 
   def redirect_path
-    if path_segments[0] == 'web'
-      if path_segments[1].present? && path_segments[1].start_with?('@') && path_segments[2] =~ /\d/
-        find_status_url_by_id(path_segments[2])
-      elsif path_segments[1].present? && path_segments[1].start_with?('@')
-        find_account_url_by_name(path_segments[1])
-      elsif path_segments[1] == 'statuses' && path_segments[2] =~ /\d/
-        find_status_url_by_id(path_segments[2])
-      elsif path_segments[1] == 'accounts' && path_segments[2] =~ /\d/
-        find_account_url_by_id(path_segments[2])
-      elsif path_segments[1] == 'timelines' && path_segments[2] == 'tag' && path_segments[3].present?
-        find_tag_url_by_name(path_segments[3])
-      elsif path_segments[1] == 'tags' && path_segments[2].present?
-        find_tag_url_by_name(path_segments[2])
-      end
+    if at_username_status_request? || statuses_status_request?
+      find_status_url_by_id(second_segment)
+    elsif at_username_request?
+      find_account_url_by_name(first_segment)
+    elsif accounts_request? && record_integer_id_request?
+      find_account_url_by_id(second_segment)
     end
   end
 
   private
 
+  def at_username_status_request?
+    at_username_request? && record_integer_id_request?
+  end
+
+  def statuses_status_request?
+    statuses_request? && record_integer_id_request?
+  end
+
+  def at_username_request?
+    first_segment.present? && first_segment.start_with?('@')
+  end
+
+  def statuses_request?
+    first_segment == 'statuses'
+  end
+
+  def accounts_request?
+    first_segment == 'accounts'
+  end
+
+  def record_integer_id_request?
+    second_segment =~ /\d/
+  end
+
+  def first_segment
+    path_segments.first
+  end
+
+  def second_segment
+    path_segments.second
+  end
+
   def path_segments
-    @path_segments ||= @path.gsub(/\A\//, '').split('/')
+    @path_segments ||= @path.delete_prefix('/').split('/')
   end
 
   def find_status_url_by_id(id)
     status = Status.find_by(id: id)
-
-    return unless status&.distributable?
-
-    ActivityPub::TagManager.instance.url_for(status)
+    ActivityPub::TagManager.instance.url_for(status) if status&.distributable? && !status.account.local?
   end
 
   def find_account_url_by_id(id)
     account = Account.find_by(id: id)
-
-    return unless account
-
-    ActivityPub::TagManager.instance.url_for(account)
+    ActivityPub::TagManager.instance.url_for(account) if account.present? && !account.local?
   end
 
   def find_account_url_by_name(name)
@@ -52,12 +70,6 @@ class PermalinkRedirector
     domain           = nil if TagManager.instance.local_domain?(domain)
     account          = Account.find_remote(username, domain)
 
-    return unless account
-
-    ActivityPub::TagManager.instance.url_for(account)
-  end
-
-  def find_tag_url_by_name(name)
-    tag_path(CGI.unescape(name))
+    ActivityPub::TagManager.instance.url_for(account) if account.present? && !account.local?
   end
 end

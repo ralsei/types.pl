@@ -1,4 +1,5 @@
 import api from '../api';
+
 import { importFetchedAccounts, importFetchedStatus } from './importer';
 
 export const REBLOG_REQUEST = 'REBLOG_REQUEST';
@@ -54,7 +55,7 @@ export function reblog(status, visibility) {
       dispatch(reblogFail(status, error));
     });
   };
-};
+}
 
 export function unreblog(status) {
   return (dispatch, getState) => {
@@ -67,7 +68,7 @@ export function unreblog(status) {
       dispatch(unreblogFail(status, error));
     });
   };
-};
+}
 
 export function reblogRequest(status) {
   return {
@@ -75,7 +76,7 @@ export function reblogRequest(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function reblogSuccess(status) {
   return {
@@ -83,7 +84,7 @@ export function reblogSuccess(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function reblogFail(status, error) {
   return {
@@ -92,7 +93,7 @@ export function reblogFail(status, error) {
     error: error,
     skipLoading: true,
   };
-};
+}
 
 export function unreblogRequest(status) {
   return {
@@ -100,7 +101,7 @@ export function unreblogRequest(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function unreblogSuccess(status) {
   return {
@@ -108,7 +109,7 @@ export function unreblogSuccess(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function unreblogFail(status, error) {
   return {
@@ -117,7 +118,7 @@ export function unreblogFail(status, error) {
     error: error,
     skipLoading: true,
   };
-};
+}
 
 export function favourite(status) {
   return function (dispatch, getState) {
@@ -130,7 +131,7 @@ export function favourite(status) {
       dispatch(favouriteFail(status, error));
     });
   };
-};
+}
 
 export function unfavourite(status) {
   return (dispatch, getState) => {
@@ -143,7 +144,7 @@ export function unfavourite(status) {
       dispatch(unfavouriteFail(status, error));
     });
   };
-};
+}
 
 export function favouriteRequest(status) {
   return {
@@ -151,7 +152,7 @@ export function favouriteRequest(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function favouriteSuccess(status) {
   return {
@@ -159,7 +160,7 @@ export function favouriteSuccess(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function favouriteFail(status, error) {
   return {
@@ -168,7 +169,7 @@ export function favouriteFail(status, error) {
     error: error,
     skipLoading: true,
   };
-};
+}
 
 export function unfavouriteRequest(status) {
   return {
@@ -176,7 +177,7 @@ export function unfavouriteRequest(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function unfavouriteSuccess(status) {
   return {
@@ -184,7 +185,7 @@ export function unfavouriteSuccess(status) {
     status: status,
     skipLoading: true,
   };
-};
+}
 
 export function unfavouriteFail(status, error) {
   return {
@@ -193,7 +194,7 @@ export function unfavouriteFail(status, error) {
     error: error,
     skipLoading: true,
   };
-};
+}
 
 export function bookmark(status) {
   return function (dispatch, getState) {
@@ -206,7 +207,7 @@ export function bookmark(status) {
       dispatch(bookmarkFail(status, error));
     });
   };
-};
+}
 
 export function unbookmark(status) {
   return (dispatch, getState) => {
@@ -219,14 +220,14 @@ export function unbookmark(status) {
       dispatch(unbookmarkFail(status, error));
     });
   };
-};
+}
 
 export function bookmarkRequest(status) {
   return {
     type: BOOKMARK_REQUEST,
     status: status,
   };
-};
+}
 
 export function bookmarkSuccess(status, response) {
   return {
@@ -234,7 +235,7 @@ export function bookmarkSuccess(status, response) {
     status: status,
     response: response,
   };
-};
+}
 
 export function bookmarkFail(status, error) {
   return {
@@ -242,14 +243,14 @@ export function bookmarkFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function unbookmarkRequest(status) {
   return {
     type: UNBOOKMARK_REQUEST,
     status: status,
   };
-};
+}
 
 export function unbookmarkSuccess(status, response) {
   return {
@@ -257,7 +258,7 @@ export function unbookmarkSuccess(status, response) {
     status: status,
     response: response,
   };
-};
+}
 
 export function unbookmarkFail(status, error) {
   return {
@@ -265,7 +266,7 @@ export function unbookmarkFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function fetchReblogs(id) {
   return (dispatch, getState) => {
@@ -278,14 +279,14 @@ export function fetchReblogs(id) {
       dispatch(fetchReblogsFail(id, error));
     });
   };
-};
+}
 
 export function fetchReblogsRequest(id) {
   return {
     type: REBLOGS_FETCH_REQUEST,
     id,
   };
-};
+}
 
 export function fetchReblogsSuccess(id, accounts) {
   return {
@@ -293,14 +294,14 @@ export function fetchReblogsSuccess(id, accounts) {
     id,
     accounts,
   };
-};
+}
 
 export function fetchReblogsFail(id, error) {
   return {
     type: REBLOGS_FETCH_FAIL,
     error,
   };
-};
+}
 
 export function fetchFavourites(id) {
   return (dispatch, getState) => {
@@ -313,14 +314,14 @@ export function fetchFavourites(id) {
       dispatch(fetchFavouritesFail(id, error));
     });
   };
-};
+}
 
 export function fetchFavouritesRequest(id) {
   return {
     type: FAVOURITES_FETCH_REQUEST,
     id,
   };
-};
+}
 
 export function fetchFavouritesSuccess(id, accounts) {
   return {
@@ -328,14 +329,14 @@ export function fetchFavouritesSuccess(id, accounts) {
     id,
     accounts,
   };
-};
+}
 
 export function fetchFavouritesFail(id, error) {
   return {
     type: FAVOURITES_FETCH_FAIL,
     error,
   };
-};
+}
 
 export function pin(status) {
   return (dispatch, getState) => {
@@ -348,7 +349,7 @@ export function pin(status) {
       dispatch(pinFail(status, error));
     });
   };
-};
+}
 
 export function pinRequest(status) {
   return {
@@ -356,7 +357,7 @@ export function pinRequest(status) {
     status,
     skipLoading: true,
   };
-};
+}
 
 export function pinSuccess(status) {
   return {
@@ -364,7 +365,7 @@ export function pinSuccess(status) {
     status,
     skipLoading: true,
   };
-};
+}
 
 export function pinFail(status, error) {
   return {
@@ -373,7 +374,7 @@ export function pinFail(status, error) {
     error,
     skipLoading: true,
   };
-};
+}
 
 export function unpin (status) {
   return (dispatch, getState) => {
@@ -386,7 +387,7 @@ export function unpin (status) {
       dispatch(unpinFail(status, error));
     });
   };
-};
+}
 
 export function unpinRequest(status) {
   return {
@@ -394,7 +395,7 @@ export function unpinRequest(status) {
     status,
     skipLoading: true,
   };
-};
+}
 
 export function unpinSuccess(status) {
   return {
@@ -402,7 +403,7 @@ export function unpinSuccess(status) {
     status,
     skipLoading: true,
   };
-};
+}
 
 export function unpinFail(status, error) {
   return {
@@ -411,4 +412,4 @@ export function unpinFail(status, error) {
     error,
     skipLoading: true,
   };
-};
+}

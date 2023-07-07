@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Admin::CustomEmojisController do
   render_views
 
-  let(:user) { Fabricate(:user, admin: true) }
+  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
@@ -40,7 +42,7 @@ describe Admin::CustomEmojisController do
       let(:params) { { shortcode: 'test', image: image } }
 
       it 'creates custom emoji' do
-        expect { subject }.to change { CustomEmoji.count }.by(1)
+        expect { subject }.to change(CustomEmoji, :count).by(1)
       end
     end
 

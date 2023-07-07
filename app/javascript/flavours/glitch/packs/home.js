@@ -1,8 +1,11 @@
 import 'packs/public-path';
-import loadPolyfills from 'flavours/glitch/util/load_polyfills';
+import { loadLocale } from 'flavours/glitch/locales';
+import main from "flavours/glitch/main";
+import { loadPolyfills } from 'flavours/glitch/polyfills';
 
-loadPolyfills().then(() => {
-  require('flavours/glitch/util/main').default();
-}).catch(e => {
-  console.error(e);
-});
+loadPolyfills()
+  .then(loadLocale)
+  .then(main)
+  .catch(e => {
+    console.error(e);
+  });

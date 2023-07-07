@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Admin::SystemCheck::ElasticsearchCheck < Admin::SystemCheck::BaseCheck
+  def skip?
+    !current_user.can?(:view_devops)
+  end
+
   def pass?
     return true unless Chewy.enabled?
 
@@ -9,7 +13,14 @@ class Admin::SystemCheck::ElasticsearchCheck < Admin::SystemCheck::BaseCheck
 
   def message
     if running_version.present?
-      Admin::SystemCheck::Message.new(:elasticsearch_version_check, I18n.t('admin.system_checks.elasticsearch_version_check.version_comparison', running_version: running_version, required_version: required_version))
+      Admin::SystemCheck::Message.new(
+        :elasticsearch_version_check,
+        I18n.t(
+          'admin.system_checks.elasticsearch_version_check.version_comparison',
+          running_version: running_version,
+          required_version: required_version
+        )
+      )
     else
       Admin::SystemCheck::Message.new(:elasticsearch_running_check)
     end
@@ -20,9 +31,13 @@ class Admin::SystemCheck::ElasticsearchCheck < Admin::SystemCheck::BaseCheck
   def running_version
     @running_version ||= begin
       Chewy.client.info['version']['number']
-    rescue Faraday::ConnectionFailed
+    rescue Faraday::ConnectionFailed, Elasticsearch::Transport::Transport::Error
       nil
     end
+  end
+
+  def compatible_wire_version
+    Chewy.client.info['version']['minimum_wire_compatibility_version']
   end
 
   def required_version
@@ -30,10 +45,9 @@ class Admin::SystemCheck::ElasticsearchCheck < Admin::SystemCheck::BaseCheck
   end
 
   def compatible_version?
-    Gem::Version.new(running_version) >= Gem::Version.new(required_version)
-  end
+    return false if running_version.nil?
 
-  def missing_queues
-    @missing_queues ||= Sidekiq::ProcessSet.new.reduce(SIDEKIQ_QUEUES) { |queues, process| queues - process['queues'] }
+    Gem::Version.new(running_version) >= Gem::Version.new(required_version) ||
+      Gem::Version.new(compatible_wire_version) >= Gem::Version.new(required_version)
   end
 end

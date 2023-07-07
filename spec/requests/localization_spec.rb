@@ -3,37 +3,39 @@
 require 'rails_helper'
 
 describe 'Localization' do
-  after(:all) do
-    I18n.locale = I18n.default_locale
+  around do |example|
+    I18n.with_locale(I18n.locale) do
+      example.run
+    end
   end
 
   it 'uses a specific region when provided' do
     headers = { 'Accept-Language' => 'zh-HK' }
 
-    get "/about", headers: headers
+    get '/auth/sign_in', headers: headers
 
     expect(response.body).to include(
-      I18n.t('about.tagline', locale: 'zh-HK')
+      I18n.t('auth.login', locale: 'zh-HK')
     )
   end
 
   it 'falls back to a locale when region missing' do
     headers = { 'Accept-Language' => 'es-FAKE' }
 
-    get "/about", headers: headers
+    get '/auth/sign_in', headers: headers
 
     expect(response.body).to include(
-      I18n.t('about.tagline', locale: 'es')
+      I18n.t('auth.login', locale: 'es')
     )
   end
 
   it 'falls back to english when locale is missing' do
     headers = { 'Accept-Language' => '12-FAKE' }
 
-    get "/about", headers: headers
+    get '/auth/sign_in', headers: headers
 
     expect(response.body).to include(
-      I18n.t('about.tagline', locale: 'en')
+      I18n.t('auth.login', locale: 'en')
     )
   end
 end

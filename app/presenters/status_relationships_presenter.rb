@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class StatusRelationshipsPresenter
+  PINNABLE_VISIBILITIES = %w(public unlisted private).freeze
+
   attr_reader :reblogs_map, :favourites_map, :mutes_map, :pins_map,
               :bookmarks_map, :filters_map
 
@@ -16,7 +18,7 @@ class StatusRelationshipsPresenter
       statuses            = statuses.compact
       status_ids          = statuses.flat_map { |s| [s.id, s.reblog_of_id] }.uniq.compact
       conversation_ids    = statuses.filter_map(&:conversation_id).uniq
-      pinnable_status_ids = statuses.map(&:proper).filter_map { |s| s.id if s.account_id == current_account_id && %w(public unlisted private).include?(s.visibility) }
+      pinnable_status_ids = statuses.map(&:proper).filter_map { |s| s.id if s.account_id == current_account_id && PINNABLE_VISIBILITIES.include?(s.visibility) }
 
       @filters_map     = build_filters_map(statuses, current_account_id).merge(options[:filters_map] || {})
       @reblogs_map     = Status.reblogs_map(status_ids, current_account_id).merge(options[:reblogs_map] || {})
@@ -33,12 +35,7 @@ class StatusRelationshipsPresenter
     active_filters = CustomFilter.cached_filters_for(current_account_id)
 
     @filters_map = statuses.each_with_object({}) do |status, h|
-      filter_matches = active_filters.filter_map do |filter, rules|
-        next if rules[:keywords].blank?
-
-        match = rules[:keywords].match(status.proper.searchable_text)
-        FilterResultPresenter.new(filter: filter, keyword_matches: [match.to_s]) unless match.nil?
-      end
+      filter_matches = CustomFilter.apply_cached_filters(active_filters, status)
 
       unless filter_matches.empty?
         h[status.id] = filter_matches

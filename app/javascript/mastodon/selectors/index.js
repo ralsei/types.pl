@@ -1,5 +1,8 @@
+import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 import { createSelector } from 'reselect';
-import { List as ImmutableList, Map as ImmutableMap, is } from 'immutable';
+
+import { toServerSideType } from 'mastodon/utils/filters';
+
 import { me } from '../initial_state';
 
 const getAccountBase         = (state, id) => state.getIn(['accounts', id], null);
@@ -18,48 +21,6 @@ export const makeGetAccount = () => {
       map.set('moved', moved);
     });
   });
-};
-
-const toServerSideType = columnType => {
-  switch (columnType) {
-  case 'home':
-  case 'notifications':
-  case 'public':
-  case 'thread':
-  case 'account':
-    return columnType;
-  default:
-    if (columnType.indexOf('list:') > -1) {
-      return 'home';
-    } else {
-      return 'public'; // community, account, hashtag
-    }
-  }
-};
-
-const escapeRegExp = string =>
-  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-
-const regexFromKeywords = keywords => {
-  if (keywords.size === 0) {
-    return null;
-  }
-
-  return new RegExp(keywords.map(keyword_filter => {
-    let expr = escapeRegExp(keyword_filter.get('keyword'));
-
-    if (keyword_filter.get('whole_word')) {
-      if (/^[\w]/.test(expr)) {
-        expr = `\\b${expr}`;
-      }
-
-      if (/[\w]$/.test(expr)) {
-        expr = `${expr}\\b`;
-      }
-    }
-
-    return expr;
-  }).join('|'), 'i');
 };
 
 const getFilters = (state, { contextType }) => {
@@ -82,7 +43,7 @@ export const makeGetStatus = () => {
     ],
 
     (statusBase, statusReblog, accountBase, accountReblog, filters) => {
-      if (!statusBase) {
+      if (!statusBase || statusBase.get('isLoading')) {
         return null;
       }
 
@@ -98,6 +59,7 @@ export const makeGetStatus = () => {
         if (filterResults.some((result) => filters.getIn([result.get('filter'), 'filter_action']) === 'hide')) {
           return null;
         }
+        filterResults = filterResults.filter(result => filters.has(result.get('filter')));
         if (!filterResults.isEmpty()) {
           filtered = filterResults.map(result => filters.getIn([result.get('filter'), 'title']));
         }
@@ -106,7 +68,7 @@ export const makeGetStatus = () => {
       return statusBase.withMutations(map => {
         map.set('reblog', statusReblog);
         map.set('account', accountBase);
-        map.set('filtered', filtered);
+        map.set('matched_filters', filtered);
       });
     },
   );
@@ -161,8 +123,8 @@ export const getAccountGallery = createSelector([
   let medias = ImmutableList();
 
   statusIds.forEach(statusId => {
-    const status = statuses.get(statusId);
-    medias = medias.concat(status.get('media_attachments').map(media => media.set('status', status).set('account', account)));
+    const status = statuses.get(statusId).set('account', account);
+    medias = medias.concat(status.get('media_attachments').map(media => media.set('status', status)));
   });
 
   return medias;
@@ -175,3 +137,7 @@ export const getAccountHidden = createSelector([
 ], (hidden, followingOrRequested, isSelf) => {
   return hidden && !(isSelf || followingOrRequested);
 });
+
+export const getStatusList = createSelector([
+  (state, type) => state.getIn(['status_lists', type, 'items']),
+], (items) => items.toList());

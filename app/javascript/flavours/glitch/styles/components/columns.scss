@@ -42,14 +42,67 @@
     &__main {
       box-sizing: border-box;
       width: 100%;
-      max-width: 600px;
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
 
       @media screen and (min-width: $no-gap-breakpoint) {
         padding: 0 10px;
+        max-width: 600px;
       }
+    }
+  }
+}
+
+$ui-header-height: 55px;
+
+.ui__header {
+  display: none;
+  box-sizing: border-box;
+  height: $ui-header-height;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  justify-content: space-between;
+  align-items: center;
+
+  &__logo {
+    display: inline-flex;
+    padding: 15px;
+
+    .logo {
+      height: $ui-header-height - 30px;
+      width: auto;
+    }
+
+    .logo--wordmark {
+      display: none;
+    }
+
+    @media screen and (width >= 320px) {
+      .logo--wordmark {
+        display: block;
+      }
+
+      .logo--icon {
+        display: none;
+      }
+    }
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    overflow: hidden;
+
+    .button {
+      flex: 0 0 auto;
+    }
+
+    .button-tertiary {
+      flex-shrink: 1;
     }
   }
 }
@@ -57,12 +110,13 @@
 .tabs-bar__wrapper {
   background: darken($ui-base-color, 8%);
   position: sticky;
-  top: 0;
+  top: $ui-header-height;
   z-index: 2;
   padding-top: 0;
 
   @media screen and (min-width: $no-gap-breakpoint) {
     padding-top: 10px;
+    top: 0;
   }
 
   .tabs-bar {
@@ -117,6 +171,7 @@
   box-sizing: border-box;
   width: 100%;
   background: lighten($ui-base-color, 4%);
+  border-radius: 4px 4px 0 0;
   color: $highlight-text-color;
   cursor: pointer;
   flex: 0 0 auto;
@@ -140,7 +195,8 @@
   cursor: pointer;
   flex: 0 0 auto;
   font-size: 16px;
-  padding: 0 5px 0 0;
+  padding: 0;
+  padding-inline-end: 5px;
   z-index: 3;
 
   &:hover {
@@ -148,13 +204,14 @@
   }
 
   &:last-child {
-    padding: 0 15px 0 0;
+    padding: 0;
+    padding-inline-end: 15px;
   }
 }
 
 .column-back-button__icon {
   display: inline-block;
-  margin-right: 5px;
+  margin-inline-end: 5px;
 }
 
 .column-back-button--slim {
@@ -167,7 +224,7 @@
   font-size: 16px;
   padding: 15px;
   position: absolute;
-  right: 0;
+  inset-inline-end: 0;
   top: -48px;
 }
 
@@ -178,6 +235,8 @@
   font-size: 16px;
   padding: 15px;
   text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
 
   &:hover,
   &:focus,
@@ -204,11 +263,22 @@
       color: $highlight-text-color;
     }
   }
+
+  &--logo {
+    background: transparent;
+    padding: 10px;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: transparent;
+    }
+  }
 }
 
 .column-link__icon {
   display: inline-block;
-  margin-right: 5px;
+  margin-inline-end: 5px;
 }
 
 .column-subheading {
@@ -231,17 +301,21 @@
 
     &::before {
       display: block;
-      content: "";
+      content: '';
       position: absolute;
       bottom: -13px;
-      left: 0;
-      right: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
       margin: 0 auto;
       width: 60%;
       pointer-events: none;
       height: 28px;
       z-index: 1;
-      background: radial-gradient(ellipse, rgba($ui-highlight-color, 0.23) 0%, rgba($ui-highlight-color, 0) 60%);
+      background: radial-gradient(
+        ellipse,
+        rgba($ui-highlight-color, 0.23) 0%,
+        rgba($ui-highlight-color, 0) 60%
+      );
     }
   }
 
@@ -255,6 +329,7 @@
   display: flex;
   font-size: 16px;
   background: lighten($ui-base-color, 4%);
+  border-radius: 4px 4px 0 0;
   flex: 0 0 auto;
   cursor: pointer;
   position: relative;
@@ -269,7 +344,7 @@
     color: inherit;
     background: transparent;
     font: inherit;
-    text-align: left;
+    text-align: start;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -309,13 +384,15 @@
 
   > .scrollable {
     background: $ui-base-color;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
   }
 }
 
 .column-header__buttons {
   height: 48px;
   display: flex;
-  margin-left: 0;
+  margin-inline-start: 0;
 }
 
 .column-header__links {
@@ -323,7 +400,7 @@
 }
 
 .column-header__links .text-btn {
-  margin-right: 10px;
+  margin-inline-end: 10px;
 }
 
 .column-header__button {
@@ -352,6 +429,11 @@
   &:focus {
     text-shadow: 0 0 4px darken($ui-highlight-color, 5%);
   }
+
+  &:disabled {
+    color: $dark-text-color;
+    cursor: default;
+  }
 }
 
 .column-header__notif-cleaning-buttons {
@@ -359,8 +441,7 @@
   align-items: stretch;
   justify-content: space-around;
 
-  button {
-    @extend .column-header__button;
+  .column-header__button {
     background: transparent;
     text-align: center;
     padding: 10px 5px;
@@ -372,11 +453,11 @@
   }
 }
 
-
 .layout-single-column .column-header__notif-cleaning-buttons {
   @media screen and (min-width: $no-gap-breakpoint) {
-    b, i {
-      margin-right: 5px;
+    b,
+    i {
+      margin-inline-end: 5px;
     }
 
     br {
@@ -424,6 +505,7 @@
   // notif cleaning drawer
   &.ncd {
     transition: none;
+
     &.collapsed {
       max-height: 0;
       opacity: 0.7;
@@ -461,12 +543,12 @@
     padding: 5px;
 
     &:first-child {
-      padding-right: 7px;
+      padding-inline-end: 7px;
     }
 
     &:last-child {
-      padding-left: 7px;
-      margin-left: 5px;
+      padding-inline-start: 7px;
+      margin-inline-start: 5px;
     }
   }
 }
@@ -490,7 +572,7 @@
 
 .column-header__icon {
   display: inline-block;
-  margin-right: 5px;
+  margin-inline-end: 5px;
 }
 
 .column-settings__pillbar {
@@ -501,6 +583,7 @@
   border-radius: 4px;
   margin-bottom: 10px;
   align-items: stretch;
+  gap: 2px;
 }
 
 .pillbar-button {
@@ -508,12 +591,11 @@
   color: #fafafa;
   padding: 2px;
   margin: 0;
-  margin-left: 2px;
   font-size: inherit;
   flex: auto;
   background-color: $ui-base-color;
-  transition-property: background-color, box-shadow;
   transition: all 0.2s ease;
+  transition-property: background-color, box-shadow;
 
   &[disabled] {
     cursor: not-allowed;
@@ -521,42 +603,19 @@
   }
 
   &:not([disabled]) {
-    &:hover {
+    &:hover,
+    &:focus {
       background-color: darken($ui-base-color, 10%);
     }
 
-    &:focus {
-      background-color: darken($ui-base-color, 15%);
-    }
-
-    &:active {
-      background-color: darken($ui-base-color, 20%);
-    }
-
     &.active {
-      background-color: $ui-highlight-color;
-      box-shadow: inset 0 5px darken($ui-highlight-color, 20%);
+      background-color: darken($ui-highlight-color, 2%);
 
-      &:hover {
-        background-color: lighten($ui-highlight-color, 10%);
-        box-shadow: inset 0 5px darken($ui-highlight-color, 10%);
-      }
-
+      &:hover,
       &:focus {
-        background-color: lighten($ui-highlight-color, 15%);
-        box-shadow: inset 0 5px darken($ui-highlight-color, 5%);
-      }
-
-      &:active {
-        background-color: lighten($ui-highlight-color, 20%);
-        box-shadow: inset 0 5px $ui-highlight-color;
+        background-color: $ui-highlight-color;
       }
     }
-  }
-
-  /* TODO: check RTL? */
-  &:first-child {
-    margin-left: 0;
   }
 }
 
@@ -570,7 +629,6 @@
 }
 
 .empty-column-indicator,
-.error-column,
 .follow_requests-unlocked_explanation {
   color: $dark-text-color;
   background: $ui-base-color;
@@ -583,7 +641,8 @@
   flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  @supports(display: grid) { // hack to fix Chrome <57
+  @supports (display: grid) {
+    // hack to fix Chrome <57
     contain: strict;
   }
 
@@ -604,40 +663,57 @@
 .follow_requests-unlocked_explanation {
   background: darken($ui-base-color, 4%);
   contain: initial;
+  flex-grow: 0;
 }
 
 .error-column {
+  padding: 20px;
+  background: $ui-base-color;
+  border-radius: 4px;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
-}
+  cursor: default;
 
-// more fixes for the navbar-under mode
-@mixin fix-margins-for-navbar-under {
-  .tabs-bar {
-    margin-top: 0 !important;
-    margin-bottom: -6px !important;
+  &__image {
+    width: 70%;
+    max-width: 350px;
+    margin-top: -50px;
   }
-}
 
-.single-column.navbar-under {
-  @include fix-margins-for-navbar-under;
-}
+  &__message {
+    text-align: center;
+    color: $darker-text-color;
+    font-size: 15px;
+    line-height: 22px;
 
-.auto-columns.navbar-under {
-  @media screen and (max-width: $no-gap-breakpoint) {
-    @include fix-margins-for-navbar-under;
-  }
-}
+    h1 {
+      font-size: 28px;
+      line-height: 33px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: $primary-text-color;
+    }
 
-.auto-columns.navbar-under .react-swipeable-view-container .columns-area,
-.single-column.navbar-under .react-swipeable-view-container .columns-area {
-  @media screen and (max-width: $no-gap-breakpoint) {
-    height: 100% !important;
+    p {
+      max-width: 48ch;
+    }
+
+    &__actions {
+      margin-top: 30px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
 .column-inline-form {
   padding: 7px 15px;
-  padding-right: 5px;
+  padding-inline-end: 5px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -686,7 +762,7 @@
 
   .column-select {
     &__control {
-      @include search-input();
+      @include search-input;
 
       &::placeholder {
         color: lighten($darker-text-color, 4%);
@@ -706,19 +782,19 @@
         background: lighten($ui-base-color, 4%);
       }
 
-      @media screen and (max-width: 600px) {
+      @media screen and (width <= 600px) {
         font-size: 16px;
       }
     }
 
     &__placeholder {
       color: $dark-text-color;
-      padding-left: 2px;
+      padding-inline-start: 2px;
       font-size: 12px;
     }
 
     &__value-container {
-      padding-left: 6px;
+      padding-inline-start: 6px;
     }
 
     &__multi-value {
@@ -760,7 +836,8 @@
     }
 
     &__menu {
-      @include search-popout();
+      @include search-popout;
+
       padding: 0;
       background: $ui-secondary-color;
     }
@@ -800,7 +877,7 @@
   &__close {
     position: absolute;
     top: 10px;
-    right: 10px;
+    inset-inline-end: 10px;
   }
 
   h2 {
@@ -836,7 +913,7 @@
 
   p {
     font-size: 16px;
-   line-height: 24px;
+    line-height: 24px;
     font-weight: 400;
     color: $darker-text-color;
   }
@@ -849,7 +926,7 @@
 
 .column-actions {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   justify-content: center;
   padding: 40px;
   padding-top: 40px;
@@ -859,7 +936,7 @@
 
   &__background {
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     bottom: 0;
     height: 220px;
     width: auto;
@@ -879,5 +956,83 @@
     line-height: 24px;
     font-weight: 400;
     color: $darker-text-color;
+  }
+}
+
+.dismissable-banner {
+  position: relative;
+  margin: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  border: 1px solid $highlight-text-color;
+  background: rgba($highlight-text-color, 0.15);
+  padding-inline-end: 45px;
+  overflow: hidden;
+
+  &__background-image {
+    width: 125%;
+    position: absolute;
+    bottom: -25%;
+    inset-inline-end: -25%;
+    z-index: -1;
+    opacity: 0.15;
+    mix-blend-mode: luminosity;
+  }
+
+  &__message {
+    flex: 1 1 auto;
+    padding: 15px;
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 500;
+    color: $primary-text-color;
+
+    p {
+      margin-bottom: 15px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    h1 {
+      color: $highlight-text-color;
+      font-size: 22px;
+      line-height: 33px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      &__wrapper {
+        display: flex;
+        margin-top: 30px;
+      }
+
+      .button {
+        display: block;
+        flex-grow: 1;
+      }
+    }
+
+    .button-tertiary {
+      background: rgba($ui-base-color, 0.15);
+      backdrop-filter: blur(8px);
+    }
+  }
+
+  &__action {
+    position: absolute;
+    inset-inline-end: 0;
+    top: 0;
+    padding: 10px;
+
+    .icon-button {
+      color: $highlight-text-color;
+    }
   }
 }

@@ -24,13 +24,11 @@ class Importer::StatusesIndexImporter < Importer::BaseImporter
           # is called before rendering the data and we need to filter based
           # on the results of the filter, so this filtering happens here instead
           bulk.map! do |entry|
-            new_entry = begin
-              if entry[:index] && entry.dig(:index, :data, 'searchable_by').blank?
-                { delete: entry[:index].except(:data) }
-              else
-                entry
-              end
-            end
+            new_entry = if entry[:index] && entry.dig(:index, :data, 'searchable_by').blank?
+                          { delete: entry[:index].except(:data) }
+                        else
+                          entry
+                        end
 
             if new_entry[:index]
               indexed += 1
@@ -84,6 +82,6 @@ class Importer::StatusesIndexImporter < Importer::BaseImporter
   end
 
   def local_statuses_scope
-    Status.local.select('id, coalesce(reblog_of_id, id) as status_id')
+    Status.local.select('"statuses"."id", COALESCE("statuses"."reblog_of_id", "statuses"."id") AS status_id')
   end
 end

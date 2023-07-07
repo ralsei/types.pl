@@ -8,8 +8,6 @@ module Admin
 
     before_action :set_dummy_import!, only: [:new]
 
-    ROWS_PROCESSING_LIMIT = 20_000
-
     def new
       authorize :domain_block, :create?
     end
@@ -23,24 +21,32 @@ module Admin
       authorize :domain_block, :create?
 
       @import = Admin::Import.new(import_params)
-      parse_import_data!(export_headers)
+      return render :new unless @import.validate
 
       @global_private_comment = I18n.t('admin.export_domain_blocks.import.private_comment_template', source: @import.data_file_name, date: I18n.l(Time.now.utc))
 
       @form = Form::DomainBlockBatch.new
-      @domain_blocks = @data.take(ROWS_PROCESSING_LIMIT).filter_map do |row|
+      @domain_blocks = @import.csv_rows.filter_map do |row|
         domain = row['#domain'].strip
         next if DomainBlock.rule_for(domain).present?
 
         domain_block = DomainBlock.new(domain: domain,
-                                       severity: row['#severity'].strip,
-                                       reject_media: row['#reject_media'].strip,
-                                       reject_reports: row['#reject_reports'].strip,
+                                       severity: row.fetch('#severity', :suspend),
+                                       reject_media: row.fetch('#reject_media', false),
+                                       reject_reports: row.fetch('#reject_reports', false),
                                        private_comment: @global_private_comment,
-                                       public_comment: row['#public_comment']&.strip,
-                                       obfuscate: row['#obfuscate'].strip)
+                                       public_comment: row['#public_comment'],
+                                       obfuscate: row.fetch('#obfuscate', false))
 
-        domain_block if domain_block.valid?
+        if domain_block.invalid?
+          flash.now[:alert] = I18n.t('admin.export_domain_blocks.invalid_domain_block', error: domain_block.errors.full_messages.join(', '))
+          next
+        end
+
+        domain_block
+      rescue ArgumentError => e
+        flash.now[:alert] = I18n.t('admin.export_domain_blocks.invalid_domain_block', error: e.message)
+        next
       end
 
       @warning_domains = Instance.where(domain: @domain_blocks.map(&:domain)).where('EXISTS (SELECT 1 FROM follows JOIN accounts ON follows.account_id = accounts.id OR follows.target_account_id = accounts.id WHERE accounts.domain = instances.domain)').pluck(:domain)
@@ -62,7 +68,7 @@ module Admin
 
     def export_data
       CSV.generate(headers: export_headers, write_headers: true) do |content|
-        DomainBlock.with_user_facing_limitations.each do |instance|
+        DomainBlock.with_limitations.each do |instance|
           content << [instance.domain, instance.severity, instance.reject_media, instance.reject_reports, instance.public_comment, instance.obfuscate]
         end
       end

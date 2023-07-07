@@ -1,11 +1,12 @@
+import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
+
+import api, { getLinks } from 'flavours/glitch/api';
+import { compareId } from 'flavours/glitch/compare_id';
+import { usePendingItems as preferPendingItems } from 'flavours/glitch/initial_state';
+import { toServerSideType } from 'flavours/glitch/utils/filters';
+
 import { importFetchedStatus, importFetchedStatuses } from './importer';
 import { submitMarkers } from './markers';
-import api, { getLinks } from 'flavours/glitch/util/api';
-import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
-import compareId from 'flavours/glitch/util/compare_id';
-import { me, usePendingItems as preferPendingItems } from 'flavours/glitch/util/initial_state';
-import { getFiltersRegex } from 'flavours/glitch/selectors';
-import { searchTextFromRawStatus } from 'flavours/glitch/actions/importer/normalizer';
 
 export const TIMELINE_UPDATE  = 'TIMELINE_UPDATE';
 export const TIMELINE_DELETE  = 'TIMELINE_DELETE';
@@ -40,14 +41,13 @@ export function updateTimeline(timeline, status, accept) {
       return;
     }
 
-    const filters   = getFiltersRegex(getState(), { contextType: timeline });
-    const dropRegex = filters[0];
-    const regex     = filters[1];
-    const text      = searchTextFromRawStatus(status);
-    let filtered    = false;
+    let filtered = false;
 
-    if (status.account.id !== me) {
-      filtered = (dropRegex && dropRegex.test(text)) || (regex && regex.test(text));
+    if (status.filtered) {
+      const contextType = toServerSideType(timeline);
+      const filters = status.filtered.filter(result => result.filter.context.includes(contextType));
+
+      filtered = filters.length > 0;
     }
 
     dispatch(importFetchedStatus(status));
@@ -57,14 +57,14 @@ export function updateTimeline(timeline, status, accept) {
       timeline,
       status,
       usePendingItems: preferPendingItems,
-      filtered
+      filtered,
     });
 
     if (timeline === 'home') {
       dispatch(submitMarkers());
     }
   };
-};
+}
 
 export function deleteFromTimelines(id) {
   return (dispatch, getState) => {
@@ -80,13 +80,13 @@ export function deleteFromTimelines(id) {
       reblogOf,
     });
   };
-};
+}
 
 export function clearTimeline(timeline) {
   return (dispatch) => {
     dispatch({ type: TIMELINE_CLEAR, timeline });
   };
-};
+}
 
 const noOp = () => {};
 
@@ -123,7 +123,6 @@ export function expandTimeline(timelineId, path, params = {}, done = noOp) {
 
     api(getState).get(path, { params }).then(response => {
       const next = getLinks(response).refs.find(link => link.rel === 'next');
-
       dispatch(importFetchedStatuses(response.data));
       dispatch(expandTimelineSuccess(timelineId, response.data, next ? next.uri : null, response.status === 206, isLoadingRecent, isLoadingMore, isLoadingRecent && preferPendingItems));
 
@@ -136,7 +135,7 @@ export function expandTimeline(timelineId, path, params = {}, done = noOp) {
       done();
     });
   };
-};
+}
 
 export function fillTimelineGaps(timelineId, path, params = {}, done = noOp) {
   return (dispatch, getState) => {
@@ -158,17 +157,17 @@ export const expandHomeTimeline            = ({ maxId } = {}, done = noOp) => ex
 export const expandPublicTimeline          = ({ maxId, onlyMedia, onlyRemote, allowLocalOnly } = {}, done = noOp) => expandTimeline(`public${onlyRemote ? ':remote' : (allowLocalOnly ? ':allow_local_only' : '')}${onlyMedia ? ':media' : ''}`, '/api/v1/timelines/public', { remote: !!onlyRemote, allow_local_only: !!allowLocalOnly, max_id: maxId, only_media: !!onlyMedia }, done);
 export const expandCommunityTimeline       = ({ maxId, onlyMedia } = {}, done = noOp) => expandTimeline(`community${onlyMedia ? ':media' : ''}`, '/api/v1/timelines/public', { local: true, max_id: maxId, only_media: !!onlyMedia }, done);
 export const expandDirectTimeline          = ({ maxId } = {}, done = noOp) => expandTimeline('direct', '/api/v1/timelines/direct', { max_id: maxId }, done);
-export const expandAccountTimeline         = (accountId, { maxId, withReplies } = {}) => expandTimeline(`account:${accountId}${withReplies ? ':with_replies' : ''}`, `/api/v1/accounts/${accountId}/statuses`, { exclude_replies: !withReplies, max_id: maxId });
-export const expandAccountFeaturedTimeline = accountId => expandTimeline(`account:${accountId}:pinned`, `/api/v1/accounts/${accountId}/statuses`, { pinned: true });
+export const expandAccountTimeline         = (accountId, { maxId, withReplies, tagged } = {}) => expandTimeline(`account:${accountId}${withReplies ? ':with_replies' : ''}${tagged ? `:${tagged}` : ''}`, `/api/v1/accounts/${accountId}/statuses`, { exclude_replies: !withReplies, tagged, max_id: maxId });
+export const expandAccountFeaturedTimeline = (accountId, { tagged } = {}) => expandTimeline(`account:${accountId}:pinned`, `/api/v1/accounts/${accountId}/statuses`, { pinned: true, tagged });
 export const expandAccountMediaTimeline    = (accountId, { maxId } = {}) => expandTimeline(`account:${accountId}:media`, `/api/v1/accounts/${accountId}/statuses`, { max_id: maxId, only_media: true, limit: 40 });
 export const expandListTimeline            = (id, { maxId } = {}, done = noOp) => expandTimeline(`list:${id}`, `/api/v1/timelines/list/${id}`, { max_id: maxId }, done);
 export const expandHashtagTimeline         = (hashtag, { maxId, tags, local } = {}, done = noOp) => {
   return expandTimeline(`hashtag:${hashtag}${local ? ':local' : ''}`, `/api/v1/timelines/tag/${hashtag}`, {
     max_id: maxId,
-    any: parseTags(tags, 'any'),
-    all: parseTags(tags, 'all'),
-    none: parseTags(tags, 'none'),
-    local: local,
+    any:    parseTags(tags, 'any'),
+    all:    parseTags(tags, 'all'),
+    none:   parseTags(tags, 'none'),
+    local:  local,
   }, done);
 };
 
@@ -183,7 +182,7 @@ export function expandTimelineRequest(timeline, isLoadingMore) {
     timeline,
     skipLoading: !isLoadingMore,
   };
-};
+}
 
 export function expandTimelineSuccess(timeline, statuses, next, partial, isLoadingRecent, isLoadingMore, usePendingItems) {
   return {
@@ -196,7 +195,7 @@ export function expandTimelineSuccess(timeline, statuses, next, partial, isLoadi
     usePendingItems,
     skipLoading: !isLoadingMore,
   };
-};
+}
 
 export function expandTimelineFail(timeline, error, isLoadingMore) {
   return {
@@ -206,7 +205,7 @@ export function expandTimelineFail(timeline, error, isLoadingMore) {
     skipLoading: !isLoadingMore,
     skipNotFound: timeline.startsWith('account:'),
   };
-};
+}
 
 export function scrollTopTimeline(timeline, top) {
   return {
@@ -214,7 +213,7 @@ export function scrollTopTimeline(timeline, top) {
     timeline,
     top,
   };
-};
+}
 
 export function connectTimeline(timeline) {
   return {
@@ -222,7 +221,7 @@ export function connectTimeline(timeline) {
     timeline,
     usePendingItems: preferPendingItems,
   };
-};
+}
 
 export const disconnectTimeline = timeline => ({
   type: TIMELINE_DISCONNECT,

@@ -1,6 +1,5 @@
-import {
-  NOTIFICATIONS_UPDATE,
-} from '../actions/notifications';
+import { Map as ImmutableMap, List as ImmutableList, fromJS } from 'immutable';
+
 import {
   FOLLOWERS_FETCH_REQUEST,
   FOLLOWERS_FETCH_SUCCESS,
@@ -24,10 +23,6 @@ import {
   FOLLOW_REQUEST_REJECT_SUCCESS,
 } from 'flavours/glitch/actions/accounts';
 import {
-  REBLOGS_FETCH_SUCCESS,
-  FAVOURITES_FETCH_SUCCESS,
-} from 'flavours/glitch/actions/interactions';
-import {
   BLOCKS_FETCH_REQUEST,
   BLOCKS_FETCH_SUCCESS,
   BLOCKS_FETCH_FAIL,
@@ -36,14 +31,6 @@ import {
   BLOCKS_EXPAND_FAIL,
 } from 'flavours/glitch/actions/blocks';
 import {
-  MUTES_FETCH_REQUEST,
-  MUTES_FETCH_SUCCESS,
-  MUTES_FETCH_FAIL,
-  MUTES_EXPAND_REQUEST,
-  MUTES_EXPAND_SUCCESS,
-  MUTES_EXPAND_FAIL,
-} from 'flavours/glitch/actions/mutes';
-import {
   DIRECTORY_FETCH_REQUEST,
   DIRECTORY_FETCH_SUCCESS,
   DIRECTORY_FETCH_FAIL,
@@ -51,7 +38,28 @@ import {
   DIRECTORY_EXPAND_SUCCESS,
   DIRECTORY_EXPAND_FAIL,
 } from 'flavours/glitch/actions/directory';
-import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
+import {
+  FEATURED_TAGS_FETCH_REQUEST,
+  FEATURED_TAGS_FETCH_SUCCESS,
+  FEATURED_TAGS_FETCH_FAIL,
+} from 'flavours/glitch/actions/featured_tags';
+import {
+  REBLOGS_FETCH_SUCCESS,
+  FAVOURITES_FETCH_SUCCESS,
+} from 'flavours/glitch/actions/interactions';
+import {
+  MUTES_FETCH_REQUEST,
+  MUTES_FETCH_SUCCESS,
+  MUTES_FETCH_FAIL,
+  MUTES_EXPAND_REQUEST,
+  MUTES_EXPAND_SUCCESS,
+  MUTES_EXPAND_FAIL,
+} from 'flavours/glitch/actions/mutes';
+
+import {
+  NOTIFICATIONS_UPDATE,
+} from '../actions/notifications';
+
 
 const initialListState = ImmutableMap({
   next: null,
@@ -67,6 +75,7 @@ const initialState = ImmutableMap({
   follow_requests: initialListState,
   blocks: initialListState,
   mutes: initialListState,
+  featured_tags: initialListState,
 });
 
 const normalizeList = (state, path, accounts, next) => {
@@ -87,6 +96,18 @@ const normalizeFollowRequest = (state, notification) => {
   return state.updateIn(['follow_requests', 'items'], list => {
     return list.filterNot(item => item === notification.account.id).unshift(notification.account.id);
   });
+};
+
+const normalizeFeaturedTag = (featuredTags, accountId) => {
+  const normalizeFeaturedTag = { ...featuredTags, accountId: accountId };
+  return fromJS(normalizeFeaturedTag);
+};
+
+const normalizeFeaturedTags = (state, path, featuredTags, accountId) => {
+  return state.setIn(path, ImmutableMap({
+    items: ImmutableList(featuredTags.map(featuredTag => normalizeFeaturedTag(featuredTag, accountId)).sort((a, b) => b.get('statuses_count') - a.get('statuses_count'))),
+    isLoading: false,
+  }));
 };
 
 export default function userLists(state = initialState, action) {
@@ -160,7 +181,13 @@ export default function userLists(state = initialState, action) {
   case DIRECTORY_FETCH_FAIL:
   case DIRECTORY_EXPAND_FAIL:
     return state.setIn(['directory', 'isLoading'], false);
+  case FEATURED_TAGS_FETCH_SUCCESS:
+    return normalizeFeaturedTags(state, ['featured_tags', action.id], action.tags, action.id);
+  case FEATURED_TAGS_FETCH_REQUEST:
+    return state.setIn(['featured_tags', action.id, 'isLoading'], true);
+  case FEATURED_TAGS_FETCH_FAIL:
+    return state.setIn(['featured_tags', action.id, 'isLoading'], false);
   default:
     return state;
   }
-};
+}

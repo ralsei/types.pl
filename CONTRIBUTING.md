@@ -1,39 +1,43 @@
-#  Contributing to Mastodon Glitch Edition  #
+# Contributing to Mastodon Glitch Edition
 
 Thank you for your interest in contributing to the `glitch-soc` project!
 Here are some guidelines, and ways you can help.
 
->   (This document is a bit of a work-in-progress, so please bear with us.
->   If you don't see what you're looking for here, please don't hesitate to reach out!)
+> (This document is a bit of a work-in-progress, so please bear with us.
+> If you don't see what you're looking for here, please don't hesitate to reach out!)
 
-##  Planning  ##
+## Translations
+
+You can submit glitch-soc-specific translations via [Crowdin](https://crowdin.com/project/glitch-soc). They are periodically merged into the codebase.
+
+[![Crowdin](https://badges.crowdin.net/glitch-soc/localized.svg)](https://crowdin.com/project/glitch-soc)
+
+## Planning
 
 Right now a lot of the planning for this project takes place in our development Discord, or through GitHub Issues and Projects.
 We're working on ways to improve the planning structure and better solicit feedback, and if you feel like you can help in this respect, feel free to give us a holler.
 
-##  Documentation  ##
+## Documentation
 
 The documentation for this repository is available at [`glitch-soc/docs`](https://github.com/glitch-soc/docs) (online at [glitch-soc.github.io/docs/](https://glitch-soc.github.io/docs/)).
 Right now, we've mostly focused on the features that make this fork different from upstream in some manner.
 Adding screenshots, improving descriptions, and so forth are all ways to help contribute to the project even if you don't know any code.
 
-##  Frontend Development  ##
+## Frontend Development
 
 Check out [the documentation here](https://glitch-soc.github.io/docs/contributing/frontend/) for more information.
 
-##  Backend Development  ##
+## Backend Development
 
 See the guidelines below.
 
- - - -
+---
 
-You should also try to follow the guidelines set out in the original `CONTRIBUTING.md` from `tootsuite/mastodon`, reproduced below.
+You should also try to follow the guidelines set out in the original `CONTRIBUTING.md` from `mastodon/mastodon`, reproduced below.
 
 <blockquote>
 
-CONTRIBUTING
-=======
-Contributing
+# Contributing
 
 Thank you for considering contributing to Mastodon 🐘
 
@@ -62,9 +66,9 @@ You can submit translations via [Crowdin](https://crowdin.com/project/mastodon).
 
 Example:
 
-|Not ideal|Better|
-|---|----|
-|Fixed NoMethodError in RemovalWorker|Fix nil error when removing statuses caused by race condition|
+| Not ideal                            | Better                                                        |
+| ------------------------------------ | ------------------------------------------------------------- |
+| Fixed NoMethodError in RemovalWorker | Fix nil error when removing statuses caused by race condition |
 
 It is not always possible to phrase every change in such a manner, but it is desired.
 

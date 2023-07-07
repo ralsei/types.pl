@@ -24,6 +24,9 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym 'RSS'
   inflect.acronym 'REST'
   inflect.acronym 'URL'
+  inflect.acronym 'ASCII'
+  inflect.acronym 'DeepL'
+  inflect.acronym 'DSL'
 
   inflect.singular 'data', 'data'
 end

@@ -3,13 +3,17 @@
 class AccountSearchService < BaseService
   attr_reader :query, :limit, :offset, :options, :account
 
+  MENTION_ONLY_RE = /\A#{Account::MENTION_RE}\z/i
+
+  # Min. number of characters to look for non-exact matches
+  MIN_QUERY_LENGTH = 5
+
   def call(query, account = nil, options = {})
-    @acct_hint = query&.start_with?('@')
-    @query     = query&.strip&.gsub(/\A@/, '')
-    @limit     = options[:limit].to_i
-    @offset    = options[:offset].to_i
-    @options   = options
-    @account   = account
+    @query   = query&.strip&.gsub(/\A@/, '')
+    @limit   = options[:limit].to_i
+    @offset  = options[:offset].to_i
+    @options = options
+    @account = account
 
     search_service_results.compact.uniq
   end
@@ -27,15 +31,13 @@ class AccountSearchService < BaseService
 
     return @exact_match if defined?(@exact_match)
 
-    match = begin
-      if options[:resolve]
-        ResolveAccountService.new.call(query)
-      elsif domain_is_local?
-        Account.find_local(query_username)
-      else
-        Account.find_remote(query_username, query_domain)
-      end
-    end
+    match = if options[:resolve]
+              ResolveAccountService.new.call(query)
+            elsif domain_is_local?
+              Account.find_local(query_username)
+            else
+              Account.find_remote(query_username, query_domain)
+            end
 
     match = nil if !match.nil? && !account.nil? && options[:following] && !account.following?(match)
 
@@ -61,16 +63,16 @@ class AccountSearchService < BaseService
   end
 
   def advanced_search_results
-    Account.advanced_search_for(terms_for_query, account, limit_for_non_exact_results, options[:following], offset)
+    Account.advanced_search_for(terms_for_query, account, limit: limit_for_non_exact_results, following: options[:following], offset: offset)
   end
 
   def simple_search_results
-    Account.search_for(terms_for_query, limit_for_non_exact_results, offset)
+    Account.search_for(terms_for_query, limit: limit_for_non_exact_results, offset: offset)
   end
 
   def from_elasticsearch
-    must_clauses   = [{ multi_match: { query: terms_for_query, fields: likely_acct? ? %w(acct.edge_ngram acct) : %w(acct.edge_ngram acct display_name.edge_ngram display_name), type: 'most_fields', operator: 'and' } }]
-    should_clauses = []
+    must_clauses   = must_clause
+    should_clauses = should_clause
 
     if account
       return [] if options[:following] && following_ids.empty?
@@ -85,7 +87,7 @@ class AccountSearchService < BaseService
     query     = { bool: { must: must_clauses, should: should_clauses } }
     functions = [reputation_score_function, followers_score_function, time_distance_function]
 
-    records = AccountsIndex.query(function_score: { query: query, functions: functions, boost_mode: 'multiply', score_mode: 'avg' })
+    records = AccountsIndex.query(function_score: { query: query, functions: functions })
                            .limit(limit_for_non_exact_results)
                            .offset(offset)
                            .objects
@@ -102,7 +104,7 @@ class AccountSearchService < BaseService
     {
       script_score: {
         script: {
-          source: "(doc['followers_count'].value + 0.0) / (doc['followers_count'].value + doc['following_count'].value + 1)",
+          source: "(Math.max(doc['followers_count'].value, 0) + 0.0) / (Math.max(doc['followers_count'].value, 0) + Math.max(doc['following_count'].value, 0) + 1)",
         },
       },
     }
@@ -110,10 +112,10 @@ class AccountSearchService < BaseService
 
   def followers_score_function
     {
-      field_value_factor: {
-        field: 'followers_count',
-        modifier: 'log2p',
-        missing: 0,
+      script_score: {
+        script: {
+          source: "Math.log10(Math.max(doc['followers_count'].value, 0) + 2)",
+        },
       },
     }
   end
@@ -130,11 +132,43 @@ class AccountSearchService < BaseService
     }
   end
 
+  def must_clause
+    fields = %w(username username.* display_name display_name.*)
+    fields << 'text' << 'text.*' if options[:use_searchable_text]
+
+    [
+      {
+        multi_match: {
+          query: terms_for_query,
+          fields: fields,
+          type: 'best_fields',
+          operator: 'or',
+        },
+      },
+    ]
+  end
+
+  def should_clause
+    [
+      {
+        multi_match: {
+          query: terms_for_query,
+          fields: %w(username username.* display_name display_name.*),
+          type: 'best_fields',
+          operator: 'and',
+          boost: 10,
+        },
+      },
+    ]
+  end
+
   def following_ids
     @following_ids ||= account.active_relationships.pluck(:target_account_id) + [account.id]
   end
 
   def limit_for_non_exact_results
+    return 0 if @account.nil? && query.size < MIN_QUERY_LENGTH
+
     if exact_match?
       limit - 1
     else
@@ -175,10 +209,6 @@ class AccountSearchService < BaseService
   end
 
   def username_complete?
-    query.include?('@') && "@#{query}".match?(/\A#{Account::MENTION_RE}\Z/)
-  end
-
-  def likely_acct?
-    @acct_hint || username_complete?
+    query.include?('@') && "@#{query}".match?(MENTION_ONLY_RE)
   end
 end

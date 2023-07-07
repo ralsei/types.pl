@@ -1,5 +1,15 @@
-import api, { getLinks } from 'flavours/glitch/util/api';
-import IntlMessageFormat from 'intl-messageformat';
+import { IntlMessageFormat } from 'intl-messageformat';
+import { defineMessages } from 'react-intl';
+
+import { List as ImmutableList } from 'immutable';
+
+import { compareId } from 'flavours/glitch/compare_id';
+import { usePendingItems as preferPendingItems } from 'flavours/glitch/initial_state';
+import { unescapeHTML } from 'flavours/glitch/utils/html';
+import { requestNotificationPermission } from 'flavours/glitch/utils/notifications';
+
+import api, { getLinks } from '../api';
+
 import { fetchFollowRequests, fetchRelationships } from './accounts';
 import {
   importFetchedAccount,
@@ -9,14 +19,9 @@ import {
 } from './importer';
 import { submitMarkers } from './markers';
 import { saveSettings } from './settings';
-import { defineMessages } from 'react-intl';
-import { List as ImmutableList } from 'immutable';
-import { unescapeHTML } from 'flavours/glitch/util/html';
-import { getFiltersRegex } from 'flavours/glitch/selectors';
-import { usePendingItems as preferPendingItems } from 'flavours/glitch/util/initial_state';
-import compareId from 'flavours/glitch/util/compare_id';
-import { searchTextFromRawStatus } from 'flavours/glitch/actions/importer/normalizer';
-import { requestNotificationPermission } from 'flavours/glitch/util/notifications';
+
+
+
 
 export const NOTIFICATIONS_UPDATE = 'NOTIFICATIONS_UPDATE';
 export const NOTIFICATIONS_UPDATE_NOOP = 'NOTIFICATIONS_UPDATE_NOOP';
@@ -74,20 +79,17 @@ export function updateNotifications(notification, intlMessages, intlLocale) {
     const showInColumn = activeFilter === 'all' ? getState().getIn(['settings', 'notifications', 'shows', notification.type], true) : activeFilter === notification.type;
     const showAlert    = getState().getIn(['settings', 'notifications', 'alerts', notification.type], true);
     const playSound    = getState().getIn(['settings', 'notifications', 'sounds', notification.type], true);
-    const filters      = getFiltersRegex(getState(), { contextType: 'notifications' });
 
     let filtered = false;
 
-    if (['mention', 'status'].includes(notification.type)) {
-      const dropRegex   = filters[0];
-      const regex       = filters[1];
-      const searchIndex = searchTextFromRawStatus(notification.status);
+    if (['mention', 'status'].includes(notification.type) && notification.status.filtered) {
+      const filters = notification.status.filtered.filter(result => result.filter.context.includes('notifications'));
 
-      if (dropRegex && dropRegex.test(searchIndex)) {
+      if (filters.some(result => result.filter.filter_action === 'hide')) {
         return;
       }
 
-      filtered = regex && regex.test(searchIndex);
+      filtered = filters.length > 0;
     }
 
     if (['follow_request'].includes(notification.type)) {
@@ -134,7 +136,7 @@ export function updateNotifications(notification, intlMessages, intlLocale) {
       });
     }
   };
-};
+}
 
 const excludeTypesFromSettings = state => state.getIn(['settings', 'notifications', 'shows']).filter(enabled => !enabled).keySeq().toJS();
 
@@ -158,15 +160,22 @@ const excludeTypesFromFilter = filter => {
 
 const noOp = () => {};
 
-export function expandNotifications({ maxId } = {}, done = noOp) {
+let expandNotificationsController = new AbortController();
+
+export function expandNotifications({ maxId, forceLoad } = {}, done = noOp) {
   return (dispatch, getState) => {
     const activeFilter = getState().getIn(['settings', 'notifications', 'quickFilter', 'active']);
     const notifications = getState().get('notifications');
     const isLoadingMore = !!maxId;
 
     if (notifications.get('isLoading')) {
-      done();
-      return;
+      if (forceLoad) {
+        expandNotificationsController.abort();
+        expandNotificationsController = new AbortController();
+      } else {
+        done();
+        return;
+      }
     }
 
     const params = {
@@ -191,7 +200,7 @@ export function expandNotifications({ maxId } = {}, done = noOp) {
 
     dispatch(expandNotificationsRequest(isLoadingMore));
 
-    api(getState).get('/api/v1/notifications', { params }).then(response => {
+    api(getState).get('/api/v1/notifications', { params, signal: expandNotificationsController.signal }).then(response => {
       const next = getLinks(response).refs.find(link => link.rel === 'next');
 
       dispatch(importFetchedAccounts(response.data.map(item => item.account)));
@@ -207,14 +216,14 @@ export function expandNotifications({ maxId } = {}, done = noOp) {
       done();
     });
   };
-};
+}
 
 export function expandNotificationsRequest(isLoadingMore) {
   return {
     type: NOTIFICATIONS_EXPAND_REQUEST,
     skipLoading: !isLoadingMore,
   };
-};
+}
 
 export function expandNotificationsSuccess(notifications, next, isLoadingMore, isLoadingRecent, usePendingItems) {
   return {
@@ -225,16 +234,16 @@ export function expandNotificationsSuccess(notifications, next, isLoadingMore, i
     usePendingItems,
     skipLoading: !isLoadingMore,
   };
-};
+}
 
 export function expandNotificationsFail(error, isLoadingMore) {
   return {
     type: NOTIFICATIONS_EXPAND_FAIL,
     error,
     skipLoading: !isLoadingMore,
-    skipAlert: !isLoadingMore,
+    skipAlert: !isLoadingMore || error.name === 'AbortError',
   };
-};
+}
 
 export function clearNotifications() {
   return (dispatch, getState) => {
@@ -244,14 +253,14 @@ export function clearNotifications() {
 
     api(getState).post('/api/v1/notifications/clear');
   };
-};
+}
 
 export function scrollTopNotifications(top) {
   return {
     type: NOTIFICATIONS_SCROLL_TOP,
     top,
   };
-};
+}
 
 export function deleteMarkedNotifications() {
   return (dispatch, getState) => {
@@ -275,33 +284,33 @@ export function deleteMarkedNotifications() {
       dispatch(deleteMarkedNotificationsFail(error));
     });
   };
-};
+}
 
 export function enterNotificationClearingMode(yes) {
   return {
     type: NOTIFICATIONS_ENTER_CLEARING_MODE,
     yes: yes,
   };
-};
+}
 
 export function markAllNotifications(yes) {
   return {
     type: NOTIFICATIONS_MARK_ALL_FOR_DELETE,
     yes: yes, // true, false or null. null = invert
   };
-};
+}
 
 export function deleteMarkedNotificationsRequest() {
   return {
     type: NOTIFICATIONS_DELETE_MARKED_REQUEST,
   };
-};
+}
 
 export function deleteMarkedNotificationsFail() {
   return {
     type: NOTIFICATIONS_DELETE_MARKED_FAIL,
   };
-};
+}
 
 export function markNotificationForDelete(id, yes) {
   return {
@@ -309,32 +318,32 @@ export function markNotificationForDelete(id, yes) {
     id: id,
     yes: yes,
   };
-};
+}
 
 export function deleteMarkedNotificationsSuccess() {
   return {
     type: NOTIFICATIONS_DELETE_MARKED_SUCCESS,
   };
-};
+}
 
 export function mountNotifications() {
   return {
     type: NOTIFICATIONS_MOUNT,
   };
-};
+}
 
 export function unmountNotifications() {
   return {
     type: NOTIFICATIONS_UNMOUNT,
   };
-};
+}
 
 export function notificationsSetVisibility(visibility) {
   return {
     type: NOTIFICATIONS_SET_VISIBILITY,
     visibility: visibility,
   };
-};
+}
 
 export function setFilter (filterType) {
   return dispatch => {
@@ -343,16 +352,16 @@ export function setFilter (filterType) {
       path: ['notifications', 'quickFilter', 'active'],
       value: filterType,
     });
-    dispatch(expandNotifications());
+    dispatch(expandNotifications({ forceLoad: true }));
     dispatch(saveSettings());
   };
-};
+}
 
 export function markNotificationsAsRead() {
   return {
     type: NOTIFICATIONS_MARK_AS_READ,
   };
-};
+}
 
 // Browser support
 export function setupBrowserNotifications() {
@@ -377,7 +386,7 @@ export function requestBrowserPermission(callback = noOp) {
       callback(permission);
     });
   };
-};
+}
 
 export function setBrowserSupport (value) {
   return {

@@ -5,17 +5,17 @@ require 'pundit/rspec'
 
 RSpec.describe RelayPolicy do
   let(:subject) { described_class }
-  let(:admin)   { Fabricate(:user, admin: true).account }
+  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
   let(:john)    { Fabricate(:account) }
 
   permissions :update? do
-    context 'admin?' do
+    context 'when admin?' do
       it 'permits' do
         expect(subject).to permit(admin, Relay)
       end
     end
 
-    context '!admin?' do
+    context 'with !admin?' do
       it 'denies' do
         expect(subject).to_not permit(john, Relay)
       end
