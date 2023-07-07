@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      5
+      3
     end
 
     def flags
@@ -33,7 +33,7 @@ module Mastodon
     end
 
     def repository
-      ENV.fetch('GITHUB_REPOSITORY', 'glitch-soc/mastodon')
+      ENV.fetch('GITHUB_REPOSITORY', 'ralsei/types.pl')
     end
 
     def source_base_url
