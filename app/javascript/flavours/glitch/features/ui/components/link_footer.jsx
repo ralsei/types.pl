@@ -80,7 +80,7 @@ class LinkFooter extends PureComponent {
           {canProfileDirectory && (
             <>
               {DividingCircle}
-              <Link to='/directory'><FormattedMessage id='footer.directory' defaultMessage='Profiles directory' /></Link>
+              <Link to='/directory'><FormattedMessage id='footer.directory' defaultMessage='Profiles' /></Link>
             </>
           )}
           {DividingCircle}
