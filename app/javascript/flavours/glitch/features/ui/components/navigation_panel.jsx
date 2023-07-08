@@ -19,7 +19,7 @@ const messages = defineMessages({
   notifications: { id: 'tabs_bar.notifications', defaultMessage: 'Notifications' },
   explore: { id: 'explore.title', defaultMessage: 'Explore' },
   firehose: { id: 'column.firehose', defaultMessage: 'Live feeds' },
-  direct: { id: 'navigation_bar.direct', defaultMessage: 'Private mentions' },
+  direct: { id: 'navigation_bar.direct', defaultMessage: 'Direct messages' },
   local: { id: 'navigation_bar.community_timeline', defaultMessage: 'Local' },
   federated: { id: 'navigation_bar.public_timeline', defaultMessage: 'Federated' },
   favourites: { id: 'navigation_bar.favourites', defaultMessage: 'Favourites' },
