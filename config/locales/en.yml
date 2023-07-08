@@ -1054,8 +1054,8 @@ en:
       preamble_html: Login with your <strong>%{domain}</strong> credentials. If your account is hosted on a different server, you will not be able to log in here.
       title: Login to %{domain}
     sign_up:
-      manual_review: Sign-ups on %{domain} go through manual review by our moderators. To help us process your registration, write a bit about yourself and why you want an account on %{domain}.
-      preamble: With an account on this Mastodon server, you'll be able to follow any other person on the network, regardless of where their account is hosted.
+      manual_review: Sign-ups on %{domain} go through manual review by our moderators. To help us review your application, tell us a bit about yourself and why you want an account on %{domain}. You may choose to include links to personal websites or other social media profiles (relevant social networks such as Twitter will be more useful than professional credentials such as LinkedIn or Google Scholar), and how you found our instance or the existing users who may have recommended it, if you wish.
+      preamble: With an account on this Mastodon server, you'll be able to follow other people on instances we federate with.
       title: Let's get you set up on %{domain}.
     status:
       account_status: Account status
