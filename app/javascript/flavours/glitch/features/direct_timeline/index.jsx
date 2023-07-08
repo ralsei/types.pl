@@ -19,7 +19,7 @@ import ColumnSettingsContainer from './containers/column_settings_container';
 import ConversationsListContainer from './containers/conversations_list_container';
 
 const messages = defineMessages({
-  title: { id: 'column.direct', defaultMessage: 'Private mentions' },
+  title: { id: 'column.direct', defaultMessage: 'Direct messages' },
 });
 
 const mapStateToProps = state => ({
