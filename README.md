@@ -1,4 +1,4 @@
-#  types.pl  #
+# types.pl
 
 ![blobcatlambda](https://raw.githubusercontent.com/ralsei/types.pl/types.pl/public/favicon.ico)
 
@@ -8,6 +8,7 @@
 This is the Mastodon fork running on https://types.pl, which itself is a fork of glitch-soc.
 
 Differences from glitch-soc:
+
 - Various features of the Markdown parser are disabled, because they federate poorly.
   - Namely, lists are disabled, and so are superscripts and subscripts. They get auto-escaped.
 - LaTeX support is provided, with `\( this for inline math \)`, and either `$$ this $$` or `\[ this \]`
@@ -18,5 +19,6 @@ Differences from glitch-soc:
 - Various branding assets changed.
 
 Long-term goals:
+
 - Switch to Kramdown over Redcarpet. Redcarpet kinda sucks.
 - World domination.
