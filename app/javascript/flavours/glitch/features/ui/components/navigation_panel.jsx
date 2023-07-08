@@ -20,6 +20,8 @@ const messages = defineMessages({
   explore: { id: 'explore.title', defaultMessage: 'Explore' },
   firehose: { id: 'column.firehose', defaultMessage: 'Live feeds' },
   direct: { id: 'navigation_bar.direct', defaultMessage: 'Private mentions' },
+  local: { id: 'navigation_bar.community_timeline', defaultMessage: 'Local' },
+  federated: { id: 'navigation_bar.public_timeline', defaultMessage: 'Federated' },
   favourites: { id: 'navigation_bar.favourites', defaultMessage: 'Favourites' },
   bookmarks: { id: 'navigation_bar.bookmarks', defaultMessage: 'Bookmarks' },
   lists: { id: 'navigation_bar.lists', defaultMessage: 'Lists' },
@@ -67,7 +69,11 @@ class NavigationPanel extends Component {
         )}
 
         {(signedIn || timelinePreview) && (
-          <ColumnLink transparent to='/public/local' isActive={this.isFirehoseActive} icon='globe' text={intl.formatMessage(messages.firehose)} />
+          <ColumnLink transparent to='/public/local' icon='users' text={intl.formatMessage(messages.local)} />
+        )}
+
+        {(signedIn || timelinePreview) && (
+          <ColumnLink transparent to='/public/remote' icon='globe' text={intl.formatMessage(messages.federated)} />
         )}
 
         {!signedIn && (
