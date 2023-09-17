@@ -13,7 +13,7 @@ describe 'Content-Security-Policy' do
       "frame-ancestors 'none'",
       "font-src 'self' https://cb6e6126.ngrok.io",
       "img-src 'self' data: blob: https://cb6e6126.ngrok.io",
-      "style-src 'self' https://cb6e6126.ngrok.io 'nonce-ZbA+JmE7+bK8F5qvADZHuQ=='",
+      "style-src 'self' 'unsafe-inline' https://cb6e6126.ngrok.io",
       "media-src 'self' data: https://cb6e6126.ngrok.io",
       "frame-src 'self' https:",
       "manifest-src 'self' https://cb6e6126.ngrok.io",
