@@ -51,7 +51,7 @@ class Sanitize
         movablelimits
       ),
       'mover' => %w(accent),
-      'moverunder' => %w(accent accentunder),
+      'munderover' => %w(accent accentunder),
       # see <mspace>
       'mpadded' => %w(),
       'mphantom' => %w(),
