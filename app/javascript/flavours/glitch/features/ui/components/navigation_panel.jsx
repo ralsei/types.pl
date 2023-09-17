@@ -4,7 +4,8 @@ import { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import NavigationPortal from 'flavours/glitch/components/navigation_portal';
-import { timelinePreview, showTrends } from 'flavours/glitch/initial_state';
+import { timelinePreview, trendsEnabled } from 'flavours/glitch/initial_state';
+import { transientSingleColumn } from 'flavours/glitch/is_mobile';
 import { preferencesLink } from 'flavours/glitch/utils/backend_links';
 
 import ColumnLink from './column_link';
@@ -29,6 +30,8 @@ const messages = defineMessages({
   followsAndFollowers: { id: 'navigation_bar.follows_and_followers', defaultMessage: 'Follows and followers' },
   about: { id: 'navigation_bar.about', defaultMessage: 'About' },
   search: { id: 'navigation_bar.search', defaultMessage: 'Search' },
+  advancedInterface: { id: 'navigation_bar.advanced_interface', defaultMessage: 'Open in advanced web interface' },
+  openedInClassicInterface: { id: 'navigation_bar.opened_in_classic_interface', defaultMessage: 'Posts, accounts, and other specific pages are opened by default in the classic web interface.' },
   app_settings: { id: 'navigation_bar.app_settings', defaultMessage: 'App settings' },
 });
 
@@ -54,6 +57,19 @@ class NavigationPanel extends Component {
 
     return (
       <div className='navigation-panel'>
+        {transientSingleColumn && (
+          <div className='navigation-panel__logo'>
+            <div class='switch-to-advanced'>
+              {intl.formatMessage(messages.openedInClassicInterface)}
+              {" "}
+              <a href={`/deck${location.pathname}`} class='switch-to-advanced__toggle'>
+                {intl.formatMessage(messages.advancedInterface)}
+              </a>
+            </div>
+            <hr />
+          </div>
+        )}
+
         {signedIn && (
           <>
             <ColumnLink transparent to='/home' icon='home' text={intl.formatMessage(messages.home)} />
