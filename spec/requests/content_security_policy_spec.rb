@@ -21,7 +21,7 @@ describe 'Content-Security-Policy' do
       "child-src 'self' blob: https://cb6e6126.ngrok.io",
       "worker-src 'self' blob: https://cb6e6126.ngrok.io",
       "connect-src 'self' blob: data: ws://localhost:4000 https://cb6e6126.ngrok.io",
-      "script-src 'self' https://cb6e6126.ngrok.io 'wasm-unsafe-eval'"
+      "script-src 'self' 'unsafe_eval' https://cb6e6126.ngrok.io 'wasm-unsafe-eval'"
     )
   end
 end
