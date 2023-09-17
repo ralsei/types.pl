@@ -56,6 +56,11 @@ describe Sanitize::Config do
       expect(Sanitize.fragment('<abbr title="HyperText Markup Language">HTML</abbr>', subject)).to eq '<abbr title="HyperText Markup Language">HTML</abbr>'
     end
 
+    it 'keeps ruby text' do
+      ruby = '<ruby style="ruby-align: center; ruby-position: inter-character;">乳<rp>(</rp><rt>ㄖㄨˇ</rt><rp>)</rp>齒<rp>(</rp><rt>ㄔˋ</rt><rp>)</rp>象<rp>(</rp><rt>ㄒㄧㄤˋ</rt><rp>)</rp></ruby>'
+      expect(Sanitize.fragment(ruby, subject)).to eq ruby
+    end
+
     it 'keeps math' do
       mathml = '<math display="block"><mrow><mrow><munder><mo movablelimits="false">∑</mo><mrow><mi>a</mi><mo>∈</mo><mi>𝔄</mi></mrow></munder></mrow><mn>2</mn><mo>⁢</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow></math>'
       expect(Sanitize.fragment(mathml, subject)).to eq mathml
