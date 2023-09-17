@@ -24,7 +24,7 @@ describe 'NewStatuses' do
 
     within('.compose-form') do
       fill_in "What's on your mind?", with: status_text
-      click_on 'Publish!'
+      click_on 'TOOT!'
     end
 
     expect(subject).to have_selector('.status__content__text', text: status_text)
@@ -37,7 +37,7 @@ describe 'NewStatuses' do
 
     within('.compose-form') do
       fill_in "What's on your mind?", with: status_text
-      click_on 'Publish!'
+      click_on 'TOOT!'
     end
 
     expect(subject).to have_selector('.status__content__text', text: status_text)
