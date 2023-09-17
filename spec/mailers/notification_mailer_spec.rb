@@ -77,7 +77,7 @@ RSpec.describe NotificationMailer do
     end
 
     it 'renders the body' do
-      expect(mail.body.encoded).to match('Your toot was favorited by bob')
+      expect(mail.body.encoded).to match('Your post was favorited by bob')
       expect(mail.body.encoded).to include 'The body of the own status'
     end
   end
@@ -95,7 +95,7 @@ RSpec.describe NotificationMailer do
     end
 
     it 'renders the body' do
-      expect(mail.body.encoded).to match('Your toot was boosted by bob')
+      expect(mail.body.encoded).to match('Your post was boosted by bob')
       expect(mail.body.encoded).to include 'The body of the own status'
     end
   end
