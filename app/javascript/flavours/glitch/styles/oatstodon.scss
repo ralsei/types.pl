@@ -7,11 +7,9 @@
   /* rgb for transparency to work */
   --text-color: 217, 225, 232;
   --text-color-secondary: 96, 105, 132; /* less bright, for unimportant bits */
-    
   --background-color: 18, 18, 37;
   --background-color-brighter: 22, 22, 47;
   --app-background-color: 8, 8, 17; /* used only for the VERY background in the back */
-    
   --accent-color: 39, 183, 145;
   --accent-color-secondary: 62, 91, 84; /* less saturated ver of --accent-color */
   --accent-color-bright: 92, 193, 162;
@@ -21,7 +19,7 @@
 
 .account__avatar-overlay-base, .account__avatar-overlay-overlay, .account__avatar {
   border-radius: 50%;
-  /* border-bottom-right-radius: 15%; */ /* uncomment for teardrop */
+  // border-bottom-right-radius: 15%; // uncomment for teardrop
 }
 
 /* roundening shenanigans */
@@ -31,10 +29,11 @@
 }
 
 .column-header, .column-back-button, .navigation-panel .column-link:nth-child(1), .navigation-panel .column-link:nth-child(10), .navigation-bar {
-  border-radius: var(--border-radius) var(--border-radius) 0px 0px;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
+
 .column > .scrollable, .getting-started, .navigation-panel .column-link:nth-child(8), .navigation-panel .column-link:nth-child(11) {
-  border-radius: 0px 0px var(--border-radius) var(--border-radius);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 /* standard fg/bg color changes */
@@ -43,6 +42,7 @@
   background-color: rgb(var(--background-color)) !important;
   color: rgb(var(--text-color)) !important;
 }
+
 .glitch.local-settings__navigation, .glitch.local-settings__navigation__item, .glitch.local-settings__page, .glitch.local-settings {
   background-color: rgb(var(--background-color));
   color: rgb(var(--text-color));
@@ -59,6 +59,7 @@
 .dropdown-menu__arrow {
   border-bottom-color: rgb(var(--background-color)) !important;
 }
+
 .dropdown-menu__arrow.top {
   border-top-color: rgb(var(--background-color)) !important;
 }
@@ -68,7 +69,7 @@
 }
 
 html {
-  scrollbar-color: rgb(var(--background-color-brighter)) rgba(0,0,0,0.1);
+  scrollbar-color: rgb(var(--background-color-brighter)) rgba(0,0,0,10%);
 }
 
 .tabs-bar__wrapper {
@@ -116,6 +117,7 @@ input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .compose
 .button, .react-toggle--checked .react-toggle-track, .react-toggle--checked:hover .react-toggle-track, .react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track, .button.logo-button, .emoji-mart-anchor-bar, .loading-bar, .icon-with-badge__badge, .video-player__volume__current, .video-player__volume__handle, .upload-progress__tracker, .video-player__seek__buffer, .video-player__seek__progress, .floating-action-button {
   background-color: rgb(var(--accent-color));
 }
+
 .react-toggle--checked .react-toggle-thumb, .compose-form__sensitive-button .checkbox, .filters .filter-subset a.selected, .account__action-bar__tab.active, .tabs-bar__link.active, .notification.unread::before, .status.unread::before {
   border-color: rgb(var(--accent-color));
 }
@@ -123,6 +125,7 @@ input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .compose
 .text-icon-button, .icon-button.inverted, button.inverted:hover, .icon-button, .icon-button:hover, .status__action-bar__counter__label, .text-icon-button:active, .text-icon-button:focus, .text-icon-button:hover, .icon-button.disabled, .composer--options--dropdown.open > .value {
   color: rgb(var(--accent-color-secondary));
 }
+
 .status__info__icons i {
   color: rgb(var(--accent-color-secondary)) !important;
 }
@@ -130,9 +133,11 @@ input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .compose
 .status__content__spoiler-link {
   background-color: rgb(var(--accent-color-secondary)) !important;
 }
+
 .column-header__wrapper.active::before {
   background: radial-gradient(ellipse, rgba(var(--accent-color),.23) 0%, rgba(var(--accent-color),0) 60%);
 }
+
 .column-header__wrapper.active {
   box-shadow: 0 1px 0 rgba(var(--accent-color),.3);
 }
@@ -175,6 +180,7 @@ input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .compose
 .trends__item__sparkline path:last-child {
   stroke: rgb(var(--accent-color)) !important;
 }
+
 .trends__item__sparkline path:first-child {
   fill: rgb(var(--accent-color-secondary)) !important;
 }
@@ -185,15 +191,16 @@ a.u-url, .status-link, .column-header__back-button, .status__content__read-more-
 
 /* fixes */
 
-/* boost hack, v2 */
-/* https://codepen.io/sosuke/pen/Pjoqqp */
+/* boost hack, v2: https://codepen.io/sosuke/pen/Pjoqqp */
 button.icon-button i.fa-retweet {
   filter: brightness(0) saturate(100%) invert(31%) sepia(28%) saturate(388%) hue-rotate(115deg) brightness(94%) contrast(90%); /* accent-color-secondary */
   color: transparent !important;
 }
+
 button.icon-button.active i.fa-retweet {
   filter: brightness(0) saturate(100%) invert(57%) sepia(61%) saturate(481%) hue-rotate(114deg) brightness(93%) contrast(91%); /* accent-color */
 }
+
 button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock {
   filter: brightness(0) saturate(100%) invert(31%) sepia(28%) saturate(388%) hue-rotate(115deg) brightness(60%) contrast(90%); /* accent-color-secondary with brightness set to 50% */
 }
@@ -213,16 +220,18 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
 .dropdown-menu__separator, hr {
   opacity: 0;
 }
+
 .compose-form .autosuggest-textarea__textarea, .compose-form .spoiler-input__input, .compose-panel .compose-form__autosuggest-wrapper, .mbstobon-3 .drawer__inner__mastodon {
   background: transparent;
 }
+
 .status, .account, .account__header__fields dl, .account__header__fields, .account__header__bio .account__header__fields, .glitch.local-settings__navigation__item {
   border-top: none;
   border-bottom: none;
 }
 
 .report-modal__container, .report-modal__comment, .report-modal__comment .setting-text__wrapper {
-  border-color: rgba(0, 0, 0, 0) !important;
+  border-color: rgba(0, 0, 0, 0%) !important;
 }
 
 .drawer__inner__mastodon {
@@ -237,9 +246,11 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
 .notification__filter-bar button.active, .account__section-headline .active {
   border-bottom: 3px solid rgb(var(--accent-color));
 }
+
 .notification__filter-bar button:not(.active):hover {
   top: -3px;
 }
+
 .account__section-headline a.active::after, .account__section-headline a.active::before {
   display: none;
 }
@@ -247,6 +258,7 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
 .account__header__extra__links a:hover {
   text-decoration: underline;
 }
+
 .account__section-headline a:hover, .confirmation-modal__cancel-button span {
   color: #fff;
 }
@@ -254,6 +266,7 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
 .notification__filter-bar button.active::after {
   opacity: 0;
 }
+
 .notification__filter-bar button.active::before {
   opacity: 0;
 }
@@ -276,54 +289,64 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
   overflow-y: hidden;
   transition: max-height 1s;
 }
+
 .reply-indicator:hover {
   max-height: 100%;
 }
-.reply-indicator:before {
+
+.reply-indicator::before {
   content: 'Replying to:';
   font-size: 12px;
   color: rgb(var(--text-color-secondary));
 }
 
-.getting-started__footer p:after {
+.getting-started__footer p::after {
   content: ' Oat was here';
 }
 
-
-/* public/static css */
-/* for pages like /@username */
+/* public/static css for pages like /@username */
 
 .public-layout .public-account-header__tabs__tabs .counter.active::after {
   border-bottom-color: rgb(var(--accent-color));
 }
+
 .public-layout .public-account-bio .account__header__fields a {
   color: rgb(var(--accent-color));
 }
+
 .public-layout .header .nav-button {
   color: #fff;
   background-color: rgb(var(--accent-color));
 }
+
 .public-layout .header .nav-button:active, .public-layout .header .nav-button:focus, .public-layout .header .nav-button:hover {
   background-color: rgb(var(--accent-color-bright))
 }
+
 .public-layout .activity-stream .entry, .hero-widget__text, .table-of-contents {
   background-color: rgb(var(--background-color));
 }
+
 body {
   background-color: rgb(var(--app-background-color));
 }
+
 .public-layout .public-account-header__tabs__tabs .counter {
   border-right: none;
 }
+
 .public-layout .public-account-bio, .public-layout .public-account-header__bar::before, .public-layout .header, .directory__tag > a, .directory__tag > div, .directory__tag > a:active, .directory__tag > a:focus, .directory__tag > a:hover, .public-layout .header .brand:hover, .landing-page__call-to-action, .box-widget {
   background-color: rgb(var(--background-color-brighter));
 }
+
 .public-layout .display-name, .status__relative-time time, .status__relative-time {
   color: rgb(var(--text-color-secondary));
 }
+
 .rich-formatting, .rich-formatting p {
   color: rgb(var(--text-color));
 }
+
 .rich-formatting table tbody tr, .rich-formatting table thead tr, .notification-follow, .notification-follow-request {
   border-bottom: none;
 }
@@ -332,4 +355,3 @@ body {
 .search-popout em {
   color: rgb(var(--accent-color)) !important;
 }
-
