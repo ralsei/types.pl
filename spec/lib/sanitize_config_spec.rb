@@ -57,8 +57,8 @@ describe Sanitize::Config do
     end
 
     it 'keeps math' do
-      MATHML = '<math display="block"><mrow><mrow><munder><mo movablelimits="false">∑</mo><mrow><mi>a</mi><mo>∈</mo><mi>𝔄</mi></mrow></munder></mrow><mn>2</mn><mo>⁢</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow></math>'
-      expect(Sanitize.fragment(MATHML, subject)).to eq MATHML
+      mathml = '<math display="block"><mrow><mrow><munder><mo movablelimits="false">∑</mo><mrow><mi>a</mi><mo>∈</mo><mi>𝔄</mi></mrow></munder></mrow><mn>2</mn><mo>⁢</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow></math>'
+      expect(Sanitize.fragment(mathml, subject)).to eq mathml
     end
 
     it 'correctly sanitizes linethickness' do
