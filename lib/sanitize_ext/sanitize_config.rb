@@ -28,7 +28,7 @@ class Sanitize
       displaystyle
       mathvariant
       scriptlevel
-    )
+    ).freeze
     MATH_TAG_ATTRS = {
       'annotation' => %w(encoding),
       'annotation-xml' => %w(encoding),
