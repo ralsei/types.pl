@@ -21,15 +21,11 @@ class Sanitize
       gemini
     ).freeze
 
-    COMMON_RUBY_ATTRS = %w(
-      ruby-align
-      ruby-position
-    ).freeze
     RUBY_TAG_ATTRS = {
       'ruby' => %w(),
       'rt' => %w(),
       'rp' => %w(),
-    }.transform_values { |attr_list| attr_list + COMMON_RUBY_ATTRS }.freeze
+    }.freeze
 
     # We remove all "style" attributes. In particular we remove all color
     # attributes and length percentages.

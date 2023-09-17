@@ -57,7 +57,7 @@ describe Sanitize::Config do
     end
 
     it 'keeps ruby text' do
-      ruby = '<ruby style="ruby-align: center; ruby-position: inter-character;">乳<rp>(</rp><rt>ㄖㄨˇ</rt><rp>)</rp>齒<rp>(</rp><rt>ㄔˋ</rt><rp>)</rp>象<rp>(</rp><rt>ㄒㄧㄤˋ</rt><rp>)</rp></ruby>'
+      ruby = '<ruby>乳<rp>(</rp><rt>ㄖㄨˇ</rt><rp>)</rp>齒<rp>(</rp><rt>ㄔˋ</rt><rp>)</rp>象<rp>(</rp><rt>ㄒㄧㄤˋ</rt><rp>)</rp></ruby>'
       expect(Sanitize.fragment(ruby, subject)).to eq ruby
     end
 
