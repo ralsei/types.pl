@@ -3,15 +3,13 @@
 /* customize ya stuff */
 :root {
   --border-radius: 5px;
-    
+
   /* rgb for transparency to work */
   --text-color: 217, 225, 232;
   --text-color-secondary: 96, 105, 132; /* less bright, for unimportant bits */
-    
   --background-color: 18, 18, 37;
   --background-color-brighter: 22, 22, 47;
   --app-background-color: 8, 8, 17; /* used only for the VERY background in the back */
-    
   --accent-color: 39, 183, 145;
   --accent-color-secondary: 62, 91, 84; /* less saturated ver of --accent-color */
   --accent-color-bright: 92, 193, 162;
@@ -19,110 +17,257 @@
 
 /* here for you to remove */
 
-.account__avatar-overlay-base, .account__avatar-overlay-overlay, .account__avatar {
+.account__avatar-overlay-base,
+.account__avatar-overlay-overlay,
+.account__avatar {
   border-radius: 50%;
-  /* border-bottom-right-radius: 15%; */ /* uncomment for teardrop */
+
+  // border-bottom-right-radius: 15%; // uncomment for teardrop
 }
 
 /* roundening shenanigans */
 
-.drawer > div, nav, .search, .drawer__header a, .drawer--header a, .search__input {
+.drawer > div,
+nav,
+.search,
+.drawer__header a,
+.drawer--header a,
+.search__input {
   border-radius: var(--border-radius) !important;
 }
 
-.column-header, .column-back-button, .navigation-panel .column-link:nth-child(1), .navigation-panel .column-link:nth-child(10), .navigation-bar {
-  border-radius: var(--border-radius) var(--border-radius) 0px 0px;
+.column-header,
+.column-back-button,
+.navigation-panel .column-link:nth-child(1),
+.navigation-panel .column-link:nth-child(10),
+.navigation-bar {
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-.column > .scrollable, .getting-started, .navigation-panel .column-link:nth-child(8), .navigation-panel .column-link:nth-child(11) {
-  border-radius: 0px 0px var(--border-radius) var(--border-radius);
+
+.column > .scrollable,
+.getting-started,
+.navigation-panel .column-link:nth-child(8),
+.navigation-panel .column-link:nth-child(11) {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 /* standard fg/bg color changes */
 
-.drawer__inner, .drawer__inner__mastodon, .drawer__header, .drawer--header, .actions-modal, .block-modal, .boost-modal, .confirmation-modal, .mute-modal, .report-modal, article, .getting-started, .column-subheading, .column-link, .column-subheading, .column-link, .emoji-mart-scroll, .emoji-mart-search, .emoji-mart-category-label > span, .emoji-picker-dropdown__menu, .scrollable, .empty-column-indicator, .column-inline-form, .dropdown-menu, .dropdown-menu__item a, .account__header__fields dt, .search-popout, .confirmation-modal__action-bar, .reactions-bar__item, .emoji-picker-dropdown__modifiers__menu, .content-wrapper, .sidebar-wrapper--empty, .regeneration-indicator, .tabs-bar, .navigation-bar, .trends__header, .modal-layout {
+.drawer__inner,
+.drawer__inner__mastodon,
+.drawer__header,
+.drawer--header,
+.actions-modal,
+.block-modal,
+.boost-modal,
+.confirmation-modal,
+.mute-modal,
+.report-modal,
+article,
+.getting-started,
+.column-subheading,
+.column-link,
+.column-subheading,
+.column-link,
+.emoji-mart-scroll,
+.emoji-mart-search,
+.emoji-mart-category-label > span,
+.emoji-picker-dropdown__menu,
+.scrollable,
+.empty-column-indicator,
+.column-inline-form,
+.dropdown-menu,
+.dropdown-menu__item a,
+.account__header__fields dt,
+.search-popout,
+.confirmation-modal__action-bar,
+.reactions-bar__item,
+.emoji-picker-dropdown__modifiers__menu,
+.content-wrapper,
+.sidebar-wrapper--empty,
+.regeneration-indicator,
+.tabs-bar,
+.navigation-bar,
+.trends__header,
+.modal-layout {
   background-color: rgb(var(--background-color)) !important;
   color: rgb(var(--text-color)) !important;
 }
-.glitch.local-settings__navigation, .glitch.local-settings__navigation__item, .glitch.local-settings__page, .glitch.local-settings {
+
+.glitch.local-settings__navigation,
+.glitch.local-settings__navigation__item,
+.glitch.local-settings__page,
+.glitch.local-settings {
   background-color: rgb(var(--background-color));
   color: rgb(var(--text-color));
 }
 
-.modal-layout, .modal-layout__mastodon > * {
+.modal-layout,
+.modal-layout__mastodon > * {
   background-image: none;
 }
 
-.account__section-headline a.active::after, .account__section-headline button.active::after, .notification__filter-bar a.active::after, .notification__filter-bar button.active::after, .account__section-headline a.active::after, .account__section-headline a.active::before, .account__section-headline button.active::after, .account__section-headline button.active::before, .notification__filter-bar a.active::after, .notification__filter-bar a.active::before, .notification__filter-bar button.active::after, .notification__filter-bar button.active::before {
- border-color: transparent transparent rgb(var(--background-color));
+.account__section-headline a.active::after,
+.account__section-headline button.active::after,
+.notification__filter-bar a.active::after,
+.notification__filter-bar button.active::after,
+.account__section-headline a.active::after,
+.account__section-headline a.active::before,
+.account__section-headline button.active::after,
+.account__section-headline button.active::before,
+.notification__filter-bar a.active::after,
+.notification__filter-bar a.active::before,
+.notification__filter-bar button.active::after,
+.notification__filter-bar button.active::before {
+  border-color: transparent transparent rgb(var(--background-color));
 }
 
 .dropdown-menu__arrow {
   border-bottom-color: rgb(var(--background-color)) !important;
 }
+
 .dropdown-menu__arrow.top {
   border-top-color: rgb(var(--background-color)) !important;
 }
 
-.reply-indicator__content, .status__content, .reply-indicator__display-name, .privacy-dropdown__option__icon, .composer--options--dropdown--content--item .icon, .composer--reply > .content {
+.reply-indicator__content,
+.status__content,
+.reply-indicator__display-name,
+.privacy-dropdown__option__icon,
+.composer--options--dropdown--content--item .icon,
+.composer--reply > .content {
   color: rgb(var(--text-color)) !important;
 }
 
 html {
-  scrollbar-color: rgb(var(--background-color-brighter)) rgba(0,0,0,0.1);
+  scrollbar-color: rgb(var(--background-color-brighter)) rgba(0, 0, 0, 10%);
 }
 
 .tabs-bar__wrapper {
   background: rgb(var(--app-background-color));
 }
 
-.column-header, .column-header__button, .account__section-headline, .notification__filter-bar > button, .emoji-mart-bar, .column-back-button, .column-header__back-button, .announcements, .column-header__collapsible-inner, .status.status-direct:not(.read), .notification__filter-bar, .glitch.local-settings__page {
+.column-header,
+.column-header__button,
+.account__section-headline,
+.notification__filter-bar > button,
+.emoji-mart-bar,
+.column-back-button,
+.column-header__back-button,
+.announcements,
+.column-header__collapsible-inner,
+.status.status-direct:not(.read),
+.notification__filter-bar,
+.glitch.local-settings__page {
   background-color: rgb(var(--background-color-brighter)) !important;
   border-bottom: none;
 }
 
-.reply-indicator, .emoji-picker-dropdown__modifiers__menu button:hover, .compose-form .compose-form__buttons-wrapper, .composer--options-wrapper, .compose-form__poll-wrapper select, .flash-message, .card__bar, .card > a:hover .card__bar, .glitch.local-settings__navigation__item:hover {
+.reply-indicator,
+.emoji-picker-dropdown__modifiers__menu button:hover,
+.compose-form .compose-form__buttons-wrapper,
+.composer--options-wrapper,
+.compose-form__poll-wrapper select,
+.flash-message,
+.card__bar,
+.card > a:hover .card__bar,
+.glitch.local-settings__navigation__item:hover {
   background-color: rgb(var(--background-color-brighter));
 }
 
-.columns-area, .app-body, .getting-started__wrapper {
+.columns-area,
+.app-body,
+.getting-started__wrapper {
   background-color: rgb(var(--app-background-color));
 }
 
-.privacy-dropdown__option__content strong, .composer--options--dropdown--content strong, .character-counter, .report-modal__comment .setting-text-label, .compose-form__poll-wrapper select {
+.privacy-dropdown__option__content strong,
+.composer--options--dropdown--content strong,
+.character-counter,
+.report-modal__comment .setting-text-label,
+.compose-form__poll-wrapper select {
   color: rgb(var(--text-color)) !important;
 }
 
-input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .composer--options--dropdown--content, .privacy-dropdown__value {
+input,
+textarea,
+.compose-form__modifiers,
+.privacy-dropdown__dropdown,
+.composer--options--dropdown--content,
+.privacy-dropdown__value {
   background-color: rgb(var(--background-color-brighter)) !important;
   color: rgb(var(--text-color)) !important;
 }
 
-.compose-form__buttons-wrapper, .admin-wrapper .sidebar-wrapper__inner, .admin-wrapper .sidebar ul a:hover, .admin-wrapper .sidebar ul a, .admin-wrapper .sidebar ul a.selected, .account__disclaimer, .account__action-bar-links {
+.compose-form__buttons-wrapper,
+.admin-wrapper .sidebar-wrapper__inner,
+.admin-wrapper .sidebar ul a:hover,
+.admin-wrapper .sidebar ul a,
+.admin-wrapper .sidebar ul a.selected,
+.account__disclaimer,
+.account__action-bar-links {
   background-color: rgb(var(--background-color-brighter));
 }
 
-.detailed-status, .detailed-status__action-bar, .account__header__bar, .focusable:focus {
+.detailed-status,
+.detailed-status__action-bar,
+.account__header__bar,
+.focusable:focus {
   background-color: rgb(var(--background-color-brighter)) !important;
   border-bottom: none;
   border-top: none;
 }
 
 .status.collapsed .status__content::after {
-  background: linear-gradient(rgba(var(--background-color),0), rgba(var(--background-color),0)) !important;
+  background: linear-gradient(
+    rgba(var(--background-color), 0),
+    rgba(var(--background-color), 0)
+  ) !important;
 }
 
 /* accent color changes */
 
-.button, .react-toggle--checked .react-toggle-track, .react-toggle--checked:hover .react-toggle-track, .react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track, .button.logo-button, .emoji-mart-anchor-bar, .loading-bar, .icon-with-badge__badge, .video-player__volume__current, .video-player__volume__handle, .upload-progress__tracker, .video-player__seek__buffer, .video-player__seek__progress, .floating-action-button {
+.button,
+.react-toggle--checked .react-toggle-track,
+.react-toggle--checked:hover .react-toggle-track,
+.react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track,
+.button.logo-button,
+.emoji-mart-anchor-bar,
+.loading-bar,
+.icon-with-badge__badge,
+.video-player__volume__current,
+.video-player__volume__handle,
+.upload-progress__tracker,
+.video-player__seek__buffer,
+.video-player__seek__progress,
+.floating-action-button {
   background-color: rgb(var(--accent-color));
 }
-.react-toggle--checked .react-toggle-thumb, .compose-form__sensitive-button .checkbox, .filters .filter-subset a.selected, .account__action-bar__tab.active, .tabs-bar__link.active, .notification.unread::before, .status.unread::before {
+
+.react-toggle--checked .react-toggle-thumb,
+.compose-form__sensitive-button .checkbox,
+.filters .filter-subset a.selected,
+.account__action-bar__tab.active,
+.tabs-bar__link.active,
+.notification.unread::before,
+.status.unread::before {
   border-color: rgb(var(--accent-color));
 }
 
-.text-icon-button, .icon-button.inverted, button.inverted:hover, .icon-button, .icon-button:hover, .status__action-bar__counter__label, .text-icon-button:active, .text-icon-button:focus, .text-icon-button:hover, .icon-button.disabled, .composer--options--dropdown.open > .value {
+.text-icon-button,
+.icon-button.inverted,
+button.inverted:hover,
+.icon-button,
+.icon-button:hover,
+.status__action-bar__counter__label,
+.text-icon-button:active,
+.text-icon-button:focus,
+.text-icon-button:hover,
+.icon-button.disabled,
+.composer--options--dropdown.open > .value {
   color: rgb(var(--accent-color-secondary));
 }
+
 .status__info__icons i {
   color: rgb(var(--accent-color-secondary)) !important;
 }
@@ -130,14 +275,21 @@ input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .compose
 .status__content__spoiler-link {
   background-color: rgb(var(--accent-color-secondary)) !important;
 }
+
 .column-header__wrapper.active::before {
-  background: radial-gradient(ellipse, rgba(var(--accent-color),.23) 0%, rgba(var(--accent-color),0) 60%);
-}
-.column-header__wrapper.active {
-  box-shadow: 0 1px 0 rgba(var(--accent-color),.3);
+  background: radial-gradient(
+    ellipse,
+    rgba(var(--accent-color), 0.23) 0%,
+    rgba(var(--accent-color), 0) 60%
+  );
 }
 
-.compose-form__sensitive-button .checkbox.active, .poll__chart.leading {
+.column-header__wrapper.active {
+  box-shadow: 0 1px 0 rgba(var(--accent-color), 0.3);
+}
+
+.compose-form__sensitive-button .checkbox.active,
+.poll__chart.leading {
   border-color: rgb(var(--accent-color));
   background-color: rgb(var(--accent-color));
 }
@@ -147,82 +299,176 @@ input, textarea, .compose-form__modifiers, .privacy-dropdown__dropdown, .compose
 }
 
 .column-header.active .column-header__icon {
-  text-shadow: 0 0 10px rgba(var(--accent-color),.4);
+  text-shadow: 0 0 10px rgba(var(--accent-color), 0.4);
 }
 
-.text-icon-button:active, .text-icon-button:focus, .text-icon-button:hover, .drawer__header a:hover, .drawer--header a:hover, .drawer--header a:focus, .icon-button:hover, .reactions-bar__item:hover {
-  background-color: rgba(var(--accent-color-secondary), .1);
+.text-icon-button:active,
+.text-icon-button:focus,
+.text-icon-button:hover,
+.drawer__header a:hover,
+.drawer--header a:hover,
+.drawer--header a:focus,
+.icon-button:hover,
+.reactions-bar__item:hover {
+  background-color: rgba(var(--accent-color-secondary), 0.1);
 }
 
-.icon-button.inverted:active, .icon-button.inverted:focus, .icon-button.inverted:hover, .reactions-bar__item.active {
-  background-color: rgba(var(--accent-color-secondary), .25);
+.icon-button.inverted:active,
+.icon-button.inverted:focus,
+.icon-button.inverted:hover,
+.reactions-bar__item.active {
+  background-color: rgba(var(--accent-color-secondary), 0.25);
   color: rgb(var(--accent-color-secondary));
 }
 
-.button:active, .button:focus, .button:hover, .admin-wrapper .sidebar ul .simple-navigation-active-leaf a:hover, .simple_form .block-button:hover, .simple_form .button:hover, .simple_form button:hover, .button.logo-button:active, .button.logo-button:focus, .button.logo-button:hover, .floating-action-button:hover, .glitch.local-settings__navigation__item.active:hover {
+.button:active,
+.button:focus,
+.button:hover,
+.admin-wrapper .sidebar ul .simple-navigation-active-leaf a:hover,
+.simple_form .block-button:hover,
+.simple_form .button:hover,
+.simple_form button:hover,
+.button.logo-button:active,
+.button.logo-button:focus,
+.button.logo-button:hover,
+.floating-action-button:hover,
+.glitch.local-settings__navigation__item.active:hover {
   background-color: rgb(var(--accent-color-bright));
 }
 
-.privacy-dropdown__option.active, .composer--options--dropdown--content--item.active, .privacy-dropdown__option:hover, .composer--options--dropdown--content--item:hover, .privacy-dropdown__option.active:hover, .composer--options--dropdown--content.active:hover, .admin-wrapper .sidebar ul .simple-navigation-active-leaf a, .simple_form .block-button, .simple_form .button, .simple_form button, .simple_form .block-button:active, .simple_form .block-button:focus, .simple_form .button:active, .simple_form .button:focus, .simple_form button:active, .simple_form button:focus, .composer--options--dropdown.open > .value, .glitch.local-settings__navigation__item.active {
+.privacy-dropdown__option.active,
+.composer--options--dropdown--content--item.active,
+.privacy-dropdown__option:hover,
+.composer--options--dropdown--content--item:hover,
+.privacy-dropdown__option.active:hover,
+.composer--options--dropdown--content.active:hover,
+.admin-wrapper .sidebar ul .simple-navigation-active-leaf a,
+.simple_form .block-button,
+.simple_form .button,
+.simple_form button,
+.simple_form .block-button:active,
+.simple_form .block-button:focus,
+.simple_form .button:active,
+.simple_form .button:focus,
+.simple_form button:active,
+.simple_form button:focus,
+.composer--options--dropdown.open > .value,
+.glitch.local-settings__navigation__item.active {
   background-color: rgb(var(--accent-color));
 }
 
-.status__info__icons .icon-button.active i, .tabs-bar__link.active, .status__content a {
+.status__info__icons .icon-button.active i,
+.tabs-bar__link.active,
+.status__content a {
   color: rgb(var(--accent-color)) !important;
 }
-
 
 .trends__item__sparkline path:last-child {
   stroke: rgb(var(--accent-color)) !important;
 }
+
 .trends__item__sparkline path:first-child {
   fill: rgb(var(--accent-color-secondary)) !important;
 }
 
-a.u-url, .status-link, .column-header__back-button, .status__content__read-more-button, .column-header.active .column-header__icon, .column-link.active, .account__section-headline a.active, .account__section-headline button.active, .notification__filter-bar a.active, .notification__filter-bar button.active, .account__header__content a, .account__header__bio .account__header__fields a, .reactions-bar__item.active .reactions-bar__item__count, .emoji-mart-anchor-selected, .reply-indicator__content a, .compose-form .compose-form__warning a, .text-icon-button.active, .icon-button.inverted.active, .drawer__tab:hover, .icon-button.active, .column-back-button, .filters .filter-subset a.selected, .admin-wrapper .content .muted-hint a, body .muted-hint a, .table a, .notification__message .fa, .drawer--header a:hover, .drawer--header a:focus {
+a.u-url,
+.status-link,
+.column-header__back-button,
+.status__content__read-more-button,
+.column-header.active .column-header__icon,
+.column-link.active,
+.account__section-headline a.active,
+.account__section-headline button.active,
+.notification__filter-bar a.active,
+.notification__filter-bar button.active,
+.account__header__content a,
+.account__header__bio .account__header__fields a,
+.reactions-bar__item.active .reactions-bar__item__count,
+.emoji-mart-anchor-selected,
+.reply-indicator__content a,
+.compose-form .compose-form__warning a,
+.text-icon-button.active,
+.icon-button.inverted.active,
+.drawer__tab:hover,
+.icon-button.active,
+.column-back-button,
+.filters .filter-subset a.selected,
+.admin-wrapper .content .muted-hint a,
+body .muted-hint a,
+.table a,
+.notification__message .fa,
+.drawer--header a:hover,
+.drawer--header a:focus {
   color: rgb(var(--accent-color)) !important;
 }
 
 /* fixes */
 
-/* boost hack, v2 */
-/* https://codepen.io/sosuke/pen/Pjoqqp */
+/* boost hack, v2: https://codepen.io/sosuke/pen/Pjoqqp */
 button.icon-button i.fa-retweet {
-  filter: brightness(0) saturate(100%) invert(31%) sepia(28%) saturate(388%) hue-rotate(115deg) brightness(94%) contrast(90%); /* accent-color-secondary */
+  filter: brightness(0) saturate(100%) invert(31%) sepia(28%) saturate(388%)
+    hue-rotate(115deg) brightness(94%) contrast(90%); /* accent-color-secondary */
+
   color: transparent !important;
 }
+
 button.icon-button.active i.fa-retweet {
-  filter: brightness(0) saturate(100%) invert(57%) sepia(61%) saturate(481%) hue-rotate(114deg) brightness(93%) contrast(91%); /* accent-color */
-}
-button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock {
-  filter: brightness(0) saturate(100%) invert(31%) sepia(28%) saturate(388%) hue-rotate(115deg) brightness(60%) contrast(90%); /* accent-color-secondary with brightness set to 50% */
+  filter: brightness(0) saturate(100%) invert(57%) sepia(61%) saturate(481%)
+    hue-rotate(114deg) brightness(93%) contrast(91%); /* accent-color */
 }
 
-.load-more:hover, .mbstobon-2 .drawer__inner__mastodon, .mbstobon-1 .drawer__inner__mastodon, .mbstobon-0 .drawer__inner__mastodon {
+button.icon-button.disabled i.fa-retweet,
+button.icon-button.disabled i.fa-lock {
+  filter: brightness(0) saturate(100%) invert(31%) sepia(28%) saturate(388%)
+    hue-rotate(115deg) brightness(60%) contrast(90%); /* accent-color-secondary with brightness set to 50% */
+}
+
+.load-more:hover,
+.mbstobon-2 .drawer__inner__mastodon,
+.mbstobon-1 .drawer__inner__mastodon,
+.mbstobon-0 .drawer__inner__mastodon {
   background: inherit;
 }
 
-.account__action-bar__tab, .account__action-bar {
+.account__action-bar__tab,
+.account__action-bar {
   border: none;
 }
 
-.notification__filter-bar, .account__header__bar, .admin-wrapper .content-heading, .admin-wrapper .content h4, .tabs-bar__link:not(.active) {
+.notification__filter-bar,
+.account__header__bar,
+.admin-wrapper .content-heading,
+.admin-wrapper .content h4,
+.tabs-bar__link:not(.active) {
   border-bottom: none;
 }
 
-.dropdown-menu__separator, hr {
+.dropdown-menu__separator,
+hr {
   opacity: 0;
 }
-.compose-form .autosuggest-textarea__textarea, .compose-form .spoiler-input__input, .compose-panel .compose-form__autosuggest-wrapper, .mbstobon-3 .drawer__inner__mastodon {
+
+.compose-form .autosuggest-textarea__textarea,
+.compose-form .spoiler-input__input,
+.compose-panel .compose-form__autosuggest-wrapper,
+.mbstobon-3 .drawer__inner__mastodon {
   background: transparent;
 }
-.status, .account, .account__header__fields dl, .account__header__fields, .account__header__bio .account__header__fields, .glitch.local-settings__navigation__item {
+
+.status,
+.account,
+.account__header__fields dl,
+.account__header__fields,
+.account__header__bio .account__header__fields,
+.glitch.local-settings__navigation__item {
   border-top: none;
   border-bottom: none;
 }
 
-.report-modal__container, .report-modal__comment, .report-modal__comment .setting-text__wrapper {
-  border-color: rgba(0, 0, 0, 0) !important;
+.report-modal__container,
+.report-modal__comment,
+.report-modal__comment .setting-text__wrapper {
+  border-color: rgba(0, 0, 0, 0%) !important;
 }
 
 .drawer__inner__mastodon {
@@ -230,35 +476,47 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
 }
 
 /* misc */
-.column-link:hover, .dropdown-menu__item a:active, .dropdown-menu__item a:focus, .dropdown-menu__item a:hover, header strong.display-name__html {
+.column-link:hover,
+.dropdown-menu__item a:active,
+.dropdown-menu__item a:focus,
+.dropdown-menu__item a:hover,
+header strong.display-name__html {
   color: #fff !important;
 }
 
-.notification__filter-bar button.active, .account__section-headline .active {
+.notification__filter-bar button.active,
+.account__section-headline .active {
   border-bottom: 3px solid rgb(var(--accent-color));
 }
+
 .notification__filter-bar button:not(.active):hover {
   top: -3px;
 }
-.account__section-headline a.active::after, .account__section-headline a.active::before {
+
+.account__section-headline a.active::after,
+.account__section-headline a.active::before {
   display: none;
 }
 
 .account__header__extra__links a:hover {
   text-decoration: underline;
 }
-.account__section-headline a:hover, .confirmation-modal__cancel-button span {
+
+.account__section-headline a:hover,
+.confirmation-modal__cancel-button span {
   color: #fff;
 }
 
 .notification__filter-bar button.active::after {
   opacity: 0;
 }
+
 .notification__filter-bar button.active::before {
   opacity: 0;
 }
 
-.column-link__badge, .column-subheading {
+.column-link__badge,
+.column-subheading {
   background-color: rgb(var(--accent-color));
   animation-name: flash;
   animation-duration: 1s;
@@ -267,8 +525,13 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
 }
 
 @keyframes flash {
-  from {background-color: rgb(var(--accent-color));}
-  to {background-color: rgb(var(--accent-color-secondary));}
+  from {
+    background-color: rgb(var(--accent-color));
+  }
+
+  to {
+    background-color: rgb(var(--accent-color-secondary));
+  }
 }
 
 .reply-indicator {
@@ -276,55 +539,85 @@ button.icon-button.disabled i.fa-retweet, button.icon-button.disabled i.fa-lock 
   overflow-y: hidden;
   transition: max-height 1s;
 }
+
 .reply-indicator:hover {
   max-height: 100%;
 }
-.reply-indicator:before {
+
+.reply-indicator::before {
   content: 'Replying to:';
   font-size: 12px;
   color: rgb(var(--text-color-secondary));
 }
 
-.getting-started__footer p:after {
+.getting-started__footer p::after {
   content: ' Oat was here';
 }
 
-
-/* public/static css */
-/* for pages like /@username */
+/* public/static css for pages like /@username */
 
 .public-layout .public-account-header__tabs__tabs .counter.active::after {
   border-bottom-color: rgb(var(--accent-color));
 }
+
 .public-layout .public-account-bio .account__header__fields a {
   color: rgb(var(--accent-color));
 }
+
 .public-layout .header .nav-button {
   color: #fff;
   background-color: rgb(var(--accent-color));
 }
-.public-layout .header .nav-button:active, .public-layout .header .nav-button:focus, .public-layout .header .nav-button:hover {
-  background-color: rgb(var(--accent-color-bright))
+
+.public-layout .header .nav-button:active,
+.public-layout .header .nav-button:focus,
+.public-layout .header .nav-button:hover {
+  background-color: rgb(var(--accent-color-bright));
 }
-.public-layout .activity-stream .entry, .hero-widget__text, .table-of-contents {
+
+.public-layout .activity-stream .entry,
+.hero-widget__text,
+.table-of-contents {
   background-color: rgb(var(--background-color));
 }
+
 body {
   background-color: rgb(var(--app-background-color));
 }
+
 .public-layout .public-account-header__tabs__tabs .counter {
   border-right: none;
 }
-.public-layout .public-account-bio, .public-layout .public-account-header__bar::before, .public-layout .header, .directory__tag > a, .directory__tag > div, .directory__tag > a:active, .directory__tag > a:focus, .directory__tag > a:hover, .public-layout .header .brand:hover, .landing-page__call-to-action, .box-widget {
+
+.public-layout .public-account-bio,
+.public-layout .public-account-header__bar::before,
+.public-layout .header,
+.directory__tag > a,
+.directory__tag > div,
+.directory__tag > a:active,
+.directory__tag > a:focus,
+.directory__tag > a:hover,
+.public-layout .header .brand:hover,
+.landing-page__call-to-action,
+.box-widget {
   background-color: rgb(var(--background-color-brighter));
 }
-.public-layout .display-name, .status__relative-time time, .status__relative-time {
+
+.public-layout .display-name,
+.status__relative-time time,
+.status__relative-time {
   color: rgb(var(--text-color-secondary));
 }
-.rich-formatting, .rich-formatting p {
+
+.rich-formatting,
+.rich-formatting p {
   color: rgb(var(--text-color));
 }
-.rich-formatting table tbody tr, .rich-formatting table thead tr, .notification-follow, .notification-follow-request {
+
+.rich-formatting table tbody tr,
+.rich-formatting table thead tr,
+.notification-follow,
+.notification-follow-request {
   border-bottom: none;
 }
 
@@ -332,4 +625,3 @@ body {
 .search-popout em {
   color: rgb(var(--accent-color)) !important;
 }
-

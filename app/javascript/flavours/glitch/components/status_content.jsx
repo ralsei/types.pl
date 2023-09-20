@@ -97,7 +97,7 @@ class TranslateButton extends PureComponent {
     }
 
     return (
-      <button className='status__content__read-more-button' onClick={onClick}>
+      <button className='status__content__translate-button' onClick={onClick}>
         <FormattedMessage id='status.translate' defaultMessage='Translate' />
       </button>
     );
@@ -237,9 +237,9 @@ class StatusContent extends PureComponent {
 
   _renderMathJax() {
     try {
-      MathJax.typeset([this.contentsNode]);
+      MathJax.typeset([this.contentsNode]); // eslint-disable-line no-undef
     } catch(e) {
-      console.log(e);
+      console.warn(e);
     }
   }
 
