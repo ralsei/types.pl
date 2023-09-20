@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Api::V1::FollowRequestsController < Api::BaseController
-  before_action -> { doorkeeper_authorize! :follow, :'read:follows' }, only: :index
-  before_action -> { doorkeeper_authorize! :follow, :'write:follows' }, except: :index
+  before_action -> { doorkeeper_authorize! :follow, :read, :'read:follows' }, only: :index
+  before_action -> { doorkeeper_authorize! :follow, :write, :'write:follows' }, except: :index
   before_action :require_user!
   after_action :insert_pagination_headers, only: :index
 
@@ -13,7 +13,7 @@ class Api::V1::FollowRequestsController < Api::BaseController
 
   def authorize
     AuthorizeFollowService.new.call(account, current_account)
-    NotifyService.new.call(current_account, :follow, Follow.find_by(account: account, target_account: current_account))
+    LocalNotificationWorker.perform_async(current_account.id, Follow.find_by(account: account, target_account: current_account).id, 'Follow', 'follow')
     render json: account, serializer: REST::RelationshipSerializer, relationships: relationships
   end
 
@@ -53,15 +53,11 @@ class Api::V1::FollowRequestsController < Api::BaseController
   end
 
   def next_path
-    if records_continue?
-      api_v1_follow_requests_url pagination_params(max_id: pagination_max_id)
-    end
+    api_v1_follow_requests_url pagination_params(max_id: pagination_max_id) if records_continue?
   end
 
   def prev_path
-    unless @accounts.empty?
-      api_v1_follow_requests_url pagination_params(since_id: pagination_since_id)
-    end
+    api_v1_follow_requests_url pagination_params(since_id: pagination_since_id) unless @accounts.empty?
   end
 
   def pagination_max_id

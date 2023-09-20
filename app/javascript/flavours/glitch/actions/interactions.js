@@ -1,9 +1,15 @@
-import api from 'flavours/glitch/util/api';
+import api, { getLinks } from '../api';
+
+import { fetchRelationships } from './accounts';
 import { importFetchedAccounts, importFetchedStatus } from './importer';
 
 export const REBLOG_REQUEST = 'REBLOG_REQUEST';
 export const REBLOG_SUCCESS = 'REBLOG_SUCCESS';
 export const REBLOG_FAIL    = 'REBLOG_FAIL';
+
+export const REBLOGS_EXPAND_REQUEST = 'REBLOGS_EXPAND_REQUEST';
+export const REBLOGS_EXPAND_SUCCESS = 'REBLOGS_EXPAND_SUCCESS';
+export const REBLOGS_EXPAND_FAIL = 'REBLOGS_EXPAND_FAIL';
 
 export const FAVOURITE_REQUEST = 'FAVOURITE_REQUEST';
 export const FAVOURITE_SUCCESS = 'FAVOURITE_SUCCESS';
@@ -24,6 +30,10 @@ export const REBLOGS_FETCH_FAIL    = 'REBLOGS_FETCH_FAIL';
 export const FAVOURITES_FETCH_REQUEST = 'FAVOURITES_FETCH_REQUEST';
 export const FAVOURITES_FETCH_SUCCESS = 'FAVOURITES_FETCH_SUCCESS';
 export const FAVOURITES_FETCH_FAIL    = 'FAVOURITES_FETCH_FAIL';
+
+export const FAVOURITES_EXPAND_REQUEST = 'FAVOURITES_EXPAND_REQUEST';
+export const FAVOURITES_EXPAND_SUCCESS = 'FAVOURITES_EXPAND_SUCCESS';
+export const FAVOURITES_EXPAND_FAIL = 'FAVOURITES_EXPAND_FAIL';
 
 export const PIN_REQUEST = 'PIN_REQUEST';
 export const PIN_SUCCESS = 'PIN_SUCCESS';
@@ -54,7 +64,7 @@ export function reblog(status, visibility) {
       dispatch(reblogFail(status, error));
     });
   };
-};
+}
 
 export function unreblog(status) {
   return (dispatch, getState) => {
@@ -67,21 +77,21 @@ export function unreblog(status) {
       dispatch(unreblogFail(status, error));
     });
   };
-};
+}
 
 export function reblogRequest(status) {
   return {
     type: REBLOG_REQUEST,
     status: status,
   };
-};
+}
 
 export function reblogSuccess(status) {
   return {
     type: REBLOG_SUCCESS,
     status: status,
   };
-};
+}
 
 export function reblogFail(status, error) {
   return {
@@ -89,21 +99,21 @@ export function reblogFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function unreblogRequest(status) {
   return {
     type: UNREBLOG_REQUEST,
     status: status,
   };
-};
+}
 
 export function unreblogSuccess(status) {
   return {
     type: UNREBLOG_SUCCESS,
     status: status,
   };
-};
+}
 
 export function unreblogFail(status, error) {
   return {
@@ -111,7 +121,7 @@ export function unreblogFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function favourite(status) {
   return function (dispatch, getState) {
@@ -124,7 +134,7 @@ export function favourite(status) {
       dispatch(favouriteFail(status, error));
     });
   };
-};
+}
 
 export function unfavourite(status) {
   return (dispatch, getState) => {
@@ -137,21 +147,21 @@ export function unfavourite(status) {
       dispatch(unfavouriteFail(status, error));
     });
   };
-};
+}
 
 export function favouriteRequest(status) {
   return {
     type: FAVOURITE_REQUEST,
     status: status,
   };
-};
+}
 
 export function favouriteSuccess(status) {
   return {
     type: FAVOURITE_SUCCESS,
     status: status,
   };
-};
+}
 
 export function favouriteFail(status, error) {
   return {
@@ -159,21 +169,21 @@ export function favouriteFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function unfavouriteRequest(status) {
   return {
     type: UNFAVOURITE_REQUEST,
     status: status,
   };
-};
+}
 
 export function unfavouriteSuccess(status) {
   return {
     type: UNFAVOURITE_SUCCESS,
     status: status,
   };
-};
+}
 
 export function unfavouriteFail(status, error) {
   return {
@@ -181,7 +191,7 @@ export function unfavouriteFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function bookmark(status) {
   return function (dispatch, getState) {
@@ -194,7 +204,7 @@ export function bookmark(status) {
       dispatch(bookmarkFail(status, error));
     });
   };
-};
+}
 
 export function unbookmark(status) {
   return (dispatch, getState) => {
@@ -207,21 +217,21 @@ export function unbookmark(status) {
       dispatch(unbookmarkFail(status, error));
     });
   };
-};
+}
 
 export function bookmarkRequest(status) {
   return {
     type: BOOKMARK_REQUEST,
     status: status,
   };
-};
+}
 
 export function bookmarkSuccess(status) {
   return {
     type: BOOKMARK_SUCCESS,
     status: status,
   };
-};
+}
 
 export function bookmarkFail(status, error) {
   return {
@@ -229,21 +239,21 @@ export function bookmarkFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function unbookmarkRequest(status) {
   return {
     type: UNBOOKMARK_REQUEST,
     status: status,
   };
-};
+}
 
 export function unbookmarkSuccess(status) {
   return {
     type: UNBOOKMARK_SUCCESS,
     status: status,
   };
-};
+}
 
 export function unbookmarkFail(status, error) {
   return {
@@ -251,77 +261,171 @@ export function unbookmarkFail(status, error) {
     status: status,
     error: error,
   };
-};
+}
 
 export function fetchReblogs(id) {
   return (dispatch, getState) => {
     dispatch(fetchReblogsRequest(id));
 
     api(getState).get(`/api/v1/statuses/${id}/reblogged_by`).then(response => {
+      const next = getLinks(response).refs.find(link => link.rel === 'next');
       dispatch(importFetchedAccounts(response.data));
-      dispatch(fetchReblogsSuccess(id, response.data));
+      dispatch(fetchReblogsSuccess(id, response.data, next ? next.uri : null));
+      dispatch(fetchRelationships(response.data.map(item => item.id)));
     }).catch(error => {
       dispatch(fetchReblogsFail(id, error));
     });
   };
-};
+}
 
 export function fetchReblogsRequest(id) {
   return {
     type: REBLOGS_FETCH_REQUEST,
     id,
   };
-};
+}
 
-export function fetchReblogsSuccess(id, accounts) {
+export function fetchReblogsSuccess(id, accounts, next) {
   return {
     type: REBLOGS_FETCH_SUCCESS,
     id,
     accounts,
+    next,
   };
-};
+}
 
 export function fetchReblogsFail(id, error) {
   return {
     type: REBLOGS_FETCH_FAIL,
+    id,
     error,
   };
-};
+}
+
+export function expandReblogs(id) {
+  return (dispatch, getState) => {
+    const url = getState().getIn(['user_lists', 'reblogged_by', id, 'next']);
+    if (url === null) {
+      return;
+    }
+
+    dispatch(expandReblogsRequest(id));
+
+    api(getState).get(url).then(response => {
+      const next = getLinks(response).refs.find(link => link.rel === 'next');
+
+      dispatch(importFetchedAccounts(response.data));
+      dispatch(expandReblogsSuccess(id, response.data, next ? next.uri : null));
+      dispatch(fetchRelationships(response.data.map(item => item.id)));
+    }).catch(error => dispatch(expandReblogsFail(id, error)));
+  };
+}
+
+export function expandReblogsRequest(id) {
+  return {
+    type: REBLOGS_EXPAND_REQUEST,
+    id,
+  };
+}
+
+export function expandReblogsSuccess(id, accounts, next) {
+  return {
+    type: REBLOGS_EXPAND_SUCCESS,
+    id,
+    accounts,
+    next,
+  };
+}
+
+export function expandReblogsFail(id, error) {
+  return {
+    type: REBLOGS_EXPAND_FAIL,
+    id,
+    error,
+  };
+}
 
 export function fetchFavourites(id) {
   return (dispatch, getState) => {
     dispatch(fetchFavouritesRequest(id));
 
     api(getState).get(`/api/v1/statuses/${id}/favourited_by`).then(response => {
+      const next = getLinks(response).refs.find(link => link.rel === 'next');
       dispatch(importFetchedAccounts(response.data));
-      dispatch(fetchFavouritesSuccess(id, response.data));
+      dispatch(fetchFavouritesSuccess(id, response.data, next ? next.uri : null));
+      dispatch(fetchRelationships(response.data.map(item => item.id)));
     }).catch(error => {
       dispatch(fetchFavouritesFail(id, error));
     });
   };
-};
+}
 
 export function fetchFavouritesRequest(id) {
   return {
     type: FAVOURITES_FETCH_REQUEST,
     id,
   };
-};
+}
 
-export function fetchFavouritesSuccess(id, accounts) {
+export function fetchFavouritesSuccess(id, accounts, next) {
   return {
     type: FAVOURITES_FETCH_SUCCESS,
     id,
     accounts,
+    next,
   };
-};
+}
 
 export function fetchFavouritesFail(id, error) {
   return {
     type: FAVOURITES_FETCH_FAIL,
+    id,
     error,
   };
-};
+}
+
+export function expandFavourites(id) {
+  return (dispatch, getState) => {
+    const url = getState().getIn(['user_lists', 'favourited_by', id, 'next']);
+    if (url === null) {
+      return;
+    }
+
+    dispatch(expandFavouritesRequest(id));
+
+    api(getState).get(url).then(response => {
+      const next = getLinks(response).refs.find(link => link.rel === 'next');
+
+      dispatch(importFetchedAccounts(response.data));
+      dispatch(expandFavouritesSuccess(id, response.data, next ? next.uri : null));
+      dispatch(fetchRelationships(response.data.map(item => item.id)));
+    }).catch(error => dispatch(expandFavouritesFail(id, error)));
+  };
+}
+
+export function expandFavouritesRequest(id) {
+  return {
+    type: FAVOURITES_EXPAND_REQUEST,
+    id,
+  };
+}
+
+export function expandFavouritesSuccess(id, accounts, next) {
+  return {
+    type: FAVOURITES_EXPAND_SUCCESS,
+    id,
+    accounts,
+    next,
+  };
+}
+
+export function expandFavouritesFail(id, error) {
+  return {
+    type: FAVOURITES_EXPAND_FAIL,
+    id,
+    error,
+  };
+}
 
 export function pin(status) {
   return (dispatch, getState) => {
@@ -334,21 +438,21 @@ export function pin(status) {
       dispatch(pinFail(status, error));
     });
   };
-};
+}
 
 export function pinRequest(status) {
   return {
     type: PIN_REQUEST,
     status,
   };
-};
+}
 
 export function pinSuccess(status) {
   return {
     type: PIN_SUCCESS,
     status,
   };
-};
+}
 
 export function pinFail(status, error) {
   return {
@@ -356,7 +460,7 @@ export function pinFail(status, error) {
     status,
     error,
   };
-};
+}
 
 export function unpin (status) {
   return (dispatch, getState) => {
@@ -369,21 +473,21 @@ export function unpin (status) {
       dispatch(unpinFail(status, error));
     });
   };
-};
+}
 
 export function unpinRequest(status) {
   return {
     type: UNPIN_REQUEST,
     status,
   };
-};
+}
 
 export function unpinSuccess(status) {
   return {
     type: UNPIN_SUCCESS,
     status,
   };
-};
+}
 
 export function unpinFail(status, error) {
   return {
@@ -391,4 +495,4 @@ export function unpinFail(status, error) {
     status,
     error,
   };
-};
+}

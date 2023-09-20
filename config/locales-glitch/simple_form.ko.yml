@@ -1,6 +1,7 @@
 ---
 ko:
   simple_form:
+    glitch_only: 글리치
     hints:
       defaults:
         setting_default_content_type_html: 게시물을 작성할 때, 형식을 지정하지 않았다면, 생 HTML이라고 가정합니다
@@ -15,6 +16,9 @@ ko:
         setting_default_content_type_markdown: 마크다운
         setting_default_content_type_plain: 일반 텍스트
         setting_favourite_modal: 관심글을 지정할 때 확인 창을 띄웁니다(글리치 풍미에만 적용됨)
-        setting_hide_followers_count: 내 팔로워 수 숨기기
         setting_skin: 스킨
         setting_system_emoji_font: 에모지에 시스템 기본 폰트 적용하기 (글리치 풍미에만 적용됨)
+      notification_emails:
+        trending_link: 새로 유행중인 링크에 대한 리뷰가 필요할 때
+        trending_status: 새로 유행중인 게시물에 대한 리뷰가 필요할 때
+        trending_tag: 새로 유행중인 해시태그에 대한 리뷰가 필요할 때

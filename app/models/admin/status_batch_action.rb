@@ -6,7 +6,14 @@ class Admin::StatusBatchAction
   include Authorization
 
   attr_accessor :current_account, :type,
-                :status_ids, :report_id
+                :status_ids, :report_id,
+                :text
+
+  attr_reader :send_email_notification
+
+  def send_email_notification=(value)
+    @send_email_notification = ActiveModel::Type::Boolean.new.cast(value)
+  end
 
   def save!
     process_action!
@@ -15,7 +22,7 @@ class Admin::StatusBatchAction
   private
 
   def statuses
-    Status.with_discarded.where(id: status_ids)
+    Status.with_discarded.where(id: status_ids).reorder(nil)
   end
 
   def process_action!
@@ -24,6 +31,8 @@ class Admin::StatusBatchAction
     case type
     when 'delete'
       handle_delete!
+    when 'mark_as_sensitive'
+      handle_mark_as_sensitive!
     when 'report'
       handle_report!
     when 'remove_from_report'
@@ -32,11 +41,11 @@ class Admin::StatusBatchAction
   end
 
   def handle_delete!
-    statuses.each { |status| authorize(status, :destroy?) }
+    statuses.each { |status| authorize([:admin, status], :destroy?) }
 
     ApplicationRecord.transaction do
       statuses.each do |status|
-        status.discard
+        status.discard_with_reblogs
         log_action(:destroy, status)
       end
 
@@ -49,19 +58,55 @@ class Admin::StatusBatchAction
         action: :delete_statuses,
         account: current_account,
         report: report,
-        status_ids: status_ids
+        status_ids: status_ids,
+        text: text
       )
 
       statuses.each { |status| Tombstone.find_or_create_by(uri: status.uri, account: status.account, by_moderator: true) } unless target_account.local?
     end
 
-    UserMailer.warning(target_account.user, @warning).deliver_later! if target_account.local?
+    UserMailer.warning(target_account.user, @warning).deliver_later! if warnable?
     RemovalWorker.push_bulk(status_ids) { |status_id| [status_id, { 'preserve' => target_account.local?, 'immediate' => !target_account.local? }] }
+  end
+
+  def handle_mark_as_sensitive!
+    representative_account = Account.representative
+
+    # Can't use a transaction here because UpdateStatusService queues
+    # Sidekiq jobs
+    statuses.includes(:media_attachments, :preview_cards).find_each do |status|
+      next if status.discarded? || !(status.with_media? || status.with_preview_card?)
+
+      authorize([:admin, status], :update?)
+
+      if target_account.local?
+        UpdateStatusService.new.call(status, representative_account.id, sensitive: true)
+      else
+        status.update(sensitive: true)
+      end
+
+      log_action(:update, status)
+
+      if with_report?
+        report.resolve!(current_account)
+        log_action(:resolve, report)
+      end
+    end
+
+    @warning = target_account.strikes.create!(
+      action: :mark_statuses_as_sensitive,
+      account: current_account,
+      report: report,
+      status_ids: status_ids,
+      text: text
+    )
+
+    UserMailer.warning(target_account.user, @warning).deliver_later! if warnable?
   end
 
   def handle_report!
     @report = Report.new(report_params) unless with_report?
-    @report.status_ids = (@report.status_ids + status_ids.map(&:to_i)).uniq
+    @report.status_ids = (@report.status_ids + allowed_status_ids).uniq
     @report.save!
 
     @report_id = @report.id
@@ -82,11 +127,19 @@ class Admin::StatusBatchAction
     !report.nil?
   end
 
+  def warnable?
+    send_email_notification && target_account.local?
+  end
+
   def target_account
     @target_account ||= statuses.first.account
   end
 
   def report_params
     { account: current_account, target_account: target_account }
+  end
+
+  def allowed_status_ids
+    Admin::AccountStatusesFilter.new(@report.target_account, current_account).results.with_discarded.where(id: status_ids).pluck(:id)
   end
 end

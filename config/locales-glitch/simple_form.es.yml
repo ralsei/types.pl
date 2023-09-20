@@ -1,6 +1,7 @@
 ---
 es:
   simple_form:
+    glitch_only: glitch-soc
     hints:
       defaults:
         setting_default_content_type_html: Al escribir toots, asume que estás escritos en HTML, a menos que se especifique lo contrario
@@ -15,6 +16,9 @@ es:
         setting_default_content_type_markdown: Markdown
         setting_default_content_type_plain: Sin formato
         setting_favourite_modal: Mostrar diálogo de confirmación antes de marcar como favorito (sólo aplica a la edición Glich)
-        setting_hide_followers_count: Ocultar tu conteo de seguidorxs
         setting_skin: Diseño
         setting_system_emoji_font: Usar la fuente predeterminada del sistema para emojis (sólo aplica a la edición Glitch)
+      notification_emails:
+        trending_link: Un vínculo en tendencia requiere revisión
+        trending_status: Una publicación en tendencia requiere revisión
+        trending_tag: Una etiqueta en tendencia requiere revisión

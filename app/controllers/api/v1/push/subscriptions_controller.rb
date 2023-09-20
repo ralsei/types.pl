@@ -6,6 +6,10 @@ class Api::V1::Push::SubscriptionsController < Api::BaseController
   before_action :set_push_subscription
   before_action :check_push_subscription, only: [:show, :update]
 
+  def show
+    render json: @push_subscription, serializer: REST::WebPushSubscriptionSerializer
+  end
+
   def create
     @push_subscription&.destroy!
 
@@ -18,10 +22,6 @@ class Api::V1::Push::SubscriptionsController < Api::BaseController
       access_token_id: doorkeeper_token.id
     )
 
-    render json: @push_subscription, serializer: REST::WebPushSubscriptionSerializer
-  end
-
-  def show
     render json: @push_subscription, serializer: REST::WebPushSubscriptionSerializer
   end
 
@@ -52,6 +52,6 @@ class Api::V1::Push::SubscriptionsController < Api::BaseController
   def data_params
     return {} if params[:data].blank?
 
-    params.require(:data).permit(:policy, alerts: [:follow, :follow_request, :favourite, :reblog, :mention, :poll, :status])
+    params.require(:data).permit(:policy, alerts: Notification::TYPES)
   end
 end

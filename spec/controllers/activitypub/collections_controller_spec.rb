@@ -2,15 +2,15 @@
 
 require 'rails_helper'
 
-RSpec.describe ActivityPub::CollectionsController, type: :controller do
+RSpec.describe ActivityPub::CollectionsController do
   let!(:account) { Fabricate(:account) }
   let!(:private_pinned) { Fabricate(:status, account: account, text: 'secret private stuff', visibility: :private) }
   let(:remote_account) { nil }
 
-  shared_examples 'cachable response' do
+  shared_examples 'cacheable response' do
     it 'does not set cookies' do
       expect(response.cookies).to be_empty
-      expect(response.headers['Set-Cookies']).to be nil
+      expect(response.headers['Set-Cookies']).to be_nil
     end
 
     it 'does not set sessions' do
@@ -24,7 +24,7 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
   end
 
   before do
-    allow(controller).to receive(:signed_request_account).and_return(remote_account)
+    allow(controller).to receive(:signed_request_actor).and_return(remote_account)
 
     Fabricate(:status_pin, account: account)
     Fabricate(:status_pin, account: account)
@@ -35,10 +35,10 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
   describe 'GET #show' do
     context 'when id is "featured"' do
       context 'without signature' do
-        let(:remote_account) { nil }
-
         subject(:response) { get :show, params: { id: 'featured', account_username: account.username } }
-        subject(:body) { body_as_json }
+
+        let(:body) { body_as_json }
+        let(:remote_account) { nil }
 
         it 'returns http success' do
           expect(response).to have_http_status(200)
@@ -48,7 +48,7 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
           expect(response.media_type).to eq 'application/activity+json'
         end
 
-        it_behaves_like 'cachable response'
+        it_behaves_like 'cacheable response'
 
         it 'returns orderedItems with pinned statuses' do
           expect(body[:orderedItems]).to be_an Array
@@ -60,7 +60,7 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
         end
 
         it 'does not include contents of private pinned status' do
-          expect(response.body).not_to include(private_pinned.text)
+          expect(response.body).to_not include(private_pinned.text)
         end
 
         context 'when account is permanently suspended' do
@@ -88,7 +88,7 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
       context 'with signature' do
         let(:remote_account) { Fabricate(:account, domain: 'example.com') }
 
-        context do
+        context 'when getting a featured resource' do
           before do
             get :show, params: { id: 'featured', account_username: account.username }
           end
@@ -101,7 +101,7 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
             expect(response.media_type).to eq 'application/activity+json'
           end
 
-          it_behaves_like 'cachable response'
+          it_behaves_like 'cacheable response'
 
           it 'returns orderedItems with pinned statuses' do
             json = body_as_json
@@ -115,11 +115,11 @@ RSpec.describe ActivityPub::CollectionsController, type: :controller do
           end
 
           it 'does not include contents of private pinned status' do
-            expect(response.body).not_to include(private_pinned.text)
+            expect(response.body).to_not include(private_pinned.text)
           end
         end
 
-        context 'in authorized fetch mode' do
+        context 'with authorized fetch mode' do
           before do
             allow(controller).to receive(:authorized_fetch_mode?).and_return(true)
           end

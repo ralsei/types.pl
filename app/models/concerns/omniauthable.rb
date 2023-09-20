@@ -4,7 +4,7 @@ module Omniauthable
   extend ActiveSupport::Concern
 
   TEMP_EMAIL_PREFIX = 'change@me'
-  TEMP_EMAIL_REGEX  = /\A#{TEMP_EMAIL_PREFIX}/.freeze
+  TEMP_EMAIL_REGEX  = /\A#{TEMP_EMAIL_PREFIX}/
 
   included do
     devise :omniauthable
@@ -13,7 +13,7 @@ module Omniauthable
       Devise.omniauth_configs.keys
     end
 
-    def email_verified?
+    def email_present?
       email && email !~ TEMP_EMAIL_REGEX
     end
   end
@@ -40,16 +40,14 @@ module Omniauthable
     end
 
     def create_for_oauth(auth)
-      # Check if the user exists with provided email if the provider gives us a
-      # verified email.  If no verified email was provided or the user already
-      # exists, we assign a temporary email and ask the user to verify it on
+      # Check if the user exists with provided email. If no email was provided,
+      # we assign a temporary email and ask the user to verify it on
       # the next step via Auth::SetupController.show
 
       strategy          = Devise.omniauth_configs[auth.provider.to_sym].strategy
       assume_verified   = strategy&.security&.assume_email_is_verified
-      email_is_verified = auth.info.verified || auth.info.verified_email || assume_verified
+      email_is_verified = auth.info.verified || auth.info.verified_email || auth.info.email_verified || assume_verified
       email             = auth.info.verified_email || auth.info.email
-      email             = nil unless email_is_verified
 
       user = User.find_by(email: email) if email_is_verified
 
@@ -57,8 +55,13 @@ module Omniauthable
 
       user = User.new(user_params_from_auth(email, auth))
 
-      user.account.avatar_remote_url = auth.info.image if /\A#{URI::DEFAULT_PARSER.make_regexp(%w(http https))}\z/.match?(auth.info.image)
-      user.skip_confirmation!
+      begin
+        user.account.avatar_remote_url = auth.info.image if /\A#{URI::DEFAULT_PARSER.make_regexp(%w(http https))}\z/.match?(auth.info.image)
+      rescue Mastodon::UnexpectedResponseError
+        user.account.avatar_remote_url = nil
+      end
+
+      user.confirm! if email_is_verified
       user.save!
       user
     end
@@ -71,8 +74,8 @@ module Omniauthable
         agreement: true,
         external: true,
         account_attributes: {
-          username: ensure_unique_username(auth.uid),
-          display_name: auth.info.full_name || [auth.info.first_name, auth.info.last_name].join(' '),
+          username: ensure_unique_username(ensure_valid_username(auth.uid)),
+          display_name: auth.info.full_name || auth.info.name || [auth.info.first_name, auth.info.last_name].join(' '),
         },
       }
     end
@@ -87,6 +90,12 @@ module Omniauthable
       end
 
       username
+    end
+
+    def ensure_valid_username(starting_username)
+      starting_username = starting_username.split('@')[0]
+      temp_username = starting_username.gsub(/[^a-z0-9_]+/i, '')
+      temp_username.truncate(30, omission: '')
     end
   end
 end

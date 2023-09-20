@@ -8,11 +8,11 @@ class Admin::Metrics::Dimension::SpaceUsageDimension < Admin::Metrics::Dimension
     'space_usage'
   end
 
-  def data
+  protected
+
+  def perform_query
     [postgresql_size, redis_size, media_size]
   end
-
-  private
 
   def postgresql_size
     value = ActiveRecord::Base.connection.execute('SELECT pg_database_size(current_database())').first['pg_database_size']
@@ -59,12 +59,10 @@ class Admin::Metrics::Dimension::SpaceUsageDimension < Admin::Metrics::Dimension
   end
 
   def redis_info
-    @redis_info ||= begin
-      if redis.is_a?(Redis::Namespace)
-        redis.redis.info
-      else
-        redis.info
-      end
-    end
+    @redis_info ||= if redis.is_a?(Redis::Namespace)
+                      redis.redis.info
+                    else
+                      redis.info
+                    end
   end
 end

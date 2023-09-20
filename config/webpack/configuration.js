@@ -1,10 +1,11 @@
 // Common configuration for webpacker loaded from config/webpacker.yml
 
+const { lstatSync, readFileSync } = require('fs');
 const { basename, dirname, extname, join, resolve } = require('path');
 const { env } = require('process');
-const { load } = require('js-yaml');
-const { lstatSync, readFileSync } = require('fs');
+
 const glob = require('glob');
+const { load } = require('js-yaml');
 
 const configPath = resolve('config', 'webpacker.yml');
 const settings = load(readFileSync(configPath), 'utf8')[env.RAILS_ENV || env.NODE_ENV];
@@ -21,8 +22,7 @@ const core = function () {
   return data.pack ? data : {};
 }();
 
-for (let i = 0; i < flavourFiles.length; i++) {
-  const flavourFile = flavourFiles[i];
+flavourFiles.forEach((flavourFile) => {
   const data = load(readFileSync(flavourFile), 'utf8');
   data.name = basename(dirname(flavourFile));
   data.skin = {};
@@ -35,27 +35,25 @@ for (let i = 0; i < flavourFiles.length; i++) {
   if (data.pack && typeof data.pack === 'object') {
     flavours[data.name] = data;
   }
-}
+});
 
-for (let i = 0; i < skinFiles.length; i++) {
-  const skinFile = skinFiles[i];
+skinFiles.forEach((skinFile) => {
   let skin = basename(skinFile);
   const name = basename(dirname(skinFile));
   if (!flavours[name]) {
-    continue;
+    return;
   }
   const data = flavours[name].skin;
   if (lstatSync(skinFile).isDirectory()) {
     data[skin] = {};
     const skinPacks = glob.sync(join(skinFile, '*.{css,scss}'));
-    for (let j = 0; j < skinPacks.length; j++) {
-      const pack = skinPacks[j];
+    skinPacks.forEach((pack) => {
       data[skin][basename(pack, extname(pack))] = pack;
-    }
+    });
   } else if ((skin = skin.match(/^(.*)\.s?css$/i))) {
     data[skin[1]] = { common: skinFile };
   }
-}
+});
 
 const output = {
   path: resolve('public', settings.public_output_path),

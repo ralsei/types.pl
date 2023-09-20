@@ -10,10 +10,13 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   before_action :configure_sign_up_params, only: [:create]
   before_action :set_pack
   before_action :set_sessions, only: [:edit, :update]
+  before_action :set_strikes, only: [:edit, :update]
   before_action :set_instance_presenter, only: [:new, :create, :update]
   before_action :set_body_classes, only: [:new, :create, :edit, :update]
   before_action :require_not_suspended!, only: [:update]
   before_action :set_cache_headers, only: [:edit, :update]
+  before_action :set_rules, only: :new
+  before_action :require_rules_acceptance!, only: :new
   before_action :set_registration_form_time, only: :new
 
   skip_before_action :require_functional!, only: [:edit, :update]
@@ -22,16 +25,14 @@ class Auth::RegistrationsController < Devise::RegistrationsController
     super(&:build_invite_request)
   end
 
-  def destroy
-    not_found
-  end
-
   def update
     super do |resource|
-      if resource.saved_change_to_encrypted_password?
-        resource.clear_other_sessions(current_session.session_id)
-      end
+      resource.clear_other_sessions(current_session.session_id) if resource.saved_change_to_encrypted_password?
     end
+  end
+
+  def destroy
+    not_found
   end
 
   protected
@@ -46,7 +47,7 @@ class Auth::RegistrationsController < Devise::RegistrationsController
     super(hash)
 
     resource.locale                 = I18n.locale
-    resource.invite_code            = params[:invite_code] if resource.invite_code.blank?
+    resource.invite_code            = @invite&.code if resource.invite_code.blank?
     resource.registration_form_time = session[:registration_form_time]
     resource.sign_up_ip             = request.remote_ip
 
@@ -54,8 +55,8 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   end
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up) do |u|
-      u.permit({ account_attributes: [:username], invite_request_attributes: [:text] }, :email, :password, :password_confirmation, :invite_code, :agreement, :website, :confirm_password)
+    devise_parameter_sanitizer.permit(:sign_up) do |user_params|
+      user_params.permit({ account_attributes: [:username, :display_name], invite_request_attributes: [:text] }, :email, :password, :password_confirmation, :invite_code, :agreement, :website, :confirm_password)
     end
   end
 
@@ -82,7 +83,7 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   end
 
   def check_enabled_registrations
-    redirect_to root_path if single_user_mode? || omniauth_only? || !allowed_registrations?
+    redirect_to root_path if single_user_mode? || omniauth_only? || !allowed_registrations? || ip_blocked?
   end
 
   def allowed_registrations?
@@ -91,6 +92,10 @@ class Auth::RegistrationsController < Devise::RegistrationsController
 
   def omniauth_only?
     ENV['OMNIAUTH_ONLY'] == 'true'
+  end
+
+  def ip_blocked?
+    IpBlock.where(severity: :sign_up_block).where('ip >>= ?', request.remote_ip.to_s).exists?
   end
 
   def invite_code
@@ -116,8 +121,10 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   end
 
   def set_invite
-    invite = invite_code.present? ? Invite.find_by(code: invite_code) : nil
-    @invite = invite&.valid_for_use? ? invite : nil
+    @invite = begin
+      invite = Invite.find_by(code: invite_code) if invite_code.present?
+      invite if invite&.valid_for_use?
+    end
   end
 
   def determine_layout
@@ -125,14 +132,31 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   end
 
   def set_sessions
-    @sessions = current_user.session_activations
+    @sessions = current_user.session_activations.order(updated_at: :desc)
+  end
+
+  def set_strikes
+    @strikes = current_account.strikes.recent.latest
   end
 
   def require_not_suspended!
     forbidden if current_account.suspended?
   end
 
+  def set_rules
+    @rules = Rule.ordered
+  end
+
+  def require_rules_acceptance!
+    return if @rules.empty? || (session[:accept_token].present? && params[:accept] == session[:accept_token])
+
+    @accept_token = session[:accept_token] = SecureRandom.hex
+    @invite_code  = invite_code
+
+    set_locale { render :rules }
+  end
+
   def set_cache_headers
-    response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+    response.cache_control.replace(private: true, no_store: true)
   end
 end

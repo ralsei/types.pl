@@ -20,7 +20,7 @@ module ThemingConcern
   end
 
   def valid_pack_data?(data, pack_name)
-    data['pack'].is_a?(Hash) && [String, Hash].any? { |c| data['pack'][pack_name].is_a?(c) }
+    data['pack'].is_a?(Hash) && data['pack'][pack_name].present?
   end
 
   def nil_pack(data)
@@ -75,7 +75,7 @@ module ThemingConcern
     end
 
     fallbacks.each do |fallback|
-      return resolve_pack(Themes.instance.flavour(fallback), pack_name) if Themes.instance.flavour(fallback)
+      return resolve_pack(Themes.instance.flavour(fallback), pack_name, skin) if Themes.instance.flavour(fallback)
     end
 
     nil

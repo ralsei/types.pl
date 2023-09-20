@@ -9,12 +9,14 @@ class Admin::Metrics::Dimension
     software_versions: Admin::Metrics::Dimension::SoftwareVersionsDimension,
     tag_servers: Admin::Metrics::Dimension::TagServersDimension,
     tag_languages: Admin::Metrics::Dimension::TagLanguagesDimension,
+    instance_accounts: Admin::Metrics::Dimension::InstanceAccountsDimension,
+    instance_languages: Admin::Metrics::Dimension::InstanceLanguagesDimension,
   }.freeze
 
   def self.retrieve(dimension_keys, start_at, end_at, limit, params)
-    Array(dimension_keys).map do |key|
+    Array(dimension_keys).filter_map do |key|
       klass = DIMENSIONS[key.to_sym]
       klass&.new(start_at, end_at, limit, klass.with_params? ? params.require(key.to_sym) : nil)
-    end.compact
+    end
   end
 end

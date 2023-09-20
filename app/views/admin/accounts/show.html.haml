@@ -1,5 +1,5 @@
 - content_for :page_title do
-  = @account.acct
+  = @account.pretty_acct
 
 - if @account.instance_actor?
   .flash-message.notice
@@ -16,16 +16,16 @@
         .account__header__fields
           - fields.each do |field|
             %dl
-              %dt.emojify{ title: field.name }= Formatter.instance.format_field(account, field.name, custom_emojify: true)
+              %dt.emojify{ title: field.name }= prerender_custom_emojis(h(field.name), account.emojis)
               %dd{ title: field.value, class: custom_field_classes(field) }
                 - if field.verified?
                   %span.verified__mark{ title: t('accounts.link_verified_on', date: l(field.verified_at)) }
                     = fa_icon 'check'
-                = Formatter.instance.format_field(account, field.value, custom_emojify: true)
+                = prerender_custom_emojis(account_field_value_format(field, with_rel_me: false), account.emojis)
 
     - if account.note.present?
       %div
-        .account__header__content.emojify= Formatter.instance.simplified_format(account, custom_emojify: true)
+        .account__header__content.emojify= prerender_custom_emojis(account_bio_format(account), account.emojis)
 
 .dashboard__counters.admin-account-counters
   %div
@@ -37,7 +37,7 @@
       .dashboard__counters__num= number_to_human_size @account.media_attachments.sum('file_file_size')
       .dashboard__counters__label= t 'admin.accounts.media_attachments'
   %div
-    = link_to admin_account_relationships_path(@account.id, location: 'local', relationship: 'followed_by') do
+    = link_to admin_account_relationships_path(@account.id, location: @account.local? ? nil : 'local', relationship: 'followed_by') do
       .dashboard__counters__num= number_with_delimiter @account.local_followers_count
       .dashboard__counters__label= t 'admin.accounts.followers'
   %div
@@ -92,10 +92,13 @@
 
           %tr
             %th= t('admin.accounts.role')
-            %td= t("admin.accounts.roles.#{@account.user&.role}")
             %td
-              = table_link_to 'angle-double-up', t('admin.accounts.promote'), promote_admin_account_role_path(@account.id), method: :post, data: { confirm: t('admin.accounts.are_you_sure') } if can?(:promote, @account.user)
-              = table_link_to 'angle-double-down', t('admin.accounts.demote'), demote_admin_account_role_path(@account.id), method: :post, data: { confirm: t('admin.accounts.are_you_sure') } if can?(:demote, @account.user)
+              - if @account.user_role&.everyone?
+                = t('admin.accounts.no_role_assigned')
+              - else
+                = @account.user_role&.name
+            %td
+              = table_link_to 'vcard', t('admin.accounts.change_role.label'), admin_user_role_path(@account.user) if can?(:change_role, @account.user)
 
           %tr
             %th{ rowspan: can?(:create, :email_domain_block) ? 3 : 2 }= t('admin.accounts.email')
@@ -128,17 +131,11 @@
             %td{ rowspan: can?(:reset_password, @account.user) ? 2 : 1 }
               - if @account.user&.two_factor_enabled?
                 = t 'admin.accounts.security_measures.password_and_2fa'
-              - elsif @account.user&.skip_sign_in_token?
-                = t 'admin.accounts.security_measures.only_password'
               - else
-                = t 'admin.accounts.security_measures.password_and_sign_in_token'
+                = t 'admin.accounts.security_measures.only_password'
             %td
               - if @account.user&.two_factor_enabled?
                 = table_link_to 'unlock', t('admin.accounts.disable_two_factor_authentication'), admin_user_two_factor_authentication_path(@account.user.id), method: :delete if can?(:disable_2fa, @account.user)
-              - elsif @account.user&.skip_sign_in_token?
-                = table_link_to 'lock', t('admin.accounts.enable_sign_in_token_auth'), admin_user_sign_in_token_authentication_path(@account.user.id), method: :post if can?(:enable_sign_in_token_auth, @account.user)
-              - else
-                = table_link_to 'unlock', t('admin.accounts.disable_sign_in_token_auth'), admin_user_sign_in_token_authentication_path(@account.user.id), method: :delete if can?(:disable_sign_in_token_auth, @account.user)
 
           - if can?(:reset_password, @account.user)
             %tr
@@ -147,7 +144,7 @@
 
           %tr
             %th= t('simple_form.labels.defaults.locale')
-            %td= @account.user_locale
+            %td= standard_locale_name(@account.user_locale)
             %td
 
           %tr
@@ -190,7 +187,7 @@
             %th= t('admin.accounts.shared_inbox_url')
             %td
               = @account.shared_inbox_url
-              = fa_icon DeliveryFailureTracker.available?(@account.shared_inbox_url) ? 'check': 'times'
+              = fa_icon DeliveryFailureTracker.available?(@account.shared_inbox_url) ? 'check' : 'times'
             %td
               - if @domain_block.nil?
                 = table_link_to 'ban', t('admin.domain_blocks.add_new'), new_admin_domain_block_path(_domain: @account.domain)
@@ -198,14 +195,18 @@
   - if @account.suspended?
     %hr.spacer/
 
-    %p.muted-hint= @deletion_request.present? ? t('admin.accounts.suspension_reversible_hint_html', date: content_tag(:strong, l(@deletion_request.due_at.to_date))) : t('admin.accounts.suspension_irreversible')
+    - if @account.suspension_origin_remote?
+      %p.muted-hint= @deletion_request.present? ? t('admin.accounts.remote_suspension_reversible_hint_html', date: content_tag(:strong, l(@deletion_request.due_at.to_date))) : t('admin.accounts.remote_suspension_irreversible')
+    - else
+      %p.muted-hint= @deletion_request.present? ? t('admin.accounts.suspension_reversible_hint_html', date: content_tag(:strong, l(@deletion_request.due_at.to_date))) : t('admin.accounts.suspension_irreversible')
 
     = link_to t('admin.accounts.undo_suspension'), unsuspend_admin_account_path(@account.id), method: :post, class: 'button' if can?(:unsuspend, @account)
+    = link_to t('admin.accounts.redownload'), redownload_admin_account_path(@account.id), method: :post, class: 'button' if can?(:redownload, @account) && @account.suspension_origin_remote?
 
     - if @deletion_request.present?
       = link_to t('admin.accounts.delete'), admin_account_path(@account.id), method: :delete, class: 'button button--destructive', data: { confirm: t('admin.accounts.are_you_sure') } if can?(:destroy, @account)
   - else
-    %div.action-buttons
+    .action-buttons
       %div
         - if @account.local? && @account.user_approved?
           = link_to t('admin.accounts.warn'), new_admin_account_action_path(@account.id, type: 'none'), class: 'button' if can?(:warn, @account)
@@ -246,17 +247,28 @@
   %hr.spacer/
 
   - unless @warnings.empty?
-    = render @warnings
+
+    %h3= t 'admin.accounts.previous_strikes'
+
+    %p= t('admin.accounts.previous_strikes_description_html', count: @account.previous_strikes_count)
+
+    .account-strikes
+      = render @warnings
 
     %hr.spacer/
 
-  = render @moderation_notes
+  %h3= t 'admin.reports.notes.title'
+
+  %p= t 'admin.reports.notes_description_html'
+
+  .report-notes
+    = render partial: 'admin/report_notes/report_note', collection: @moderation_notes
 
   = simple_form_for @account_moderation_note, url: admin_account_moderation_notes_path do |f|
-    = render 'shared/error_messages', object: @account_moderation_note
-
-    = f.input :content, placeholder: t('admin.reports.notes.placeholder'), rows: 6
     = f.hidden_field :target_account_id
+
+    .field-group
+      = f.input :content, placeholder: t('admin.reports.notes.placeholder'), rows: 6
 
     .actions
       = f.button :button, t('admin.account_moderation_notes.create'), type: :submit
@@ -264,9 +276,9 @@
   %hr.spacer/
 
   - if @account.user&.invite_request&.text&.present?
-    %div.speech-bubble
-      %div.speech-bubble__bubble
+    .speech-bubble
+      .speech-bubble__bubble
         = @account.user&.invite_request&.text
-      %div.speech-bubble__owner
+      .speech-bubble__owner
         = admin_account_link_to @account
         = t('admin.accounts.invite_request_text')

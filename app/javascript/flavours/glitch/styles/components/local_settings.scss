@@ -11,19 +11,21 @@
   max-height: 450px;
   overflow: hidden;
 
-  label, legend {
+  label,
+  legend {
     display: block;
     font-size: 14px;
   }
 
-  .boolean label, .radio_buttons label {
+  .boolean label,
+  .radio_buttons label {
     position: relative;
-    padding-left: 28px;
+    padding-inline-start: 28px;
     padding-top: 3px;
 
     input {
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       top: 0;
     }
   }
@@ -54,15 +56,21 @@
   padding: 15px 20px;
   color: inherit;
   background: lighten($ui-secondary-color, 8%);
+  border: 0;
   border-bottom: 1px $ui-secondary-color solid;
   cursor: pointer;
   text-decoration: none;
   outline: none;
-  transition: background .3s;
+  transition: background 0.3s;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: start;
+  font-size: inherit;
 
   .text-icon-button {
     color: inherit;
     transition: unset;
+    unicode-bidi: embed;
   }
 
   &:hover {
@@ -74,7 +82,8 @@
     color: $primary-text-color;
   }
 
-  &.close, &.close:hover {
+  &.close,
+  &.close:hover {
     background: $error-value-color;
     color: $primary-text-color;
   }
@@ -91,13 +100,29 @@
 .glitch.local-settings__page {
   display: block;
   flex: auto;
-  padding: 15px 20px 15px 20px;
+  padding: 15px 20px;
   width: 360px;
   overflow-y: auto;
 }
 
 .glitch.local-settings__page__item {
   margin-bottom: 2px;
+
+  .hint a {
+    color: $lighter-text-color;
+    font-weight: 500;
+    text-decoration: underline;
+
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  #mastodon-settings--collapsed-auto-height {
+    width: calc(4ch + 20px);
+  }
 }
 
 .glitch.local-settings__page__item.string,
@@ -106,7 +131,7 @@
   margin-bottom: 10px;
 }
 
-@media screen and (max-width: 630px) {
+@media screen and (width <= 630px) {
   .glitch.local-settings__navigation {
     width: 40px;
     flex-shrink: 0;
@@ -117,6 +142,32 @@
 
     span:last-of-type {
       display: none;
+    }
+  }
+}
+
+.deprecated-settings-label {
+  white-space: nowrap;
+}
+
+.deprecated-settings-info {
+  text-align: start;
+
+  ul {
+    padding: 10px;
+    margin-inline-start: 12px;
+    list-style: disc inside;
+  }
+
+  a {
+    color: $lighter-text-color;
+    font-weight: 500;
+    text-decoration: underline;
+
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: none;
     }
   }
 }

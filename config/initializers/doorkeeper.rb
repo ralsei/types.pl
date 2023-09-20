@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Doorkeeper.configure do
   # Change the ORM that doorkeeper will use (needs plugins)
   orm :active_record
@@ -98,9 +100,19 @@ Doorkeeper.configure do
                   :'admin:read',
                   :'admin:read:accounts',
                   :'admin:read:reports',
+                  :'admin:read:domain_allows',
+                  :'admin:read:domain_blocks',
+                  :'admin:read:ip_blocks',
+                  :'admin:read:email_domain_blocks',
+                  :'admin:read:canonical_email_blocks',
                   :'admin:write',
                   :'admin:write:accounts',
                   :'admin:write:reports',
+                  :'admin:write:domain_allows',
+                  :'admin:write:domain_blocks',
+                  :'admin:write:ip_blocks',
+                  :'admin:write:email_domain_blocks',
+                  :'admin:write:canonical_email_blocks',
                   :crypto
 
   # Change the way client credentials are retrieved from the request object.
@@ -127,6 +139,13 @@ Doorkeeper.configure do
   # communication to the HTTPS protocol so it is wise to keep this enabled.
   #
   force_ssl_in_redirect_uri false
+
+  # Specify what redirect URI's you want to block during Application creation.
+  # Any redirect URI is whitelisted by default.
+  #
+  # You can use this option in order to forbid URI's with 'javascript' scheme
+  # for example.
+  forbid_redirect_uri { |uri| %w[data vbscript javascript].include?(uri.scheme.to_s.downcase) }
 
   # Specify what grant flows are enabled in array of Strings. The valid
   # strings and the flows they enable are:

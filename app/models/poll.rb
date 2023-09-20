@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: polls
@@ -27,6 +28,7 @@ class Poll < ApplicationRecord
 
   has_many :votes, class_name: 'PollVote', inverse_of: :poll, dependent: :delete_all
   has_many :voters, -> { group('accounts.id') }, through: :votes, class_name: 'Account', source: :account
+  has_many :local_voters, -> { group('accounts.id').merge(Account.local) }, through: :votes, class_name: 'Account', source: :account
 
   has_many :notifications, as: :activity, dependent: :destroy
 
@@ -39,13 +41,12 @@ class Poll < ApplicationRecord
 
   before_validation :prepare_options, if: :local?
   before_validation :prepare_votes_count
-
-  after_initialize :prepare_cached_tallies
+  before_validation :prepare_cached_tallies
 
   after_commit :reset_parent_cache, on: :update
 
   def loaded_options
-    options.map.with_index { |title, key| Option.new(self, key.to_s, title, show_totals_now? ? cached_tallies[key] : nil) }
+    options.map.with_index { |title, key| Option.new(self, key.to_s, title, show_totals_now? ? (cached_tallies[key] || 0) : nil) }
   end
 
   def possibly_stale?
@@ -75,12 +76,19 @@ class Poll < ApplicationRecord
 
     def initialize(poll, id, title, votes_count)
       super(
-        poll:        poll,
-        id:          id,
-        title:       title,
+        poll: poll,
+        id: id,
+        title: title,
         votes_count: votes_count,
       )
     end
+  end
+
+  def reset_votes!
+    self.cached_tallies = options.map { 0 }
+    self.votes_count = 0
+    self.voters_count = 0
+    votes.delete_all unless new_record?
   end
 
   private
@@ -94,12 +102,13 @@ class Poll < ApplicationRecord
   end
 
   def prepare_options
-    self.options = options.map(&:strip).reject(&:blank?)
+    self.options = options.map(&:strip).compact_blank
   end
 
   def reset_parent_cache
     return if status_id.nil?
-    Rails.cache.delete("statuses/#{status_id}")
+
+    Rails.cache.delete("v3:statuses/#{status_id}")
   end
 
   def last_fetched_before_expiration?

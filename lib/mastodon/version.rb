@@ -5,23 +5,27 @@ module Mastodon
     module_function
 
     def major
-      3
-    end
-
-    def minor
       4
     end
 
+    def minor
+      2
+    end
+
     def patch
-      6
+      0
     end
 
-    def flags
-      ''
+    def default_prerelease
+      'rc2'
     end
 
-    def suffix
-      '+types'
+    def prerelease
+      ENV['MASTODON_VERSION_PRERELEASE'].presence || default_prerelease
+    end
+
+    def build_metadata
+      ['types', ENV.fetch('MASTODON_VERSION_METADATA', nil)].compact_blank.join('.')
     end
 
     def to_a
@@ -29,7 +33,14 @@ module Mastodon
     end
 
     def to_s
-      [to_a.join('.'), flags, suffix].join
+      components = [to_a.join('.')]
+      components << "-#{prerelease}" if prerelease.present?
+      components << "+#{build_metadata}" if build_metadata.present?
+      components.join
+    end
+
+    def gem_version
+      @gem_version ||= Gem::Version.new(to_s.split('+')[0])
     end
 
     def repository

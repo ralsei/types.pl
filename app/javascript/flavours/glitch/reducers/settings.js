@@ -1,11 +1,14 @@
-import { SETTING_CHANGE, SETTING_SAVE } from 'flavours/glitch/actions/settings';
-import { NOTIFICATIONS_FILTER_SET } from 'flavours/glitch/actions/notifications';
-import { COLUMN_ADD, COLUMN_REMOVE, COLUMN_MOVE, COLUMN_PARAMS_CHANGE } from 'flavours/glitch/actions/columns';
-import { STORE_HYDRATE } from 'flavours/glitch/actions/store';
-import { EMOJI_USE } from 'flavours/glitch/actions/emojis';
-import { LIST_DELETE_SUCCESS, LIST_FETCH_FAIL } from '../actions/lists';
 import { Map as ImmutableMap, fromJS } from 'immutable';
-import uuid from 'flavours/glitch/util/uuid';
+
+import { COLUMN_ADD, COLUMN_REMOVE, COLUMN_MOVE, COLUMN_PARAMS_CHANGE } from 'flavours/glitch/actions/columns';
+import { EMOJI_USE } from 'flavours/glitch/actions/emojis';
+import { LANGUAGE_USE } from 'flavours/glitch/actions/languages';
+import { NOTIFICATIONS_FILTER_SET } from 'flavours/glitch/actions/notifications';
+import { SETTING_CHANGE, SETTING_SAVE } from 'flavours/glitch/actions/settings';
+import { STORE_HYDRATE } from 'flavours/glitch/actions/store';
+
+import { LIST_DELETE_SUCCESS, LIST_FETCH_FAIL } from '../actions/lists';
+import { uuid } from '../uuid';
 
 const initialState = ImmutableMap({
   saved: true,
@@ -40,6 +43,9 @@ const initialState = ImmutableMap({
       mention: false,
       poll: false,
       status: false,
+      update: false,
+      'admin.sign_up': false,
+      'admin.report': false,
     }),
 
     quickFilter: ImmutableMap({
@@ -59,6 +65,9 @@ const initialState = ImmutableMap({
       mention: true,
       poll: true,
       status: true,
+      update: true,
+      'admin.sign_up': true,
+      'admin.report': true,
     }),
 
     sounds: ImmutableMap({
@@ -69,6 +78,18 @@ const initialState = ImmutableMap({
       mention: true,
       poll: true,
       status: true,
+      update: true,
+      'admin.sign_up': true,
+      'admin.report': true,
+    }),
+  }),
+
+  firehose: ImmutableMap({
+    onlyMedia: false,
+    allowLocalOnly: true,
+
+    regex: ImmutableMap({
+      body: '',
     }),
   }),
 
@@ -128,6 +149,8 @@ const changeColumnParams = (state, uuid, path, value) => {
 
 const updateFrequentEmojis = (state, emoji) => state.update('frequentlyUsedEmojis', ImmutableMap(), map => map.update(emoji.id, 0, count => count + 1)).set('saved', false);
 
+const updateFrequentLanguages = (state, language) => state.update('frequentlyUsedLanguages', ImmutableMap(), map => map.update(language, 0, count => count + 1)).set('saved', false);
+
 const filterDeadListColumns = (state, listId) => state.update('columns', columns => columns.filterNot(column => column.get('id') === 'LIST' && column.get('params').get('id') === listId));
 
 export default function settings(state = initialState, action) {
@@ -153,6 +176,8 @@ export default function settings(state = initialState, action) {
     return changeColumnParams(state, action.uuid, action.path, action.value);
   case EMOJI_USE:
     return updateFrequentEmojis(state, action.emoji);
+  case LANGUAGE_USE:
+    return updateFrequentLanguages(state, action.language);
   case SETTING_SAVE:
     return state.set('saved', true);
   case LIST_FETCH_FAIL:
@@ -162,4 +187,4 @@ export default function settings(state = initialState, action) {
   default:
     return state;
   }
-};
+}

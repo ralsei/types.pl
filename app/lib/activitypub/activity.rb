@@ -3,6 +3,7 @@
 class ActivityPub::Activity
   include JsonLdHelper
   include Redisable
+  include Lockable
 
   SUPPORTED_TYPES = %w(Note Question).freeze
   CONVERTED_TYPES = %w(Image Audio Video Article Page Event).freeze
@@ -71,15 +72,7 @@ class ActivityPub::Activity
   end
 
   def object_uri
-    @object_uri ||= begin
-      str = value_or_id(@object)
-
-      if str&.start_with?('bear:')
-        Addressable::URI.parse(str).query_values['u']
-      else
-        str
-      end
-    end
+    @object_uri ||= uri_from_bearcap(value_or_id(@object))
   end
 
   def unsupported_object_type?
@@ -113,7 +106,8 @@ class ActivityPub::Activity
       actor_id = value_or_id(first_of_value(@object['attributedTo']))
 
       if actor_id == @account.uri
-        return ActivityPub::Activity.factory({ 'type' => 'Create', 'actor' => actor_id, 'object' => @object }, @account).perform
+        virtual_object = { 'type' => 'Create', 'actor' => actor_id, 'object' => @object }
+        return ActivityPub::Activity.factory(virtual_object, @account, request_id: @options[:request_id]).perform
       end
     end
 
@@ -123,12 +117,12 @@ class ActivityPub::Activity
   def dereference_object!
     return unless @object.is_a?(String)
 
-    dereferencer = ActivityPub::Dereferencer.new(@object, permitted_origin: @account.uri, signature_account: signed_fetch_account)
+    dereferencer = ActivityPub::Dereferencer.new(@object, permitted_origin: @account.uri, signature_actor: signed_fetch_actor)
 
     @object = dereferencer.object unless dereferencer.object.nil?
   end
 
-  def signed_fetch_account
+  def signed_fetch_actor
     return Account.find(@options[:delivered_to_account_id]) if @options[:delivered_to_account_id].present?
 
     first_mentioned_local_account || first_local_follower
@@ -149,35 +143,20 @@ class ActivityPub::Activity
   end
 
   def follow_request_from_object
-    @follow_request ||= FollowRequest.find_by(target_account: @account, uri: object_uri) unless object_uri.nil?
+    @follow_request_from_object ||= FollowRequest.find_by(target_account: @account, uri: object_uri) unless object_uri.nil?
   end
 
   def follow_from_object
-    @follow ||= ::Follow.find_by(target_account: @account, uri: object_uri) unless object_uri.nil?
+    @follow_from_object ||= ::Follow.find_by(target_account: @account, uri: object_uri) unless object_uri.nil?
   end
 
   def fetch_remote_original_status
     if object_uri.start_with?('http')
       return if ActivityPub::TagManager.instance.local_uri?(object_uri)
-      ActivityPub::FetchRemoteStatusService.new.call(object_uri, id: true, on_behalf_of: @account.followers.local.first)
+
+      ActivityPub::FetchRemoteStatusService.new.call(object_uri, id: true, on_behalf_of: @account.followers.local.first, request_id: @options[:request_id])
     elsif @object['url'].present?
-      ::FetchRemoteStatusService.new.call(@object['url'])
-    end
-  end
-
-  def lock_or_return(key, expire_after = 2.hours.seconds)
-    yield if redis.set(key, true, nx: true, ex: expire_after)
-  ensure
-    redis.del(key)
-  end
-
-  def lock_or_fail(key, expire_after = 15.minutes.seconds)
-    RedisLock.acquire({ redis: Redis.current, key: key, autorelease: expire_after }) do |lock|
-      if lock.acquired?
-        yield
-      else
-        raise Mastodon::RaceConditionError
-      end
+      ::FetchRemoteStatusService.new.call(@object['url'], request_id: @options[:request_id])
     end
   end
 
@@ -186,15 +165,15 @@ class ActivityPub::Activity
   end
 
   def followed_by_local_accounts?
-    @account.passive_relationships.exists? || @options[:relayed_through_account]&.passive_relationships&.exists?
+    @account.passive_relationships.exists? || (@options[:relayed_through_actor].is_a?(Account) && @options[:relayed_through_actor].passive_relationships&.exists?)
   end
 
   def requested_through_relay?
-    @options[:relayed_through_account] && Relay.find_by(inbox_url: @options[:relayed_through_account].inbox_url)&.enabled?
+    @options[:relayed_through_actor] && Relay.find_by(inbox_url: @options[:relayed_through_actor].inbox_url)&.enabled?
   end
 
   def reject_payload!
-    Rails.logger.info("Rejected #{@json['type']} activity #{@json['id']} from #{@account.uri}#{@options[:relayed_through_account] && "via #{@options[:relayed_through_account].uri}"}")
+    Rails.logger.info("Rejected #{@json['type']} activity #{@json['id']} from #{@account.uri}#{@options[:relayed_through_actor] && "via #{@options[:relayed_through_actor].uri}"}")
     nil
   end
 end

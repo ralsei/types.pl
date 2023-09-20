@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe Admin::AccountModerationNotesController, type: :controller do
+RSpec.describe Admin::AccountModerationNotesController do
   render_views
 
-  let(:user) { Fabricate(:user, admin: true) }
+  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let(:target_account) { Fabricate(:account) }
 
   before do
@@ -17,7 +19,7 @@ RSpec.describe Admin::AccountModerationNotesController, type: :controller do
       let(:params) { { account_moderation_note: { target_account_id: target_account.id, content: 'test content' } } }
 
       it 'successfully creates a note' do
-        expect { subject }.to change { AccountModerationNote.count }.by(1)
+        expect { subject }.to change(AccountModerationNote, :count).by(1)
         expect(subject).to redirect_to admin_account_path(target_account.id)
       end
     end
@@ -26,7 +28,7 @@ RSpec.describe Admin::AccountModerationNotesController, type: :controller do
       let(:params) { { account_moderation_note: { target_account_id: target_account.id, content: '' } } }
 
       it 'falls to create a note' do
-        expect { subject }.not_to change { AccountModerationNote.count }
+        expect { subject }.to_not change(AccountModerationNote, :count)
         expect(subject).to render_template 'admin/accounts/show'
       end
     end
@@ -39,7 +41,7 @@ RSpec.describe Admin::AccountModerationNotesController, type: :controller do
     let(:account) { Fabricate(:account) }
 
     it 'destroys note' do
-      expect { subject }.to change { AccountModerationNote.count }.by(-1)
+      expect { subject }.to change(AccountModerationNote, :count).by(-1)
       expect(subject).to redirect_to admin_account_path(target_account.id)
     end
   end

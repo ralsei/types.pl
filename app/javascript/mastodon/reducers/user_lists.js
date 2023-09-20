@@ -1,6 +1,19 @@
+import { Map as ImmutableMap, List as ImmutableList, fromJS } from 'immutable';
+
 import {
-  NOTIFICATIONS_UPDATE,
-} from '../actions/notifications';
+  DIRECTORY_FETCH_REQUEST,
+  DIRECTORY_FETCH_SUCCESS,
+  DIRECTORY_FETCH_FAIL,
+  DIRECTORY_EXPAND_REQUEST,
+  DIRECTORY_EXPAND_SUCCESS,
+  DIRECTORY_EXPAND_FAIL,
+} from 'mastodon/actions/directory';
+import {
+  FEATURED_TAGS_FETCH_REQUEST,
+  FEATURED_TAGS_FETCH_SUCCESS,
+  FEATURED_TAGS_FETCH_FAIL,
+} from 'mastodon/actions/featured_tags';
+
 import {
   FOLLOWERS_FETCH_REQUEST,
   FOLLOWERS_FETCH_SUCCESS,
@@ -24,10 +37,6 @@ import {
   FOLLOW_REQUEST_REJECT_SUCCESS,
 } from '../actions/accounts';
 import {
-  REBLOGS_FETCH_SUCCESS,
-  FAVOURITES_FETCH_SUCCESS,
-} from '../actions/interactions';
-import {
   BLOCKS_FETCH_REQUEST,
   BLOCKS_FETCH_SUCCESS,
   BLOCKS_FETCH_FAIL,
@@ -35,6 +44,20 @@ import {
   BLOCKS_EXPAND_SUCCESS,
   BLOCKS_EXPAND_FAIL,
 } from '../actions/blocks';
+import {
+  REBLOGS_FETCH_REQUEST,
+  REBLOGS_FETCH_SUCCESS,
+  REBLOGS_FETCH_FAIL,
+  REBLOGS_EXPAND_REQUEST,
+  REBLOGS_EXPAND_SUCCESS,
+  REBLOGS_EXPAND_FAIL,
+  FAVOURITES_FETCH_REQUEST,
+  FAVOURITES_FETCH_SUCCESS,
+  FAVOURITES_FETCH_FAIL,
+  FAVOURITES_EXPAND_REQUEST,
+  FAVOURITES_EXPAND_SUCCESS,
+  FAVOURITES_EXPAND_FAIL,
+} from '../actions/interactions';
 import {
   MUTES_FETCH_REQUEST,
   MUTES_FETCH_SUCCESS,
@@ -44,14 +67,10 @@ import {
   MUTES_EXPAND_FAIL,
 } from '../actions/mutes';
 import {
-  DIRECTORY_FETCH_REQUEST,
-  DIRECTORY_FETCH_SUCCESS,
-  DIRECTORY_FETCH_FAIL,
-  DIRECTORY_EXPAND_REQUEST,
-  DIRECTORY_EXPAND_SUCCESS,
-  DIRECTORY_EXPAND_FAIL,
-} from 'mastodon/actions/directory';
-import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
+  NOTIFICATIONS_UPDATE,
+} from '../actions/notifications';
+
+
 
 const initialListState = ImmutableMap({
   next: null,
@@ -67,6 +86,7 @@ const initialState = ImmutableMap({
   follow_requests: initialListState,
   blocks: initialListState,
   mutes: initialListState,
+  featured_tags: initialListState,
 });
 
 const normalizeList = (state, path, accounts, next) => {
@@ -87,6 +107,18 @@ const normalizeFollowRequest = (state, notification) => {
   return state.updateIn(['follow_requests', 'items'], list => {
     return list.filterNot(item => item === notification.account.id).unshift(notification.account.id);
   });
+};
+
+const normalizeFeaturedTag = (featuredTags, accountId) => {
+  const normalizeFeaturedTag = { ...featuredTags, accountId: accountId };
+  return fromJS(normalizeFeaturedTag);
+};
+
+const normalizeFeaturedTags = (state, path, featuredTags, accountId) => {
+  return state.setIn(path, ImmutableMap({
+    items: ImmutableList(featuredTags.map(featuredTag => normalizeFeaturedTag(featuredTag, accountId)).sort((a, b) => b.get('statuses_count') - a.get('statuses_count'))),
+    isLoading: false,
+  }));
 };
 
 export default function userLists(state = initialState, action) {
@@ -112,9 +144,25 @@ export default function userLists(state = initialState, action) {
   case FOLLOWING_EXPAND_FAIL:
     return state.setIn(['following', action.id, 'isLoading'], false);
   case REBLOGS_FETCH_SUCCESS:
-    return state.setIn(['reblogged_by', action.id], ImmutableList(action.accounts.map(item => item.id)));
+    return normalizeList(state, ['reblogged_by', action.id], action.accounts, action.next);
+  case REBLOGS_EXPAND_SUCCESS:
+    return appendToList(state, ['reblogged_by', action.id], action.accounts, action.next);
+  case REBLOGS_FETCH_REQUEST:
+  case REBLOGS_EXPAND_REQUEST:
+    return state.setIn(['reblogged_by', action.id, 'isLoading'], true);
+  case REBLOGS_FETCH_FAIL:
+  case REBLOGS_EXPAND_FAIL:
+    return state.setIn(['reblogged_by', action.id, 'isLoading'], false);
   case FAVOURITES_FETCH_SUCCESS:
-    return state.setIn(['favourited_by', action.id], ImmutableList(action.accounts.map(item => item.id)));
+    return normalizeList(state, ['favourited_by', action.id], action.accounts, action.next);
+  case FAVOURITES_EXPAND_SUCCESS:
+    return appendToList(state, ['favourited_by', action.id], action.accounts, action.next);
+  case FAVOURITES_FETCH_REQUEST:
+  case FAVOURITES_EXPAND_REQUEST:
+    return state.setIn(['favourited_by', action.id, 'isLoading'], true);
+  case FAVOURITES_FETCH_FAIL:
+  case FAVOURITES_EXPAND_FAIL:
+    return state.setIn(['favourited_by', action.id, 'isLoading'], false);
   case NOTIFICATIONS_UPDATE:
     return action.notification.type === 'follow_request' ? normalizeFollowRequest(state, action.notification) : state;
   case FOLLOW_REQUESTS_FETCH_SUCCESS:
@@ -160,7 +208,13 @@ export default function userLists(state = initialState, action) {
   case DIRECTORY_FETCH_FAIL:
   case DIRECTORY_EXPAND_FAIL:
     return state.setIn(['directory', 'isLoading'], false);
+  case FEATURED_TAGS_FETCH_SUCCESS:
+    return normalizeFeaturedTags(state, ['featured_tags', action.id], action.tags, action.id);
+  case FEATURED_TAGS_FETCH_REQUEST:
+    return state.setIn(['featured_tags', action.id, 'isLoading'], true);
+  case FEATURED_TAGS_FETCH_FAIL:
+    return state.setIn(['featured_tags', action.id, 'isLoading'], false);
   default:
     return state;
   }
-};
+}

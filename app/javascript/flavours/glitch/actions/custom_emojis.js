@@ -1,4 +1,4 @@
-import api from 'flavours/glitch/util/api';
+import api from '../api';
 
 export const CUSTOM_EMOJIS_FETCH_REQUEST = 'CUSTOM_EMOJIS_FETCH_REQUEST';
 export const CUSTOM_EMOJIS_FETCH_SUCCESS = 'CUSTOM_EMOJIS_FETCH_SUCCESS';
@@ -14,14 +14,14 @@ export function fetchCustomEmojis() {
       dispatch(fetchCustomEmojisFail(error));
     });
   };
-};
+}
 
 export function fetchCustomEmojisRequest() {
   return {
     type: CUSTOM_EMOJIS_FETCH_REQUEST,
     skipLoading: true,
   };
-};
+}
 
 export function fetchCustomEmojisSuccess(custom_emojis) {
   return {
@@ -29,7 +29,7 @@ export function fetchCustomEmojisSuccess(custom_emojis) {
     custom_emojis,
     skipLoading: true,
   };
-};
+}
 
 export function fetchCustomEmojisFail(error) {
   return {
@@ -37,4 +37,4 @@ export function fetchCustomEmojisFail(error) {
     error,
     skipLoading: true,
   };
-};
+}
