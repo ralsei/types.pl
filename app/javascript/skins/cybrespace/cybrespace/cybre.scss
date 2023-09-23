@@ -1,7 +1,7 @@
 $ui-base-color: #1b1b1b; // darkest
 $ui-highlight-color: #1ea21e; // vibrant
-$ui-secondary-color: #E4F2E4; // lightest
-$ui-primary-color: #E4F2E4; // lighter
+$ui-secondary-color: #e4f2e4; // lightest
+$ui-primary-color: #e4f2e4; // lighter
 $ui-primary-color-alt: #a0b49c; // darker, for external pages
 
 $about-page-text: lighten($ui-base-color, 50%);
@@ -9,26 +9,30 @@ $about-page-text: lighten($ui-base-color, 50%);
 @import 'cybre-base';
 
 @keyframes floating {
-  from {
+  0% {
     transform: translate(0, 0);
   }
+
   65% {
     transform: translate(0, 4px);
   }
-  to {
+
+  100% {
     transform: translate(0, -0);
   }
 }
 
-body, body.about-body {
-  background: $ui-base-color url('flavours/cybrespace/images/background-cybre.png');
+body,
+body.about-body {
+  background: $ui-base-color
+    url('flavours/cybrespace/images/background-cybre.png');
   background-attachment: fixed;
 }
 
 body.about-body {
   // basics.scss &.about-body
-  background: darken($ui-base-color, 8%) url('flavours/cybrespace/images/background-cybre.png');
-
+  background: darken($ui-base-color, 8%)
+    url('flavours/cybrespace/images/background-cybre.png');
   background-position-y: 200px;
   background-position-x: center;
 }
@@ -38,7 +42,8 @@ body.about-body {
 }
 
 .muted {
-  .status__content p, .status__content a {
+  .status__content p,
+  .status__content a {
     color: lighten($ui-base-color, 35%);
   }
 
@@ -48,13 +53,13 @@ body.about-body {
 }
 
 .compose-form__buttons button.active:last-child {
-  color:$ui-secondary-color;
+  color: $ui-secondary-color;
   background-color: $ui-highlight-color;
-  border-radius:3px;
+  border-radius: 3px;
 }
 
 .screenshot-with-signup {
-  min-height:300px;
+  min-height: 300px;
 }
 
 .container.hero .closed-registrations-message .clock {
@@ -63,115 +68,121 @@ body.about-body {
 }
 
 .column .static-content.getting-started {
-  background-image: url('flavours/cybrespace/images/logo-cybre.png'), url('flavours/cybrespace/images/background-cybre.png');
-  background-size:auto 50%, cover;
-  background-position: 50% 75%, center center;
-  background-repeat:no-repeat, no-repeat;
+  background-image: url('flavours/cybrespace/images/logo-cybre.png'),
+    url('flavours/cybrespace/images/background-cybre.png');
+  background-size:
+    auto 50%,
+    cover;
+  background-position:
+    50% 75%,
+    center center;
+  background-repeat: no-repeat, no-repeat;
 }
 
 .columns-area {
-  background: $ui-base-color url('flavours/cybrespace/images/background-cybre.png');
+  background: $ui-base-color
+    url('flavours/cybrespace/images/background-cybre.png');
 }
 
 .actions .button.button-alternative {
-    background: $ui-highlight-color;
-    color: $ui-primary-color;
+  background: $ui-highlight-color;
+  color: $ui-primary-color;
 
-    &:active,
-    &:focus,
-    &:hover {
-      background-color: lighten($ui-highlight-color, 4%);
-    }
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: lighten($ui-highlight-color, 4%);
+  }
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (width <= 1280px) {
   .landing-page .container.links {
-      top: -15px;
+    top: -15px;
   }
 }
 
 .landing-page.alternative .header {
-    background-image:url('flavours/cybrespace/images/header-cybre-colour.jpg');
-    background-repeat: repeat-x;
-    background-size:contain;
-    height:45vh;
-    width: 100%;
-    position:absolute;
-    z-index: 1;
-    text-align:center;
-
-    display: unset!important;
+  background-image: url('flavours/cybrespace/images/header-cybre-colour.jpg');
+  background-repeat: repeat-x;
+  background-size: contain;
+  height: 45vh;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+  text-align: center;
+  display: unset !important;
 }
 
 .landing-page.alternative .header img {
-    margin: auto;
-    max-height:45vh;
+  margin: auto;
+  max-height: 45vh;
 }
 
-
 .landing-page.alternative .grid {
-    position: relative;
-    z-index:2;
-    margin-top:15vh;
+  position: relative;
+  z-index: 2;
+  margin-top: 15vh;
 }
 
 .landing-page.alternative .landing-page__hero img {
-    visibility: hidden;
-    max-height:170px;
+  visibility: hidden;
+  max-height: 170px;
 }
 
 .landing-page.alternative .landing-page__forms {
-    height:auto;
+  height: auto;
 }
 
 .landing-page.alternative .column-1 {
-    display:flex;
-    align-items:flex-end;
+  display: flex;
+  align-items: flex-end;
 }
 
 .landing-page.alternative .column {
-    max-height:initial;
+  max-height: initial;
 }
 
 .landing-page.alternative .row__mascot {
-    .floats {
-        position:absolute;
-        img {
-            width:100%;
-            height:100%;
-        }
-        transition: all 0.1s linear;
-        animation-name: floating;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-        animation-timing-function: ease-in-out;
+  .floats {
+    position: absolute;
+
+    img {
+      width: 100%;
+      height: 100%;
     }
 
-    .float-1 {
-        width:50px;
-        height:50px;
-        bottom:60px;
-        left:110px;
-        animation-duration: 3s;
-    }
+    transition: all 0.1s linear;
+    animation-name: floating;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+  }
 
-    .float-2 {
-        width:130px;
-        height:130px;
-        left:85px;
-        bottom: -60px;
-        animation-duration: 3.5s;
-        animation-delay: 0.2s;
-    }
+  .float-1 {
+    width: 50px;
+    height: 50px;
+    bottom: 60px;
+    left: 110px;
+    animation-duration: 3s;
+  }
 
-    .float-3 {
-        width:100px;
-        height:100px;
-        right: 50;
-        top: -10px;
-        animation-duration: 4s;
-        animation-delay: 0.5s;
-    }
+  .float-2 {
+    width: 130px;
+    height: 130px;
+    left: 85px;
+    bottom: -60px;
+    animation-duration: 3.5s;
+    animation-delay: 0.2s;
+  }
+
+  .float-3 {
+    width: 100px;
+    height: 100px;
+    right: 50;
+    top: -10px;
+    animation-duration: 4s;
+    animation-delay: 0.5s;
+  }
 }
 
 .activity-stream {
@@ -215,6 +226,7 @@ body.about-body {
 
   .media-spoiler {
     background: $ui-primary-color-alt;
+
     &:hover {
       background: darken($ui-primary-color-alt, 5%);
     }
@@ -222,19 +234,26 @@ body.about-body {
 
   .pre-header {
     color: $ui-primary-color-alt;
+
     .status__display-name.muted strong {
       color: $ui-primary-color-alt;
     }
   }
 }
 
-.embed .activity-stream .entry .detailed-status.light .button.button-secondary.logo-button {
+.embed
+  .activity-stream
+  .entry
+  .detailed-status.light
+  .button.button-secondary.logo-button {
   color: $ui-primary-color-alt;
+
   svg {
     path:first-child {
       fill: $ui-primary-color-alt;
     }
   }
+
   &:active,
   &:focus,
   &:hover {
@@ -246,6 +265,7 @@ body.about-body {
 
 .emoji-mart-search {
   background: $simple-background-color;
+
   input {
     color: $ui-primary-color-alt;
     border: 1px solid $ui-primary-color-alt;
@@ -254,6 +274,7 @@ body.about-body {
 
 .emoji-mart-anchor {
   color: $ui-primary-color-alt;
+
   &:hover {
     color: darken($ui-primary-color-alt, 8%);
   }
@@ -278,5 +299,5 @@ body.about-body {
 }
 
 .button:disabled {
-  background-color: #9F9F9F !important;
+  background-color: #9f9f9f !important;
 }
