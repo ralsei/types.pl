@@ -1,12 +1,14 @@
 @import 'flavours/glitch/styles/variables';
+@import 'fullwidth-media';
 
 /* Wider compose area */
-@media screen and (min-width: 1300px) {
+@media screen and (width >= 1300px) {
   .drawer {
     width: 17%; /* Not part of the flex fun */
     max-width: 400px;
     min-width: 330px;
   }
+
   .layout-multiple-columns .column {
     flex-grow: 1 !important;
     max-width: 400px;
@@ -15,9 +17,12 @@
 
 /* Don't show outline around statuses if we're in
  * mouse or touch mode (rather than keyboard) */
-[data-whatinput="mouse"], [data-whatinput="touch"] {
-  .status__content:focus, .status:focus,
-  .status__wrapper:focus, .status__content__text:focus {
+[data-whatinput='mouse'],
+[data-whatinput='touch'] {
+  .status__content:focus,
+  .status:focus,
+  .status__wrapper:focus,
+  .status__content__text:focus {
     outline: none;
   }
 }
@@ -35,10 +40,12 @@
 /* Show a little arrowey thing after the time in a
  * status to signal that you can click it to see
  * a detailed view */
-.status time:after,
-.detailed-status__datetime span:after {
-  font: normal normal normal 14px/1 FontAwesome;
-  content: "\00a0\00a0\f08e";
+.status time::after,
+.detailed-status__datetime span::after {
+  font:
+    normal normal normal 14px/1 FontAwesome,
+    sans-serif;
+  content: '\00a0\00a0\f08e';
 }
 
 /* Don't display the elephant mascot (we have our
@@ -50,12 +57,13 @@
 /* Let the compose area/drawer be short, but
  * expand if necessary */
 .drawer .drawer__inner {
-  height:inherit;
+  height: inherit;
   max-height: 100%;
   background-image: none;
 }
+
 .drawer__pager {
-  overflow-y:auto;
+  overflow-y: auto;
 }
 
 /* Put a reasonable background on the single-column compose form */
@@ -69,23 +77,21 @@
 
 /* Better distinguish the search bar */
 .layout-single-column .compose-panel .search {
-  position:relative;
+  position: relative;
   top: -55px;
   margin-bottom: -55px;
 }
 
 /* Use display: none instead of visibility:hidden
  * to hide the suggested follows list on non-mobile */
-@media screen and (min-width: 630px) {
+@media screen and (width >= 630px) {
   .search-results .trends {
-     display:none;
+    display: none;
   }
 }
 
 /* Don't display the weird triangles on the modal layout,
  * because they look strange on cybrespace themes. */
 .modal-layout__mastodon {
-  display:none;
+  display: none;
 }
-
-@import 'fullwidth-media';
