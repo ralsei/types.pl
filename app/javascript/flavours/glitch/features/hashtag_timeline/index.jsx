@@ -10,13 +10,15 @@ import { connect } from 'react-redux';
 
 import { isEqual } from 'lodash';
 
+import TagIcon from '@/material-icons/400-24px/tag.svg?react';
 import { addColumn, removeColumn, moveColumn } from 'flavours/glitch/actions/columns';
 import { connectHashtagStream } from 'flavours/glitch/actions/streaming';
 import { fetchHashtag, followHashtag, unfollowHashtag } from 'flavours/glitch/actions/tags';
 import { expandHashtagTimeline, clearTimeline } from 'flavours/glitch/actions/timelines';
 import Column from 'flavours/glitch/components/column';
 import ColumnHeader from 'flavours/glitch/components/column_header';
-import StatusListContainer from 'flavours/glitch/features/ui/containers/status_list_container';
+
+import StatusListContainer from '../ui/containers/status_list_container';
 
 import { HashtagHeader } from './components/hashtag_header';
 import ColumnSettingsContainer from './containers/column_settings_container';
@@ -189,6 +191,7 @@ class HashtagTimeline extends PureComponent {
       <Column bindToDocument={!multiColumn} ref={this.setRef} label={`#${id}`}>
         <ColumnHeader
           icon='hashtag'
+          iconComponent={TagIcon}
           active={hasUnread}
           title={this.title()}
           onPin={this.handlePin}

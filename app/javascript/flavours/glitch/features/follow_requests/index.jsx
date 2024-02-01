@@ -10,18 +10,14 @@ import { connect } from 'react-redux';
 
 import { debounce } from 'lodash';
 
-import { fetchFollowRequests, expandFollowRequests } from 'flavours/glitch/actions/accounts';
-import ColumnBackButtonSlim from 'flavours/glitch/components/column_back_button_slim';
-import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import Column from 'flavours/glitch/features/ui/components/column';
-import { me } from 'flavours/glitch/initial_state';
+import PersonAddIcon from '@/material-icons/400-24px/person_add.svg?react';
+
+import { fetchFollowRequests, expandFollowRequests } from '../../actions/accounts';
+import ScrollableList from '../../components/scrollable_list';
+import { me } from '../../initial_state';
+import Column from '../ui/components/column';
 
 import AccountAuthorizeContainer from './containers/account_authorize_container';
-
-
-
-
-
 
 const messages = defineMessages({
   heading: { id: 'column.follow_requests', defaultMessage: 'Follow requests' },
@@ -72,9 +68,7 @@ class FollowRequests extends ImmutablePureComponent {
     );
 
     return (
-      <Column bindToDocument={!multiColumn} name='follow-requests' icon='user-plus' heading={intl.formatMessage(messages.heading)}>
-        <ColumnBackButtonSlim />
-
+      <Column bindToDocument={!multiColumn} icon='user-plus' iconComponent={PersonAddIcon} heading={intl.formatMessage(messages.heading)} alwaysShowBackButton>
         <ScrollableList
           scrollKey='follow_requests'
           onLoadMore={this.handleLoadMore}

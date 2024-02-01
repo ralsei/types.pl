@@ -1,25 +1,25 @@
-//  Package imports.
 import PropTypes from 'prop-types';
 
 import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
+import { withRouter } from 'react-router-dom';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { HotKeys } from 'react-hotkeys';
 
-
-// Our imports.
+import FlagIcon from '@/material-icons/400-24px/flag-fill.svg?react';
 import { Icon } from 'flavours/glitch/components/icon';
-import Permalink from 'flavours/glitch/components/permalink';
+import { Permalink } from 'flavours/glitch/components/permalink';
+import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
 import NotificationOverlayContainer from '../containers/overlay_container';
 
 import Report from './report';
 
-export default class AdminReport extends ImmutablePureComponent {
+class AdminReport extends ImmutablePureComponent {
 
   static propTypes = {
     hidden: PropTypes.bool,
@@ -28,6 +28,7 @@ export default class AdminReport extends ImmutablePureComponent {
     notification: ImmutablePropTypes.map.isRequired,
     unread: PropTypes.bool,
     report: ImmutablePropTypes.map.isRequired,
+    ...WithRouterPropTypes,
   };
 
   handleMoveUp = () => {
@@ -45,15 +46,15 @@ export default class AdminReport extends ImmutablePureComponent {
   };
 
   handleOpenProfile = () => {
-    const { notification } = this.props;
-    this.context.router.history.push(`/@${notification.getIn(['account', 'acct'])}`);
+    const { history, notification } = this.props;
+    history.push(`/@${notification.getIn(['account', 'acct'])}`);
   };
 
   handleMention = e => {
     e.preventDefault();
 
-    const { notification, onMention } = this.props;
-    onMention(notification.get('account'), this.context.router.history);
+    const { history, notification, onMention } = this.props;
+    onMention(notification.get('account'), history);
   };
 
   getHandlers () {
@@ -95,7 +96,7 @@ export default class AdminReport extends ImmutablePureComponent {
         <div className={classNames('notification notification-admin-report focusable', { unread })} tabIndex={0}>
           <div className='notification__message'>
             <div className='notification__favourite-icon-wrapper'>
-              <Icon id='flag' fixedWidth />
+              <Icon id='flag' icon={FlagIcon} />
             </div>
 
             <span title={notification.get('created_at')}>
@@ -111,3 +112,5 @@ export default class AdminReport extends ImmutablePureComponent {
   }
 
 }
+
+export default withRouter(AdminReport);

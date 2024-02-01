@@ -1,39 +1,37 @@
 import PropTypes from 'prop-types';
 
-import { injectIntl, FormattedDate } from 'react-intl';
+import { FormattedDate } from 'react-intl';
 
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
+
+import RepeatIcon from '@/material-icons/400-24px/repeat.svg?react';
+import StarIcon from '@/material-icons/400-24px/star-fill.svg?react';
 import { AnimatedNumber } from 'flavours/glitch/components/animated_number';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
-import { Avatar } from 'flavours/glitch/components/avatar';
-import { DisplayName } from 'flavours/glitch/components/display_name';
 import EditedTimestamp from 'flavours/glitch/components/edited_timestamp';
-import { Icon } from 'flavours/glitch/components/icon';
-import MediaGallery from 'flavours/glitch/components/media_gallery';
+import { getHashtagBarForStatus } from 'flavours/glitch/components/hashtag_bar';
+import { Icon }  from 'flavours/glitch/components/icon';
 import PictureInPicturePlaceholder from 'flavours/glitch/components/picture_in_picture_placeholder';
-import StatusContent from 'flavours/glitch/components/status_content';
-import VisibilityIcon from 'flavours/glitch/components/status_visibility_icon';
+import { VisibilityIcon } from 'flavours/glitch/components/visibility_icon';
 import PollContainer from 'flavours/glitch/containers/poll_container';
-import Audio from 'flavours/glitch/features/audio';
-import Video from 'flavours/glitch/features/video';
+import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
+import { Avatar } from '../../../components/avatar';
+import { DisplayName } from '../../../components/display_name';
+import MediaGallery from '../../../components/media_gallery';
+import StatusContent from '../../../components/status_content';
+import Audio from '../../audio';
 import scheduleIdleTask from '../../ui/util/schedule_idle_task';
+import Video from '../../video';
 
 import Card from './card';
 
-
-
-
 class DetailedStatus extends ImmutablePureComponent {
-
-  static contextTypes = {
-    router: PropTypes.object,
-  };
 
   static propTypes = {
     status: ImmutablePropTypes.map,
@@ -53,7 +51,7 @@ class DetailedStatus extends ImmutablePureComponent {
       available: PropTypes.bool,
     }),
     onToggleMediaVisibility: PropTypes.func,
-    intl: PropTypes.object.isRequired,
+    ...WithRouterPropTypes,
   };
 
   state = {
@@ -61,18 +59,18 @@ class DetailedStatus extends ImmutablePureComponent {
   };
 
   handleAccountClick = (e) => {
-    if (e.button === 0 && !(e.ctrlKey || e.altKey || e.metaKey) && this.context.router) {
+    if (e.button === 0 && !(e.ctrlKey || e.altKey || e.metaKey) && this.props.history) {
       e.preventDefault();
-      this.context.router.history.push(`/@${this.props.status.getIn(['account', 'acct'])}`);
+      this.props.history.push(`/@${this.props.status.getIn(['account', 'acct'])}`);
     }
 
     e.stopPropagation();
   };
 
   parseClick = (e, destination) => {
-    if (e.button === 0 && !(e.ctrlKey || e.altKey || e.metaKey) && this.context.router) {
+    if (e.button === 0 && !(e.ctrlKey || e.altKey || e.metaKey) && this.props.history) {
       e.preventDefault();
-      this.context.router.history.push(destination);
+      this.props.history.push(destination);
     }
 
     e.stopPropagation();
@@ -135,7 +133,8 @@ class DetailedStatus extends ImmutablePureComponent {
 
     let applicationLink = '';
     let reblogLink = '';
-    let reblogIcon = 'retweet';
+    const reblogIcon = 'retweet';
+    const reblogIconComponent = RepeatIcon;
     let favouriteLink = '';
     let edited = '';
 
@@ -245,20 +244,14 @@ class DetailedStatus extends ImmutablePureComponent {
 
     const visibilityLink = <> · <VisibilityIcon visibility={status.get('visibility')} /></>;
 
-    if (status.get('visibility') === 'direct') {
-      reblogIcon = 'envelope';
-    } else if (status.get('visibility') === 'private') {
-      reblogIcon = 'lock';
-    }
-
     if (!['unlisted', 'public'].includes(status.get('visibility'))) {
       reblogLink = null;
-    } else if (this.context.router) {
+    } else if (this.props.history) {
       reblogLink = (
         <>
           {' · '}
           <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/reblogs`} className='detailed-status__link'>
-            <Icon id={reblogIcon} />
+            <Icon id={reblogIcon} icon={reblogIconComponent} />
             <span className='detailed-status__reblogs'>
               <AnimatedNumber value={status.get('reblogs_count')} />
             </span>
@@ -270,7 +263,7 @@ class DetailedStatus extends ImmutablePureComponent {
         <>
           {' · '}
           <a href={`/interact/${status.get('id')}?type=reblog`} className='detailed-status__link' onClick={this.handleModalLink}>
-            <Icon id={reblogIcon} />
+            <Icon id={reblogIcon} icon={reblogIconComponent} />
             <span className='detailed-status__reblogs'>
               <AnimatedNumber value={status.get('reblogs_count')} />
             </span>
@@ -279,10 +272,10 @@ class DetailedStatus extends ImmutablePureComponent {
       );
     }
 
-    if (this.context.router) {
+    if (this.props.history) {
       favouriteLink = (
         <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/favourites`} className='detailed-status__link'>
-          <Icon id='star' />
+          <Icon id='star' icon={StarIcon} />
           <span className='detailed-status__favorites'>
             <AnimatedNumber value={status.get('favourites_count')} />
           </span>
@@ -291,7 +284,7 @@ class DetailedStatus extends ImmutablePureComponent {
     } else {
       favouriteLink = (
         <a href={`/interact/${status.get('id')}?type=favourite`} className='detailed-status__link' onClick={this.handleModalLink}>
-          <Icon id='star' />
+          <Icon id='star' icon={StarIcon} />
           <span className='detailed-status__favorites'>
             <AnimatedNumber value={status.get('favourites_count')} />
           </span>
@@ -307,6 +300,9 @@ class DetailedStatus extends ImmutablePureComponent {
         </>
       );
     }
+
+    const {statusContentProps, hashtagBar} = getHashtagBarForStatus(status);
+    contentMedia.push(hashtagBar);
 
     return (
       <div style={outerStyle}>
@@ -330,6 +326,7 @@ class DetailedStatus extends ImmutablePureComponent {
             tagLinks={settings.get('tag_misleading_links')}
             rewriteMentions={settings.get('rewrite_mentions')}
             disabled
+            {...statusContentProps}
           />
 
           <div className='detailed-status__meta'>
@@ -344,4 +341,4 @@ class DetailedStatus extends ImmutablePureComponent {
 
 }
 
-export default injectIntl(DetailedStatus);
+export default withRouter(DetailedStatus);

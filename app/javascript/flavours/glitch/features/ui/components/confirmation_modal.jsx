@@ -3,7 +3,7 @@ import { PureComponent } from 'react';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 
-import Button from 'flavours/glitch/components/button';
+import { Button } from '../../../components/button';
 
 class ConfirmationModal extends PureComponent {
 
@@ -22,10 +22,6 @@ class ConfirmationModal extends PureComponent {
   static defaultProps = {
     closeWhenConfirm: true,
   };
-
-  componentDidMount() {
-    this.button.focus();
-  }
 
   handleClick = () => {
     if (this.props.closeWhenConfirm) {
@@ -46,10 +42,6 @@ class ConfirmationModal extends PureComponent {
     this.props.onClose();
   };
 
-  setRef = (c) => {
-    this.button = c;
-  };
-
   setDoNotAskRef = (c) => {
     this.doNotAskCheckbox = c;
   };
@@ -67,7 +59,7 @@ class ConfirmationModal extends PureComponent {
           { onDoNotAsk && (
             <div className='confirmation-modal__do_not_ask_again'>
               <input type='checkbox' id='confirmation-modal__do_not_ask_again-checkbox' ref={this.setDoNotAskRef} />
-              <label for='confirmation-modal__do_not_ask_again-checkbox'>
+              <label htmlFor='confirmation-modal__do_not_ask_again-checkbox'>
                 <FormattedMessage id='confirmation_modal.do_not_ask_again' defaultMessage='Do not ask for confirmation again' />
               </label>
             </div>
@@ -79,7 +71,7 @@ class ConfirmationModal extends PureComponent {
             {secondary !== undefined && (
               <Button text={secondary} onClick={this.handleSecondary} className='confirmation-modal__secondary-button' />
             )}
-            <Button text={confirm} onClick={this.handleClick} ref={this.setRef} />
+            <Button text={confirm} onClick={this.handleClick} autoFocus />
           </div>
         </div>
       </div>

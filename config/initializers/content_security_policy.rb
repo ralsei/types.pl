@@ -1,8 +1,16 @@
 # frozen_string_literal: true
 
-# Define an application-wide content security policy
-# For further information see the following documentation
-# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+# Be sure to restart your server when you modify this file.
+
+# Define an application-wide content security policy.
+# See the Securing Rails Applications Guide for more information:
+# https://guides.rubyonrails.org/security.html#content-security-policy-header
+
+require_relative '../../app/lib/content_security_policy'
+
+policy = ContentSecurityPolicy.new
+assets_host = policy.assets_host
+media_hosts = policy.media_hosts
 
 def sso_host
   return unless ENV['ONE_CLICK_SSO_LOGIN'] == 'true'
@@ -22,65 +30,46 @@ def sso_host
   end
 end
 
-unless Rails.env.development?
-  assets_host = Rails.configuration.action_controller.asset_host || "https://#{ENV['WEB_DOMAIN'] || ENV['LOCAL_DOMAIN']}"
-  data_hosts = [assets_host]
+Rails.application.config.content_security_policy do |p|
+  p.base_uri        :none
+  p.default_src     :none
+  p.frame_ancestors :none
+  p.font_src        :self, assets_host
+  p.img_src         :self, :data, :blob, *media_hosts
+  p.style_src       :self, :unsafe_inline, assets_host
+  p.media_src       :self, :data, *media_hosts
+  p.frame_src       :self, :https
+  p.manifest_src    :self, assets_host
 
-  if ENV['S3_ENABLED'] == 'true'
-    attachments_host = "https://#{ENV['S3_ALIAS_HOST'] || ENV['S3_CLOUDFRONT_HOST'] || ENV['AZURE_ALIAS_HOST'] || ENV['S3_HOSTNAME'] || "s3-#{ENV['S3_REGION'] || 'us-east-1'}.amazonaws.com"}"
-    attachments_host = "https://#{Addressable::URI.parse(attachments_host).host}"
-  elsif ENV['SWIFT_ENABLED'] == 'true'
-    attachments_host = ENV['SWIFT_OBJECT_URL']
-    attachments_host = "https://#{Addressable::URI.parse(attachments_host).host}"
+  if sso_host.present?
+    p.form_action     :self, sso_host
   else
-    attachments_host = nil
+    p.form_action     :self
   end
 
-  data_hosts << attachments_host unless attachments_host.nil?
+  p.child_src       :self, :blob, assets_host
+  p.worker_src      :self, :blob, assets_host
 
-  if ENV['PAPERCLIP_ROOT_URL']
-    url = Addressable::URI.parse(assets_host) + ENV['PAPERCLIP_ROOT_URL']
-    data_hosts << "https://#{url.host}"
-  end
+  if Rails.env.development?
+    webpacker_public_host = ENV.fetch('WEBPACKER_DEV_SERVER_PUBLIC', Webpacker.config.dev_server[:public])
+    front_end_build_urls = %w(ws http).map { |protocol| "#{protocol}#{Webpacker.dev_server.https? ? 's' : ''}://#{webpacker_public_host}" }
 
-  data_hosts.concat(ENV['EXTRA_DATA_HOSTS'].split('|')) if ENV['EXTRA_DATA_HOSTS']
-
-  data_hosts.uniq!
-
-  Rails.application.config.content_security_policy do |p|
-    p.base_uri        :none
-    p.default_src     :none
-    p.frame_ancestors :none
-    p.script_src      :self, :unsafe_eval, assets_host, "'wasm-unsafe-eval'"
-    p.font_src        :self, assets_host
-    p.img_src         :self, :data, :blob, *data_hosts
-    p.style_src       :self, :unsafe_inline, assets_host
-    p.media_src       :self, :data, *data_hosts
-    p.frame_src       :self, :https
-    p.child_src       :self, :blob, assets_host
-    p.worker_src      :self, :blob, assets_host
-    p.connect_src     :self, :blob, :data, Rails.configuration.x.streaming_api_base_url, *data_hosts
-    p.manifest_src    :self, assets_host
-
-    if sso_host.present?
-      p.form_action     :self, sso_host
-    else
-      p.form_action     :self
-    end
+    p.connect_src :self, :data, :blob, *media_hosts, Rails.configuration.x.streaming_api_base_url, *front_end_build_urls
+    p.script_src  :self, :unsafe_inline, :unsafe_eval, assets_host
+  else
+    p.connect_src :self, :data, :blob, *media_hosts, Rails.configuration.x.streaming_api_base_url
+    p.script_src  :self, :unsafe_eval, assets_host, "'wasm-unsafe-eval'"
   end
 end
-
-# I don't know why this is necessary but it is
-Rails.application.config.content_security_policy_nonce_directives = %w(style-src)
 
 # Report CSP violations to a specified URI
 # For further information see the following documentation:
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only
 # Rails.application.config.content_security_policy_report_only = true
 
-Rails.application.config.content_security_policy_nonce_generator = -> request { SecureRandom.base64(16) }
+Rails.application.config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
 
-Rails.application.config.content_security_policy_nonce_directives = %w()
+Rails.application.config.content_security_policy_nonce_directives = %w(style-src)
 
 Rails.application.reloader.to_prepare do
   PgHero::HomeController.content_security_policy do |p|
@@ -103,7 +92,7 @@ Rails.application.reloader.to_prepare do
       p.worker_src      :none
     end
 
-    LetterOpenerWeb::LettersController.after_action do |p|
+    LetterOpenerWeb::LettersController.after_action do
       request.content_security_policy_nonce_directives = %w(script-src)
     end
   end

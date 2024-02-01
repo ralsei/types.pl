@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
-import { Children, cloneElement } from 'react';
+import { Children, cloneElement, useCallback } from 'react';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { supportsPassiveEvents } from 'detect-passive-events';
 
-import { scrollRight } from 'flavours/glitch/scroll';
-
+import { scrollRight } from '../../../scroll';
 import BundleContainer from '../containers/bundle_container';
 import {
   Compose,
@@ -22,9 +21,10 @@ import {
   ListTimeline,
   Directory,
 } from '../util/async-components';
+import { useColumnsContext } from '../util/columns_context';
 
 import BundleColumnError from './bundle_column_error';
-import ColumnLoading from './column_loading';
+import { ColumnLoading } from './column_loading';
 import ComposePanel from './compose_panel';
 import DrawerLoading from './drawer_loading';
 import NavigationPanel from './navigation_panel';
@@ -44,12 +44,18 @@ const componentMap = {
   'DIRECTORY': Directory,
 };
 
+const TabsBarPortal = () => {
+  const {setTabsBarElement} = useColumnsContext();
+
+  const setRef = useCallback((element) => {
+    if(element)
+      setTabsBarElement(element);
+  }, [setTabsBarElement]);
+
+  return <div id='tabs-bar__portal' ref={setRef} />;
+};
+
 export default class ColumnsArea extends ImmutablePureComponent {
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired,
-  };
-
   static propTypes = {
     columns: ImmutablePropTypes.list.isRequired,
     singleColumn: PropTypes.bool,
@@ -81,7 +87,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
     this.isRtlLayout = document.getElementsByTagName('body')[0].classList.contains('rtl');
   }
 
-  componentWillUpdate(nextProps) {
+  UNSAFE_componentWillUpdate(nextProps) {
     if (this.props.singleColumn !== nextProps.singleColumn && nextProps.singleColumn) {
       this.node.removeEventListener('wheel', this.handleWheel);
     }
@@ -152,7 +158,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
           </div>
 
           <div className='columns-area__panels__main'>
-            <div className='tabs-bar__wrapper'><div id='tabs-bar__portal' /></div>
+            <div className='tabs-bar__wrapper'><TabsBarPortal /></div>
             <div className='columns-area columns-area--mobile'>{children}</div>
           </div>
 

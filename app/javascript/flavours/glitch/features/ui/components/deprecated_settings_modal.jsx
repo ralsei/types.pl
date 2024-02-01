@@ -5,7 +5,10 @@ import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
-import Button from 'flavours/glitch/components/button';
+
+import ManufacturingIcon from '@/material-icons/400-24px/manufacturing.svg?react';
+import SettingsIcon from '@/material-icons/400-24px/settings-fill.svg?react';
+import { Button } from 'flavours/glitch/components/button';
 import { Icon } from 'flavours/glitch/components/icon';
 import illustration from 'flavours/glitch/images/logo_warn_glitch.svg';
 import { preferenceLink } from 'flavours/glitch/utils/backend_links';
@@ -25,17 +28,9 @@ class DeprecatedSettingsModal extends PureComponent {
     intl: PropTypes.object.isRequired,
   };
 
-  componentDidMount() {
-    this.button.focus();
-  }
-
   handleClick = () => {
     this.props.onConfirm();
     this.props.onClose();
-  };
-
-  setRef = (c) => {
-    this.button = c;
   };
 
   render () {
@@ -53,12 +48,12 @@ class DeprecatedSettingsModal extends PureComponent {
             values={{
               app_settings: (
                 <strong className='deprecated-settings-label'>
-                  <Icon id='cogs' /> <FormattedMessage id='navigation_bar.app_settings' defaultMessage='App settings' />
+                  <Icon id='cogs' icon={ManufacturingIcon} /> <FormattedMessage id='navigation_bar.app_settings' defaultMessage='App settings' />
                 </strong>
               ),
               preferences: (
                 <strong className='deprecated-settings-label'>
-                  <Icon id='cog' /> <FormattedMessage id='navigation_bar.preferences' defaultMessage='Preferences' />
+                  <Icon id='cog' icon={SettingsIcon} /> <FormattedMessage id='navigation_bar.preferences' defaultMessage='Preferences' />
                 </strong>
               ),
             }}
@@ -78,7 +73,7 @@ class DeprecatedSettingsModal extends PureComponent {
         <div>
           <div className='confirmation-modal__action-bar'>
             <div />
-            <Button text={intl.formatMessage(messages.discardChanges)} onClick={this.handleClick} ref={this.setRef} />
+            <Button text={intl.formatMessage(messages.discardChanges)} onClick={this.handleClick} autoFocus />
           </div>
         </div>
       </div>

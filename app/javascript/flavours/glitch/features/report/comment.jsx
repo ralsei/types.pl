@@ -3,15 +3,15 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
+import { createSelector } from '@reduxjs/toolkit';
 import { OrderedSet, List as ImmutableList } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { shallowEqual } from 'react-redux';
-import { createSelector } from 'reselect';
 
 import Toggle from 'react-toggle';
 
 import { fetchAccount } from 'flavours/glitch/actions/accounts';
-import Button from 'flavours/glitch/components/button';
+import { Button } from 'flavours/glitch/components/button';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 const messages = defineMessages({
@@ -104,7 +104,7 @@ const Comment = ({ comment, domain, statusIds, isRemote, isSubmitting, selectedD
       </div>
     </>
   );
-}
+};
 
 Comment.propTypes = {
   comment: PropTypes.string.isRequired,

@@ -4,6 +4,7 @@ import { PureComponent } from 'react';
 import { defineMessages, injectIntl, FormattedMessage, FormattedDate } from 'react-intl';
 
 import classNames from 'classnames';
+import { withRouter } from 'react-router-dom';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
@@ -12,16 +13,18 @@ import TransitionMotion from 'react-motion/lib/TransitionMotion';
 import spring from 'react-motion/lib/spring';
 import ReactSwipeableViews from 'react-swipeable-views';
 
+import elephantUIPlane from '@/images/elephant_ui_plane.svg';
+import AddIcon from '@/material-icons/400-24px/add.svg?react';
+import ChevronLeftIcon from '@/material-icons/400-24px/chevron_left.svg?react';
+import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
 import { AnimatedNumber } from 'flavours/glitch/components/animated_number';
-import { Icon } from 'flavours/glitch/components/icon';
+import { Icon }  from 'flavours/glitch/components/icon';
 import { IconButton } from 'flavours/glitch/components/icon_button';
 import EmojiPickerDropdown from 'flavours/glitch/features/compose/containers/emoji_picker_dropdown_container';
-import unicodeMapping from 'flavours/glitch/features/emoji/emoji_unicode_mapping_light';
+import { unicodeMapping } from 'flavours/glitch/features/emoji/emoji_unicode_mapping_light';
 import { autoPlayGif, reduceMotion, disableSwiping, mascot } from 'flavours/glitch/initial_state';
 import { assetHost } from 'flavours/glitch/utils/config';
-import elephantUIPlane from 'mastodon/../images/elephant_ui_plane.svg';
-
-
+import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
 const messages = defineMessages({
   close: { id: 'lightbox.close', defaultMessage: 'Close' },
@@ -29,14 +32,10 @@ const messages = defineMessages({
   next: { id: 'lightbox.next', defaultMessage: 'Next' },
 });
 
-class Content extends ImmutablePureComponent {
-
-  static contextTypes = {
-    router: PropTypes.object,
-  };
-
+class ContentWithRouter extends ImmutablePureComponent {
   static propTypes = {
     announcement: ImmutablePropTypes.map.isRequired,
+    ...WithRouterPropTypes,
   };
 
   setRef = c => {
@@ -91,25 +90,25 @@ class Content extends ImmutablePureComponent {
   }
 
   onMentionClick = (mention, e) => {
-    if (this.context.router && e.button === 0 && !(e.ctrlKey || e.metaKey)) {
+    if (this.props.history && e.button === 0 && !(e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      this.context.router.history.push(`/@${mention.get('acct')}`);
+      this.props.history.push(`/@${mention.get('acct')}`);
     }
   };
 
   onHashtagClick = (hashtag, e) => {
     hashtag = hashtag.replace(/^#/, '');
 
-    if (this.context.router && e.button === 0 && !(e.ctrlKey || e.metaKey)) {
+    if (this.props.history&& e.button === 0 && !(e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      this.context.router.history.push(`/tags/${hashtag}`);
+      this.props.history.push(`/tags/${hashtag}`);
     }
   };
 
   onStatusClick = (status, e) => {
-    if (this.context.router && e.button === 0 && !(e.ctrlKey || e.metaKey)) {
+    if (this.props.history && e.button === 0 && !(e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      this.context.router.history.push(`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`);
+      this.props.history.push(`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`);
     }
   };
 
@@ -154,6 +153,8 @@ class Content extends ImmutablePureComponent {
   }
 
 }
+
+const Content = withRouter(ContentWithRouter);
 
 class Emoji extends PureComponent {
 
@@ -296,7 +297,7 @@ class ReactionsBar extends ImmutablePureComponent {
               />
             ))}
 
-            {visibleReactions.size < 8 && <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} button={<Icon id='plus' />} />}
+            {visibleReactions.size < 8 && <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} button={<Icon id='plus' icon={AddIcon} />} />}
           </div>
         )}
       </TransitionMotion>
@@ -396,7 +397,7 @@ class Announcements extends ImmutablePureComponent {
   _markAnnouncementAsRead () {
     const { dismissAnnouncement, announcements } = this.props;
     const { index } = this.state;
-    const announcement = announcements.get(index);
+    const announcement = announcements.get(announcements.size - 1 - index);
     if (!announcement.get('read')) dismissAnnouncement(announcement.get('id'));
   }
 
@@ -437,14 +438,14 @@ class Announcements extends ImmutablePureComponent {
                 selected={index === idx}
                 disabled={disableSwiping}
               />
-            ))}
+            )).reverse()}
           </ReactSwipeableViews>
 
           {announcements.size > 1 && (
             <div className='announcements__pagination'>
-              <IconButton disabled={announcements.size === 1} title={intl.formatMessage(messages.previous)} icon='chevron-left' onClick={this.handlePrevClick} size={13} />
+              <IconButton disabled={announcements.size === 1} title={intl.formatMessage(messages.previous)} icon='chevron-left' iconComponent={ChevronLeftIcon} onClick={this.handlePrevClick} size={13} />
               <span>{index + 1} / {announcements.size}</span>
-              <IconButton disabled={announcements.size === 1} title={intl.formatMessage(messages.next)} icon='chevron-right' onClick={this.handleNextClick} size={13} />
+              <IconButton disabled={announcements.size === 1} title={intl.formatMessage(messages.next)} icon='chevron-right' iconComponent={ChevronRightIcon} onClick={this.handleNextClick} size={13} />
             </div>
           )}
         </div>

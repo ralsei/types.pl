@@ -6,6 +6,8 @@ import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { Helmet } from 'react-helmet';
 import { NavLink } from 'react-router-dom';
 
+
+import PublicIcon from '@/material-icons/400-24px/public.svg?react';
 import { addColumn } from 'flavours/glitch/actions/columns';
 import { changeSetting } from 'flavours/glitch/actions/settings';
 import { connectPublicStream, connectCommunityStream } from 'flavours/glitch/actions/streaming';
@@ -179,6 +181,7 @@ const Firehose = ({ feedType, multiColumn }) => {
     <Column bindToDocument={!multiColumn} ref={columnRef} label={intl.formatMessage(messages.title)}>
       <ColumnHeader
         icon='globe'
+        iconComponent={PublicIcon}
         active={hasUnread}
         title={intl.formatMessage(messages.title)}
         onPin={handlePin}
@@ -188,32 +191,30 @@ const Firehose = ({ feedType, multiColumn }) => {
         <ColumnSettings />
       </ColumnHeader>
 
-      <div className='scrollable scrollable--flex'>
-        <div className='account__section-headline'>
-          <NavLink exact to='/public/local'>
-            <FormattedMessage tagName='div' id='firehose.local' defaultMessage='This server' />
-          </NavLink>
+      <div className='account__section-headline'>
+        <NavLink exact to='/public/local'>
+          <FormattedMessage tagName='div' id='firehose.local' defaultMessage='This server' />
+        </NavLink>
 
-          <NavLink exact to='/public/remote'>
-            <FormattedMessage tagName='div' id='firehose.remote' defaultMessage='Other servers' />
-          </NavLink>
+        <NavLink exact to='/public/remote'>
+          <FormattedMessage tagName='div' id='firehose.remote' defaultMessage='Other servers' />
+        </NavLink>
 
-          <NavLink exact to='/public'>
-            <FormattedMessage tagName='div' id='firehose.all' defaultMessage='All' />
-          </NavLink>
-        </div>
-
-        <StatusListContainer
-          prepend={prependBanner}
-          timelineId={`${feedType}${feedType === 'public' && allowLocalOnly ? ':allow_local_only' : ''}${onlyMedia ? ':media' : ''}`}
-          onLoadMore={handleLoadMore}
-          trackScroll
-          scrollKey='firehose'
-          emptyMessage={emptyMessage}
-          bindToDocument={!multiColumn}
-          regex={regex}
-        />
+        <NavLink exact to='/public'>
+          <FormattedMessage tagName='div' id='firehose.all' defaultMessage='All' />
+        </NavLink>
       </div>
+
+      <StatusListContainer
+        prepend={prependBanner}
+        timelineId={`${feedType}${feedType === 'public' && allowLocalOnly ? ':allow_local_only' : ''}${onlyMedia ? ':media' : ''}`}
+        onLoadMore={handleLoadMore}
+        trackScroll
+        scrollKey='firehose'
+        emptyMessage={emptyMessage}
+        bindToDocument={!multiColumn}
+        regex={regex}
+      />
 
       <Helmet>
         <title>{intl.formatMessage(messages.title)}</title>
@@ -221,7 +222,7 @@ const Firehose = ({ feedType, multiColumn }) => {
       </Helmet>
     </Column>
   );
-}
+};
 
 Firehose.propTypes = {
   multiColumn: PropTypes.bool,

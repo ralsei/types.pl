@@ -8,7 +8,7 @@ class StatusPolicy < ApplicationPolicy
   end
 
   def show?
-    return false if author.suspended?
+    return false if author.unavailable?
     return false if local_only? && (current_account.nil? || !current_account.local?)
 
     if requires_mention?
@@ -58,7 +58,7 @@ class StatusPolicy < ApplicationPolicy
     if record.mentions.loaded?
       record.mentions.any? { |mention| mention.account_id == current_account.id }
     else
-      record.mentions.where(account: current_account).exists?
+      record.mentions.exists?(account: current_account)
     end
   end
 

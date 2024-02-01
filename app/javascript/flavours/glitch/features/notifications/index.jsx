@@ -6,15 +6,22 @@ import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 
+import { createSelector } from '@reduxjs/toolkit';
 import { List as ImmutableList } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 
 import { debounce } from 'lodash';
 
-import { addColumn, removeColumn, moveColumn } from 'flavours/glitch/actions/columns';
-import { submitMarkers } from 'flavours/glitch/actions/markers';
+import DeleteForeverIcon from '@/material-icons/400-24px/delete_forever.svg?react';
+import DoneAllIcon from '@/material-icons/400-24px/done_all.svg?react';
+import NotificationsIcon from '@/material-icons/400-24px/notifications-fill.svg?react';
+import { compareId } from 'flavours/glitch/compare_id';
+import { Icon }  from 'flavours/glitch/components/icon';
+import { NotSignedInIndicator } from 'flavours/glitch/components/not_signed_in_indicator';
+
+import { addColumn, removeColumn, moveColumn } from '../../actions/columns';
+import { submitMarkers } from '../../actions/markers';
 import {
   enterNotificationClearingMode,
   expandNotifications,
@@ -23,25 +30,17 @@ import {
   mountNotifications,
   unmountNotifications,
   markNotificationsAsRead,
-} from 'flavours/glitch/actions/notifications';
-import { compareId } from 'flavours/glitch/compare_id';
-import Column from 'flavours/glitch/components/column';
-import ColumnHeader from 'flavours/glitch/components/column_header';
-import { Icon } from 'flavours/glitch/components/icon';
-import { LoadGap } from 'flavours/glitch/components/load_gap';
-import { NotSignedInIndicator } from 'flavours/glitch/components/not_signed_in_indicator';
-import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import NotificationPurgeButtonsContainer from 'flavours/glitch/containers/notification_purge_buttons_container';
+} from '../../actions/notifications';
+import Column from '../../components/column';
+import ColumnHeader from '../../components/column_header';
+import { LoadGap } from '../../components/load_gap';
+import ScrollableList from '../../components/scrollable_list';
+import NotificationPurgeButtonsContainer from '../../containers/notification_purge_buttons_container';
 
 import NotificationsPermissionBanner from './components/notifications_permission_banner';
 import ColumnSettingsContainer from './containers/column_settings_container';
 import FilterBarContainer from './containers/filter_bar_container';
 import NotificationContainer from './containers/notification_container';
-
-
-
-
-
 
 const messages = defineMessages({
   title: { id: 'column.notifications', defaultMessage: 'Notifications' },
@@ -297,7 +296,7 @@ class Notifications extends PureComponent {
           onClick={this.handleMarkAsRead}
           className='column-header__button'
         >
-          <Icon id='check' />
+          <Icon id='done-all' icon={DoneAllIcon} />
         </button>,
       );
     }
@@ -321,7 +320,7 @@ class Notifications extends PureComponent {
         onClick={this.onEnterCleaningMode}
         className={notifCleaningButtonClassName}
       >
-        <Icon id='eraser' />
+        <Icon id='eraser' icon={DeleteForeverIcon} />
       </button>,
     );
 
@@ -337,12 +336,12 @@ class Notifications extends PureComponent {
       <Column
         bindToDocument={!multiColumn}
         ref={this.setColumnRef}
-        name='notifications'
         extraClasses={this.props.notifCleaningActive ? 'notif-cleaning' : null}
         label={intl.formatMessage(messages.title)}
       >
         <ColumnHeader
           icon='bell'
+          iconComponent={NotificationsIcon}
           active={isUnread}
           title={intl.formatMessage(messages.title)}
           onPin={this.handlePin}

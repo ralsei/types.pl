@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe 'NewStatuses' do
+describe 'NewStatuses', :sidekiq_inline do
   include ProfileStories
 
   subject { page }
@@ -27,7 +27,7 @@ describe 'NewStatuses' do
       click_on 'TOOT!'
     end
 
-    expect(subject).to have_selector('.status__content__text', text: status_text)
+    expect(subject).to have_css('.status__content__text', text: status_text)
   end
 
   it 'can be posted again' do
@@ -40,6 +40,6 @@ describe 'NewStatuses' do
       click_on 'TOOT!'
     end
 
-    expect(subject).to have_selector('.status__content__text', text: status_text)
+    expect(subject).to have_css('.status__content__text', text: status_text)
   end
 end

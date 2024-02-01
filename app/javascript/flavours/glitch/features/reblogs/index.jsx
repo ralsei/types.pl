@@ -10,13 +10,17 @@ import { connect } from 'react-redux';
 
 import { debounce } from 'lodash';
 
-import { fetchReblogs, expandReblogs } from 'flavours/glitch/actions/interactions';
-import ColumnHeader from 'flavours/glitch/components/column_header';
-import { Icon } from 'flavours/glitch/components/icon';
-import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
-import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import AccountContainer from 'flavours/glitch/containers/account_container';
-import Column from 'flavours/glitch/features/ui/components/column';
+import RefreshIcon from '@/material-icons/400-24px/refresh.svg?react';
+import RepeatIcon from '@/material-icons/400-24px/repeat.svg?react';
+import { Icon }  from 'flavours/glitch/components/icon';
+
+
+import { fetchReblogs, expandReblogs } from '../../actions/interactions';
+import ColumnHeader from '../../components/column_header';
+import { LoadingIndicator } from '../../components/loading_indicator';
+import ScrollableList from '../../components/scrollable_list';
+import AccountContainer from '../../containers/account_container';
+import Column from '../ui/components/column';
 
 const messages = defineMessages({
   heading: { id: 'column.reblogged_by', defaultMessage: 'Boosted by' },
@@ -80,12 +84,13 @@ class Reblogs extends ImmutablePureComponent {
       <Column ref={this.setRef}>
         <ColumnHeader
           icon='retweet'
+          iconComponent={RepeatIcon}
           title={intl.formatMessage(messages.heading)}
           onClick={this.handleHeaderClick}
           showBackButton
           multiColumn={multiColumn}
           extraButton={(
-            <button className='column-header__button' title={intl.formatMessage(messages.refresh)} aria-label={intl.formatMessage(messages.refresh)} onClick={this.handleRefresh}><Icon id='refresh' /></button>
+            <button type='button' className='column-header__button' title={intl.formatMessage(messages.refresh)} aria-label={intl.formatMessage(messages.refresh)} onClick={this.handleRefresh}><Icon id='refresh' icon={RefreshIcon} /></button>
           )}
         />
 

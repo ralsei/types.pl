@@ -4,22 +4,33 @@ import { defineMessages, injectIntl } from 'react-intl';
 
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
+import { withRouter } from 'react-router-dom';
 
+import { createSelector } from '@reduxjs/toolkit';
 import Immutable from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 
 import { HotKeys } from 'react-hotkeys';
 
-import { initBlockModal } from 'flavours/glitch/actions/blocks';
-import { initBoostModal } from 'flavours/glitch/actions/boosts';
+import ChatIcon from '@/material-icons/400-24px/chat.svg?react';
+import VisibilityIcon from '@/material-icons/400-24px/visibility.svg?react';
+import VisibilityOffIcon from '@/material-icons/400-24px/visibility_off.svg?react';
+import { Icon }  from 'flavours/glitch/components/icon';
+import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
+import ScrollContainer from 'flavours/glitch/containers/scroll_container';
+import BundleColumnError from 'flavours/glitch/features/ui/components/bundle_column_error';
+import { autoUnfoldCW } from 'flavours/glitch/utils/content_warning';
+import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
+
+import { initBlockModal } from '../../actions/blocks';
+import { initBoostModal } from '../../actions/boosts';
 import {
   replyCompose,
   mentionCompose,
   directCompose,
-} from 'flavours/glitch/actions/compose';
+} from '../../actions/compose';
 import {
   favourite,
   unfavourite,
@@ -29,11 +40,11 @@ import {
   unreblog,
   pin,
   unpin,
-} from 'flavours/glitch/actions/interactions';
-import { changeLocalSetting } from 'flavours/glitch/actions/local_settings';
-import { openModal } from 'flavours/glitch/actions/modal';
-import { initMuteModal } from 'flavours/glitch/actions/mutes';
-import { initReport } from 'flavours/glitch/actions/reports';
+} from '../../actions/interactions';
+import { changeLocalSetting } from '../../actions/local_settings';
+import { openModal } from '../../actions/modal';
+import { initMuteModal } from '../../actions/mutes';
+import { initReport } from '../../actions/reports';
 import {
   fetchStatus,
   muteStatus,
@@ -44,23 +55,18 @@ import {
   revealStatus,
   translateStatus,
   undoStatusTranslation,
-} from 'flavours/glitch/actions/statuses';
-import { Icon } from 'flavours/glitch/components/icon';
-import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
-import { textForScreenReader, defaultMediaVisibility } from 'flavours/glitch/components/status';
-import ScrollContainer from 'flavours/glitch/containers/scroll_container';
-import StatusContainer from 'flavours/glitch/containers/status_container';
-import BundleColumnError from 'flavours/glitch/features/ui/components/bundle_column_error';
-import Column from 'flavours/glitch/features/ui/components/column';
-import { boostModal, favouriteModal, deleteModal } from 'flavours/glitch/initial_state';
-import { makeGetStatus, makeGetPictureInPicture } from 'flavours/glitch/selectors';
-import { autoUnfoldCW } from 'flavours/glitch/utils/content_warning';
-
+} from '../../actions/statuses';
 import ColumnHeader from '../../components/column_header';
+import { textForScreenReader, defaultMediaVisibility } from '../../components/status';
+import StatusContainer from '../../containers/status_container';
+import { boostModal, favouriteModal, deleteModal } from '../../initial_state';
+import { makeGetStatus, makeGetPictureInPicture } from '../../selectors';
+import Column from '../ui/components/column';
 import { attachFullscreenListener, detachFullscreenListener, isFullscreen } from '../ui/util/fullscreen';
 
 import ActionBar from './components/action_bar';
 import DetailedStatus from './components/detailed_status';
+
 
 const messages = defineMessages({
   deleteConfirm: { id: 'confirmations.delete.confirm', defaultMessage: 'Delete' },
@@ -182,7 +188,6 @@ const titleFromStatus = (intl, status) => {
 class Status extends ImmutablePureComponent {
 
   static contextTypes = {
-    router: PropTypes.object,
     identity: PropTypes.object,
   };
 
@@ -202,6 +207,7 @@ class Status extends ImmutablePureComponent {
       inUse: PropTypes.bool,
       available: PropTypes.bool,
     }),
+    ...WithRouterPropTypes
   };
 
   state = {
@@ -217,6 +223,7 @@ class Status extends ImmutablePureComponent {
   componentDidMount () {
     attachFullscreenListener(this.onFullScreenChange);
     this.props.dispatch(fetchStatus(this.props.params.statusId));
+    this._scrollStatusIntoView();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -321,11 +328,11 @@ class Status extends ImmutablePureComponent {
             message: intl.formatMessage(messages.replyMessage),
             confirm: intl.formatMessage(messages.replyConfirm),
             onDoNotAsk: () => dispatch(changeLocalSetting(['confirm_before_clearing_draft'], false)),
-            onConfirm: () => dispatch(replyCompose(status, this.context.router.history)),
+            onConfirm: () => dispatch(replyCompose(status, this.props.history)),
           },
         }));
       } else {
-        dispatch(replyCompose(status, this.context.router.history));
+        dispatch(replyCompose(status, this.props.history));
       }
     } else {
       dispatch(openModal({
@@ -402,12 +409,12 @@ class Status extends ImmutablePureComponent {
     this.props.dispatch(editStatus(status.get('id'), history));
   };
 
-  handleDirectClick = (account, router) => {
-    this.props.dispatch(directCompose(account, router));
+  handleDirectClick = (account, history) => {
+    this.props.dispatch(directCompose(account, history));
   };
 
-  handleMentionClick = (account, router) => {
-    this.props.dispatch(mentionCompose(account, router));
+  handleMentionClick = (account, history) => {
+    this.props.dispatch(mentionCompose(account, history));
   };
 
   handleOpenMedia = (media, index, lang) => {
@@ -529,7 +536,7 @@ class Status extends ImmutablePureComponent {
   };
 
   handleHotkeyOpenProfile = () => {
-    this.context.router.history.push(`/@${this.props.status.getIn(['account', 'acct'])}`);
+    this.props.history.push(`/@${this.props.status.getIn(['account', 'acct'])}`);
   };
 
   handleMoveUp = id => {
@@ -606,7 +613,7 @@ class Status extends ImmutablePureComponent {
     this.setState({ isExpanded: value });
   };
 
-  setRef = c => {
+  setContainerRef = c => {
     this.node = c;
   };
 
@@ -614,12 +621,16 @@ class Status extends ImmutablePureComponent {
     this.column = c;
   };
 
-  componentDidUpdate (prevProps) {
-    const { status, ancestorsIds, multiColumn } = this.props;
+  setStatusRef = c => {
+    this.statusNode = c;
+  };
 
-    if (status && (ancestorsIds.size > prevProps.ancestorsIds.size || prevProps.status?.get('id') !== status.get('id'))) {
-      window.requestAnimationFrame(() => {
-        this.node?.querySelector('.detailed-status__wrapper')?.scrollIntoView(true);
+  _scrollStatusIntoView () {
+    const { status, multiColumn } = this.props;
+
+    if (status) {
+      requestIdleCallback(() => {
+        this.statusNode?.scrollIntoView(true);
 
         // In the single-column interface, `scrollIntoView` will put the post behind the header,
         // so compensate for that.
@@ -634,12 +645,35 @@ class Status extends ImmutablePureComponent {
     }
   }
 
+  componentDidUpdate (prevProps) {
+    const { status, ancestorsIds } = this.props;
+
+    if (status && (ancestorsIds.size > prevProps.ancestorsIds.size || prevProps.status?.get('id') !== status.get('id'))) {
+      this._scrollStatusIntoView();
+    }
+  }
+
   componentWillUnmount () {
     detachFullscreenListener(this.onFullScreenChange);
   }
 
   onFullScreenChange = () => {
     this.setState({ fullscreen: isFullscreen() });
+  };
+
+  shouldUpdateScroll = (prevRouterProps, { location }) => {
+    // Do not change scroll when opening a modal
+    if (location.state?.mastodonModalKey !== prevRouterProps?.location?.state?.mastodonModalKey) {
+      return false;
+    }
+
+    // Scroll to focused post if it is loaded
+    if (this.statusNode) {
+      return [0, this.statusNode.offsetTop];
+    }
+
+    // Do not scroll otherwise, `componentDidUpdate` will take care of that
+    return false;
   };
 
   render () {
@@ -683,7 +717,7 @@ class Status extends ImmutablePureComponent {
       bookmark: this.handleHotkeyBookmark,
       mention: this.handleHotkeyMention,
       openProfile: this.handleHotkeyOpenProfile,
-      toggleSpoiler: this.handleToggleHidden,
+      toggleHidden: this.handleToggleHidden,
       toggleSensitive: this.handleHotkeyToggleSensitive,
       openMedia: this.handleHotkeyOpenMedia,
     };
@@ -692,21 +726,22 @@ class Status extends ImmutablePureComponent {
       <Column bindToDocument={!multiColumn} ref={this.setColumnRef} label={intl.formatMessage(messages.detailedStatus)}>
         <ColumnHeader
           icon='comment'
+          iconComponent={ChatIcon}
           title={intl.formatMessage(messages.tootHeading)}
           onClick={this.handleHeaderClick}
           showBackButton
           multiColumn={multiColumn}
           extraButton={(
-            <button type='button' className='column-header__button' title={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} aria-label={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} onClick={this.handleToggleAll}><Icon id={!isExpanded ? 'eye-slash' : 'eye'} /></button>
+            <button type='button' className='column-header__button' title={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} aria-label={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} onClick={this.handleToggleAll}><Icon id={!isExpanded ? 'eye-slash' : 'eye'} icon={isExpanded ? VisibilityOffIcon : VisibilityIcon} /></button>
           )}
         />
 
-        <ScrollContainer scrollKey='thread'>
-          <div className={classNames('scrollable', { fullscreen })} ref={this.setRef}>
+        <ScrollContainer scrollKey='thread' shouldUpdateScroll={this.shouldUpdateScroll}>
+          <div className={classNames('scrollable', { fullscreen })} ref={this.setContainerRef}>
             {ancestors}
 
             <HotKeys handlers={handlers}>
-              <div className={classNames('focusable', 'detailed-status__wrapper', `detailed-status__wrapper-${status.get('visibility')}`)} tabIndex={0} aria-label={textForScreenReader(intl, status, false, isExpanded)}>
+              <div className={classNames('focusable', 'detailed-status__wrapper', `detailed-status__wrapper-${status.get('visibility')}`)} tabIndex={0} aria-label={textForScreenReader(intl, status, false, isExpanded)} ref={this.setStatusRef}>
                 <DetailedStatus
                   key={`details-${status.get('id')}`}
                   status={status}
@@ -758,4 +793,4 @@ class Status extends ImmutablePureComponent {
 
 }
 
-export default injectIntl(connect(makeMapStateToProps)(Status));
+export default withRouter(injectIntl(connect(makeMapStateToProps)(Status)));

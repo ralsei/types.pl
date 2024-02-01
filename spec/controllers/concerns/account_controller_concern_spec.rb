@@ -11,12 +11,6 @@ describe AccountControllerConcern do
     end
   end
 
-  around do |example|
-    registrations_mode = Setting.registrations_mode
-    example.run
-    Setting.registrations_mode = registrations_mode
-  end
-
   before do
     routes.draw { get 'success' => 'anonymous#success' }
   end
@@ -62,7 +56,7 @@ describe AccountControllerConcern do
     end
 
     it 'sets link headers' do
-      account = Fabricate(:account, username: 'username')
+      Fabricate(:account, username: 'username')
       get 'success', params: { account_username: 'username' }
       expect(response.headers['Link'].to_s).to eq '<http://test.host/.well-known/webfinger?resource=acct%3Ausername%40cb6e6126.ngrok.io>; rel="lrdd"; type="application/jrd+json", <https://cb6e6126.ngrok.io/users/username>; rel="alternate"; type="application/activity+json"'
     end

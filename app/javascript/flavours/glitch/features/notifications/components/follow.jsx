@@ -1,24 +1,24 @@
-//  Package imports.
 import PropTypes from 'prop-types';
 
 import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
+import { withRouter } from 'react-router-dom';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { HotKeys } from 'react-hotkeys';
 
-
-// Our imports.
+import PersonAddIcon from '@/material-icons/400-24px/person_add-fill.svg?react';
 import { Icon } from 'flavours/glitch/components/icon';
-import Permalink from 'flavours/glitch/components/permalink';
+import { Permalink } from 'flavours/glitch/components/permalink';
 import AccountContainer from 'flavours/glitch/containers/account_container';
+import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
 import NotificationOverlayContainer from '../containers/overlay_container';
 
-export default class NotificationFollow extends ImmutablePureComponent {
+class NotificationFollow extends ImmutablePureComponent {
 
   static propTypes = {
     hidden: PropTypes.bool,
@@ -26,6 +26,7 @@ export default class NotificationFollow extends ImmutablePureComponent {
     account: ImmutablePropTypes.map.isRequired,
     notification: ImmutablePropTypes.map.isRequired,
     unread: PropTypes.bool,
+    ...WithRouterPropTypes,
   };
 
   handleMoveUp = () => {
@@ -43,15 +44,15 @@ export default class NotificationFollow extends ImmutablePureComponent {
   };
 
   handleOpenProfile = () => {
-    const { notification } = this.props;
-    this.context.router.history.push(`/@${notification.getIn(['account', 'acct'])}`);
+    const { history, notification } = this.props;
+    history.push(`/@${notification.getIn(['account', 'acct'])}`);
   };
 
   handleMention = e => {
     e.preventDefault();
 
-    const { notification, onMention } = this.props;
-    onMention(notification.get('account'), this.context.router.history);
+    const { history, notification, onMention } = this.props;
+    onMention(notification.get('account'), history);
   };
 
   getHandlers () {
@@ -86,7 +87,7 @@ export default class NotificationFollow extends ImmutablePureComponent {
         <div className={classNames('notification notification-follow focusable', { unread })} tabIndex={0}>
           <div className='notification__message'>
             <div className='notification__favourite-icon-wrapper'>
-              <Icon fixedWidth id='user-plus' />
+              <Icon id='user-plus' icon={PersonAddIcon} />
             </div>
 
             <FormattedMessage
@@ -104,3 +105,5 @@ export default class NotificationFollow extends ImmutablePureComponent {
   }
 
 }
+
+export default withRouter(NotificationFollow);

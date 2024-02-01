@@ -181,7 +181,7 @@ class Sanitize
       ]
     )
 
-    MASTODON_OEMBED ||= freeze_config(
+    MASTODON_OEMBED = freeze_config(
       elements: %w(audio embed iframe source video),
 
       attributes: {
@@ -229,7 +229,7 @@ class Sanitize
       end
     end
 
-    MASTODON_OUTGOING ||= freeze_config MASTODON_STRICT.merge(
+    MASTODON_OUTGOING = freeze_config MASTODON_STRICT.merge(
       attributes: merge(
         MASTODON_STRICT[:attributes],
         'a' => %w(href rel class title target translate)

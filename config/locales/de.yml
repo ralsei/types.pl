@@ -425,6 +425,7 @@ de:
       view: Domain-Sperre ansehen
     email_domain_blocks:
       add_new: Neue hinzufügen
+      allow_registrations_with_approval: Registrierungen mit Genehmigung erlauben
       attempts_over_week:
         one: "%{count} Registrierungsversuch in der vergangenen Woche"
         other: "%{count} Registrierungsversuche in der vergangenen Woche"
@@ -534,6 +535,7 @@ de:
       total_reported: Beschwerden über sie
       total_storage: Medienanhänge
       totals_time_period_hint_html: Die unten angezeigten Summen enthalten Daten für alle Zeiten.
+      unknown_instance: Auf diesem Server gibt es derzeit keinen Eintrag dieser Domain.
     invites:
       deactivate_all: Alle deaktivieren
       filter:
@@ -610,6 +612,7 @@ de:
       created_at: Gemeldet
       delete_and_resolve: Beiträge löschen
       forwarded: Weitergeleitet
+      forwarded_replies_explanation: Diese Meldung stammt von einem externen Profil und betrifft einen externen Inhalt. Der Inhalt wurde an Dich weitergeleitet, weil er eine Antwort auf ein bei Dir registriertes Profil ist.
       forwarded_to: Weitergeleitet an %{domain}
       mark_as_resolved: Als geklärt markieren
       mark_as_sensitive: Mit einer Inhaltswarnung versehen
@@ -746,7 +749,7 @@ de:
         title: Neue Nutzer*innen müssen ein CAPTCHA lösen, um das Konto zu bestätigen
       content_retention:
         preamble: Lege fest, wie lange Inhalte von Nutzer*innen auf deinem Mastodon-Server gespeichert bleiben.
-        title: Aufbewahrung von Inhalten
+        title: Cache & Archive
       default_noindex:
         desc_html: Betrifft alle Profile, die diese Einstellung bei sich nicht geändert haben
         title: Profile standardmäßig von der Suchmaschinen-Indizierung ausnehmen
@@ -995,8 +998,6 @@ de:
       new_trending_statuses:
         title: Angesagte Beiträge
       new_trending_tags:
-        no_approved_tags: Es gibt keine genehmigten Hashtags, die gerade im Trend liegen.
-        requirements: 'Jeder dieser Kandidaten könnte den #%{rank} genehmigten angesagten Hashtag übertreffen, der derzeit #%{lowest_tag_name} mit einer Punktzahl von %{lowest_tag_score} ist.'
         title: Angesagte Hashtags
       subject: Neue Trends zur Überprüfung auf %{instance}
   aliases:
@@ -1040,6 +1041,14 @@ de:
       hint_html: Fast geschafft! Wir müssen uns vergewissern, dass du ein Mensch bist (damit wir Spam verhindern können!). Bitte löse das CAPTCHA und klicke auf „Weiter“.
       title: Sicherheitsüberprüfung
     confirmations:
+      awaiting_review: Deine E-Mail-Adresse wurde bestätigt und das Team von %{domain} überprüft nun deine Registrierung. Sobald es dein Konto genehmigt, wirst du eine E-Mail erhalten.
+      awaiting_review_title: Deine Registrierung wird überprüft
+      clicking_this_link: Klick auf diesen Link
+      login_link: anmelden
+      proceed_to_login_html: Du kannst dich nun %{login_link}.
+      redirect_to_app_html: Du hättest zur <strong>%{app_name}</strong>-App weitergeleitet werden sollen. Wenn das nicht geschehen ist, versuche es mit einem %{clicking_this_link} oder kehre manuell zur App zurück.
+      registration_complete: Deine Registrierung auf %{domain} ist nun abgeschlossen!
+      welcome_title: Willkommen, %{name}!
       wrong_email_hint: Sollte diese E-Mail-Adresse nicht korrekt sein, kannst du sie in den Kontoeinstellungen ändern.
     delete_account: Konto löschen
     delete_account_html: Falls du dein Konto endgültig löschen möchtest, kannst du das <a href="%{path}">hier vornehmen</a>. Du musst dies zusätzlich bestätigen.
@@ -1069,7 +1078,7 @@ de:
       cas: CAS
       saml: SAML
     register: Registrieren
-    registration_closed: "%{instance} akzeptiert keine neuen Mitglieder*innen"
+    registration_closed: "%{instance} akzeptiert keine neuen Mitglieder"
     resend_confirmation: Bestätigungslink erneut zusenden
     reset_password: Passwort zurücksetzen
     rules:
@@ -1101,6 +1110,7 @@ de:
       functional: Dein Konto ist voll funktionsfähig.
       pending: Die Prüfung deiner Bewerbung steht noch aus. Dies kann einige Zeit in Anspruch nehmen. Sobald deine Bewerbung genehmigt wurde, erhältst du eine E-Mail.
       redirecting_to: Dein Konto ist inaktiv, weil es zu %{acct} umgezogen ist.
+      self_destruct: Da %{domain} den Betrieb einstellen wird, wirst du nur begrenzten Zugriff auf dein Konto haben.
       view_strikes: Vorherige Verstöße deines Kontos ansehen
     too_fast: Formular zu schnell übermittelt. Bitte versuche es erneut.
     use_security_key: Sicherheitsschlüssel verwenden
@@ -1228,7 +1238,7 @@ de:
       home: Startseite und Listen
       notifications: Benachrichtigungen
       public: Öffentliche Timelines
-      thread: Unterhaltungen
+      thread: Private Erwähnungen
     edit:
       add_keyword: Schlagwort hinzufügen
       keywords: Schlagwörter
@@ -1358,6 +1368,7 @@ de:
       '86400': 1 Tag
     expires_in_prompt: Nie
     generate: Einladungslink erstellen
+    invalid: Diese Einladung ist ungültig
     invited_by: 'Du wurdest eingeladen von:'
     max_uses:
       one: Eine Verwendung
@@ -1535,6 +1546,9 @@ de:
     errors:
       limit_reached: Limit für verschiedene Reaktionen erreicht
       unrecognized_emoji: ist ein unbekanntes Emoji
+  redirects:
+    prompt: Wenn du diesem Link vertraust, dann klicke ihn an, um fortzufahren.
+    title: Du verlässt %{instance}.
   relationships:
     activity: Kontoaktivität
     confirm_follow_selected_followers: Möchtest du den ausgewählten Followern folgen?
@@ -1570,6 +1584,9 @@ de:
     over_daily_limit: Du hast das Limit von %{limit} geplanten Beiträgen für heute erreicht
     over_total_limit: Du hast das Limit für geplante Beiträge, das %{limit} beträgt, erreicht
     too_soon: Das geplante Datum muss in der Zukunft liegen
+  self_destruct:
+    lead_html: Bedauerlicherweise wird <strong>%{domain}</strong> den Betrieb für immer einstellen. Wenn du dort ein Konto angelegt hast, wirst du es nicht weiter verwenden können. Du kannst allerdings eine Sicherung deiner Daten anfordern.
+    title: Dieser Server wird den Betrieb einstellen
   sessions:
     activity: Letzte Aktivität
     browser: Browser
@@ -1594,6 +1611,7 @@ de:
       unknown_browser: Unbekannter Browser
       weibo: Weibo
     current_session: Aktuelle Sitzung
+    date: Datum
     description: "%{browser} auf %{platform}"
     explanation: Dies sind die Webbrowser, die derzeit mit deinem Mastodon-Konto verbunden sind.
     ip: IP-Adresse
@@ -1760,20 +1778,29 @@ de:
     webauthn: Sicherheitsschlüssel
   user_mailer:
     appeal_approved:
-      action: Dein Konto aufrufen
-      explanation: Der Einspruch gegen deinen Verstoß vom %{strike_date}, den du am %{appeal_date} eingereicht hast, wurde genehmigt. Dein Konto ist wieder in gutem Zustand.
+      action: Kontoeinstellungen
+      explanation: Der Einspruch gegen deinen Verstoß vom %{strike_date}, den du am %{appeal_date} eingereicht hast, wurde genehmigt. Dein Konto ist wieder in Ordnung.
       subject: Dein Einspruch vom %{date} wurde angenommen
+      subtitle: Dein Konto ist wieder in Ordnung.
       title: Einspruch angenommen
     appeal_rejected:
       explanation: Der Einspruch gegen deinen Verstoß vom %{strike_date}, den du am %{appeal_date} eingereicht hast, wurde abgelehnt.
       subject: Dein Einspruch vom %{date} wurde abgelehnt
+      subtitle: Dein Einspruch wurde abgelehnt.
       title: Einspruch abgelehnt
     backup_ready:
-      explanation: Du hast eine vollständige Sicherung deines Mastodon-Kontos angefordert. Das Backup kann jetzt heruntergeladen werden!
+      explanation: Du hast eine vollständige Datensicherung deines Mastodon-Kontos angefordert.
+      extra: Sie ist jetzt zum Herunterladen bereit!
       subject: Dein persönliches Archiv kann heruntergeladen werden
       title: Archiv-Download
+    failed_2fa:
+      details: 'Details zum Anmeldeversuch:'
+      explanation: Jemand hat versucht, sich bei deinem Konto anzumelden, aber die Zwei-Faktor-Authentisierung schlug fehl.
+      further_actions_html: Solltest du das nicht gewesen sein, empfehlen wir dir, sofort %{action}, da dein Konto möglicherweise kompromittiert ist.
+      subject: Zwei-Faktor-Authentisierung fehlgeschlagen
+      title: Zwei-Faktor-Authentisierung fehlgeschlagen
     suspicious_sign_in:
-      change_password: dein Passwort ändern
+      change_password: dein Passwort zu ändern
       details: 'Hier sind die Details zu den Anmeldeversuchen:'
       explanation: Wir haben eine Anmeldung zu deinem Konto von einer neuen IP-Adresse festgestellt.
       further_actions_html: Wenn du das nicht warst, empfehlen wir dir schnellstmöglich, %{action} und die Zwei-Faktor-Authentisierung (2FA) für dein Konto zu aktivieren, um es abzusichern.
@@ -1825,11 +1852,12 @@ de:
     go_to_sso_account_settings: Kontoeinstellungen des Identitätsanbieters aufrufen
     invalid_otp_token: Ungültiger Code der Zwei-Faktor-Authentisierung (2FA)
     otp_lost_help_html: Wenn du beides nicht mehr weißt, melde dich bitte bei uns unter der E-Mail-Adresse %{email}
+    rate_limited: Zu viele Authentisierungsversuche. Bitte versuche es später noch einmal.
     seamless_external_login: Du bist über einen externen Dienst angemeldet, daher sind Passwort- und E-Mail-Einstellungen nicht verfügbar.
     signed_in_as: 'Angemeldet als:'
   verification:
     extra_instructions_html: <strong>Hinweis:</strong> Der Link auf deiner Website kann unsichtbar sein. Der wichtige Teil ist <code>rel="me"</code>, wodurch das Nachahmen von Personen auf Websites mit nutzergenerierten Inhalten verhindert wird. Du kannst auch ein <code>link</code>-Tag statt <code>a</code> im Header auf der Seite verwenden, jedoch muss der HTML-Code ohne das Ausführen von JavaScript zugänglich sein.
-    here_is_how: So funktioniert's
+    here_is_how: So funktioniert’s
     hint_html: "<strong>Alle können ihre Identität auf Mastodon verifizieren.</strong> Basierend auf offenen Standards – jetzt und für immer kostenlos. Alles, was du brauchst, ist eine eigene Website. Wenn du von deinem Profil auf diese Website verlinkst, überprüfen wir, ob die Website zu deinem Profil zurückverlinkt, und zeigen einen visuellen Hinweis an."
     instructions_html: Kopiere den unten stehenden Code und füge ihn in das HTML deiner Website ein. Trage anschließend die Adresse deiner Website in ein Zusatzfeld auf deinem Profil ein und speichere die Änderungen. Die Zusatzfelder befinden sich im Reiter „Profil bearbeiten“.
     verification: Verifizierung
