@@ -103,7 +103,7 @@ class NavigationPanel extends Component {
         )}
 
         {(signedIn || timelinePreview) && (
-          <ColumnLink transparent to='/public/remote' icon='globe' text={intl.formatMessage(messages.federated)} />
+          <ColumnLink transparent to='/public/remote' icon='globe' iconComponent={PublicIcon} text={intl.formatMessage(messages.federated)} />
         )}
 
         {!signedIn && (
