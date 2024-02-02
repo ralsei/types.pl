@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import BookmarksIcon from '@/material-icons/400-24px/bookmarks-fill.svg?react';
+import GroupIcon from '@/material-icons/400-24px/group.svg?react';
 import HomeIcon from '@/material-icons/400-24px/home-fill.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import MailIcon from '@/material-icons/400-24px/mail.svg?react';
@@ -99,7 +100,7 @@ class NavigationPanel extends Component {
         )}
 
         {(signedIn || timelinePreview) && (
-          <ColumnLink transparent to='/public/local' icon='users' text={intl.formatMessage(messages.local)} />
+          <ColumnLink transparent to='/public/local' icon='users' iconComponent={GroupIcon} text={intl.formatMessage(messages.local)} />
         )}
 
         {(signedIn || timelinePreview) && (
