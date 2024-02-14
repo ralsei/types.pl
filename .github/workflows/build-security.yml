@@ -36,7 +36,7 @@ jobs:
       tags: |
         type=raw,value=edge
         type=raw,value=nightly
-        type=schedule,pattern=${{ needs.compute-suffix.outputs.prerelease }}
+        type=raw,value=${{ needs.compute-suffix.outputs.prerelease }}
     secrets: inherit
 
   build-image-streaming:
@@ -57,5 +57,5 @@ jobs:
       tags: |
         type=raw,value=edge
         type=raw,value=nightly
-        type=schedule,pattern=${{ needs.compute-suffix.outputs.prerelease }}
+        type=raw,value=${{ needs.compute-suffix.outputs.prerelease }}
     secrets: inherit
