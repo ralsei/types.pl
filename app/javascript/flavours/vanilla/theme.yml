@@ -1,7 +1,7 @@
 #  (REQUIRED) The location of the pack files inside `pack_directory`.
 pack:
   admin:
-    - admin.jsx
+    - admin.tsx
     - public.jsx
   auth: public.jsx
   common:
@@ -28,7 +28,7 @@ locales: ../../mastodon/locales
 
 #  (OPTIONAL) A file to use as the preview screenshot for the flavour,
 #  or an array thereof. These are the full path from `app/javascript/`.
-screenshot: images/screenshot.jpg
+screenshot: images/screenshot.png
 
 #  (OPTIONAL) The directory which contains the pack files.
 #  Defaults to this directory (`app/javascript/flavour/[flavour]`),

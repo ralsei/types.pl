@@ -70,9 +70,9 @@ export const defaultMediaVisibility = (status) => {
 
 const messages = defineMessages({
   public_short: { id: 'privacy.public.short', defaultMessage: 'Public' },
-  unlisted_short: { id: 'privacy.unlisted.short', defaultMessage: 'Unlisted' },
-  private_short: { id: 'privacy.private.short', defaultMessage: 'Followers only' },
-  direct_short: { id: 'privacy.direct.short', defaultMessage: 'Mentioned people only' },
+  unlisted_short: { id: 'privacy.unlisted.short', defaultMessage: 'Quiet public' },
+  private_short: { id: 'privacy.private.short', defaultMessage: 'Followers' },
+  direct_short: { id: 'privacy.direct.short', defaultMessage: 'Specific people' },
   edited: { id: 'status.edited', defaultMessage: 'Edited {date}' },
 });
 
@@ -554,7 +554,7 @@ class Status extends ImmutablePureComponent {
             <div onClick={this.handleClick} className='status__info'>
               <a href={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`} className='status__relative-time' target='_blank' rel='noopener noreferrer'>
                 <span className='status__visibility-icon'><VisibilityIcon visibility={status.get('visibility')} /></span>
-                <RelativeTimestamp timestamp={status.get('created_at')} />{status.get('edited_at') && <abbr title={intl.formatMessage(messages.edited, { date: intl.formatDate(status.get('edited_at'), { hour12: false, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) })}> *</abbr>}
+                <RelativeTimestamp timestamp={status.get('created_at')} />{status.get('edited_at') && <abbr title={intl.formatMessage(messages.edited, { date: intl.formatDate(status.get('edited_at'), { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) })}> *</abbr>}
               </a>
 
               <a onClick={this.handleAccountClick} href={`/@${status.getIn(['account', 'acct'])}`} title={status.getIn(['account', 'acct'])} className='status__display-name' target='_blank' rel='noopener noreferrer'>

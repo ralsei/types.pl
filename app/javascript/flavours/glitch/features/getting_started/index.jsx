@@ -32,7 +32,7 @@ import { preferencesLink } from 'flavours/glitch/utils/backend_links';
 
 
 import { me, showTrends } from '../../initial_state';
-import NavigationBar from '../compose/components/navigation_bar';
+import { NavigationBar } from '../compose/components/navigation_bar';
 import ColumnLink from '../ui/components/column_link';
 import ColumnSubheading from '../ui/components/column_subheading';
 
@@ -158,7 +158,7 @@ class GettingStarted extends ImmutablePureComponent {
     }
 
     if (showTrends) {
-      navItems.push(<ColumnLink key='explore' icon='hashtag' iconComponent={TagIcon} text={intl.formatMessage(messages.explore)} to='/explore' />);
+      navItems.push(<ColumnLink key='explore' icon='explore' iconComponent={TagIcon} text={intl.formatMessage(messages.explore)} to='/explore' />);
     }
 
     if (signedIn) {

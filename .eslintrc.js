@@ -165,7 +165,7 @@ module.exports = defineConfig({
     //   },
     // ],
     'jsx-a11y/no-noninteractive-tabindex': 'off',
-    'jsx-a11y/no-onchange': 'warn',
+    'jsx-a11y/no-onchange': 'off',
     // recommended is full 'error'
     'jsx-a11y/no-static-element-interactions': [
       'warn',
@@ -355,7 +355,6 @@ module.exports = defineConfig({
         'plugin:import/typescript',
         'plugin:promise/recommended',
         'plugin:jsdoc/recommended-typescript',
-        'plugin:prettier/recommended',
       ],
 
       parserOptions: {
@@ -364,6 +363,9 @@ module.exports = defineConfig({
       },
 
       rules: {
+        // Disable formatting rules that have been enabled in the base config
+        'indent': 'off',
+
         'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
 
         '@typescript-eslint/consistent-type-definitions': ['warn', 'interface'],
