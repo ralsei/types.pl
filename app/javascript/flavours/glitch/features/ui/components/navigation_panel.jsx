@@ -4,8 +4,8 @@ import { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import BookmarksIcon from '@/material-icons/400-24px/bookmarks-fill.svg?react';
-import GroupIcon from '@/material-icons/400-24px/group.svg?react';
 import ExploreIcon from '@/material-icons/400-24px/explore.svg?react';
+import GroupIcon from '@/material-icons/400-24px/group.svg?react';
 import HomeIcon from '@/material-icons/400-24px/home-fill.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import MailIcon from '@/material-icons/400-24px/mail.svg?react';
