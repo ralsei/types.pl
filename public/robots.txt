@@ -7,8 +7,32 @@ User-agent: *
 Disallow: /media_proxy/
 Disallow: /interact/
 
-User-agent: GPTBot
-Disallow: /
+# Via https://seirdy.one/robots.txt
 
 User-agent: ChatGPT-User
 Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+# Via https://www.videolan.org/robots.txt
+
+User-Agent: TurnitinBot
+Disallow: /
+
+User-Agent: NPBot
+Disallow: /
+
+User-Agent: SlySearch
+Disallow: /
+
+User-Agent: BLEXBot
+Disallow: /
+
+User-agent: CheckMarkNetwork/1.0 (+https://www.checkmarknetwork.com/spider.html)
