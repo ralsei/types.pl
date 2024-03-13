@@ -299,7 +299,7 @@ class Search extends PureComponent {
         options.push({ key: 'go-to-account', label: <FormattedMessage id='search.quick_action.go_to_account' defaultMessage='Go to profile {x}' values={{ x: <mark>@{trimmedValue.replace(/^@/, '')}</mark> }} />, action: this.handleAccountClick });
       }
 
-      const couldBeStatusSearch = searchEnabled;
+      const couldBeStatusSearch = false;
 
       if (couldBeStatusSearch && signedIn) {
         options.push({ key: 'status-search', label: <FormattedMessage id='search.quick_action.status_search' defaultMessage='Posts matching {x}' values={{ x: <mark>{trimmedValue}</mark> }} />, action: this.handleStatusSearch });
