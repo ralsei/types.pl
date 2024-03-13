@@ -198,10 +198,6 @@ const Firehose = ({ feedType, multiColumn }) => {
         <NavLink exact to='/public/remote'>
           <FormattedMessage tagName='div' id='firehose.remote' defaultMessage='Other servers' />
         </NavLink>
-
-        <NavLink exact to='/public'>
-          <FormattedMessage tagName='div' id='firehose.all' defaultMessage='All' />
-        </NavLink>
       </div>
 
       <StatusListContainer
