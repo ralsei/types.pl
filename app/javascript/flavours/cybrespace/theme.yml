@@ -5,4 +5,5 @@ pack:
 
 locales: locales
 inherit_locales: glitch
+screenshot: flavours/cybrespace/images/cybrespace-preview.png
 fallback: glitch

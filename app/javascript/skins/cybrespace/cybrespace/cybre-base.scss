@@ -68,7 +68,7 @@
 
 /* Put a reasonable background on the single-column compose form */
 .layout-single-column .compose-panel {
-  background-color: $ui-base-color;
+  // background-color: $ui-base-color;
   height: auto;
   max-height: 100%;
   overflow-y: visible;
@@ -94,4 +94,12 @@
  * because they look strange on cybrespace themes. */
 .modal-layout__mastodon {
   display: none;
+}
+
+.link-footer {
+  padding: 10px;
+}
+
+.compose-form {
+  gap: 0 !important;
 }
