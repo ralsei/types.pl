@@ -96,3 +96,6 @@ app/javascript/flavours/glitch/styles/reset.scss
 
 # Ignore win95 theme
 app/javascript/styles/win95.scss
+
+# Ignore mastomodern theme
+app/javascript/flavours/glitch/styles/modern/style.scss
