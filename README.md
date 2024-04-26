@@ -9,11 +9,9 @@ This is the Mastodon fork running on https://types.pl, which itself is a fork of
 
 Differences from glitch-soc:
 
-- Various features of the Markdown parser are disabled, because they federate poorly.
-  - Namely, lists are disabled, and so are superscripts and subscripts. They get auto-escaped.
-- LaTeX support is provided, with `\( this for inline math \)`, and either `$$ this $$` or `\[ this \]`
-  for display math. This uses MathJax.
-  - This syntax may change for Markdown posts in the future.
+- LaTeX support is provided via MathJax, with `\\( this for inline math \\)`, and either `$$ this $$` or `\\[ this \\]` for display math.
+  - Additionally supports rendering MathML. This is in place for future work.
+- Cherry-picks the [favourite federation fix](https://git.kescher.at/CatCatNya/catstodon/commit/16be9e975b495c43035cda4e82ead2cb5374f700) from [catstodon](https://git.kescher.at/CatCatNya/catstodon).
 - "Post" changed to "toot", despite being on version 4.1.3.
 - Oatstodon theme, provided by [oat](https://hellsite.site/@oat).
 - Various branding assets changed.
