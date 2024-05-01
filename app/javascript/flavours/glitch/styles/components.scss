@@ -2302,7 +2302,8 @@ a.account__display-name {
   color: $red-bookmark;
 }
 
-.no-reduce-motion .icon-button.star-icon {
+.no-reduce-motion .icon-button.star-icon,
+.no-reduce-motion .icon-button.boost-icon {
   &.activate {
     & > .icon {
       animation: spring-rotate-in 1s linear;
