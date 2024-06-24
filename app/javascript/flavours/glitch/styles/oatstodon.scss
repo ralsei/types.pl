@@ -15,15 +15,14 @@
   --accent-color-bright: 92, 193, 162;
 }
 
-/* here for you to remove */
-
+/*
 .account__avatar-overlay-base,
 .account__avatar-overlay-overlay,
 .account__avatar {
   border-radius: 50%;
-
   // border-bottom-right-radius: 15%; // uncomment for teardrop
 }
+*/
 
 /* roundening shenanigans */
 
@@ -78,7 +77,7 @@ article,
 .column-inline-form,
 .dropdown-menu,
 .dropdown-menu__item a,
-.account__header__fields dt,
+.account__header__fields,
 .search-popout,
 .confirmation-modal__action-bar,
 .reactions-bar__item,
@@ -87,7 +86,6 @@ article,
 .sidebar-wrapper--empty,
 .regeneration-indicator,
 .tabs-bar,
-.navigation-bar,
 .trends__header,
 .modal-layout {
   background-color: rgb(var(--background-color)) !important;
@@ -163,9 +161,10 @@ html {
   border-bottom: none;
 }
 
-.reply-indicator,
 .emoji-picker-dropdown__modifiers__menu button:hover,
 .compose-form .compose-form__buttons-wrapper,
+.compose-form__highlightable,
+.compose-form__footer,
 .composer--options-wrapper,
 .compose-form__poll-wrapper select,
 .flash-message,
@@ -211,7 +210,6 @@ textarea,
 
 .detailed-status,
 .detailed-status__action-bar,
-.account__header__bar,
 .focusable:focus {
   background-color: rgb(var(--background-color-brighter)) !important;
   border-bottom: none;
@@ -534,6 +532,7 @@ header strong.display-name__html {
   }
 }
 
+/*
 .reply-indicator {
   max-height: 38px;
   overflow-y: hidden;
@@ -549,9 +548,10 @@ header strong.display-name__html {
   font-size: 12px;
   color: rgb(var(--text-color-secondary));
 }
+*/
 
 .getting-started__footer p::after {
-  content: ' Oat and rose were here';
+  content: ' Oat and rose were here! also JJ';
 }
 
 /* public/static css for pages like /@username */

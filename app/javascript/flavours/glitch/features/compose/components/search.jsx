@@ -12,6 +12,7 @@ import CancelIcon from '@/material-icons/400-24px/cancel-fill.svg?react';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import SearchIcon from '@/material-icons/400-24px/search.svg?react';
 import { Icon }  from 'flavours/glitch/components/icon';
+import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { domain, searchEnabled } from 'flavours/glitch/initial_state';
 import { HASHTAG_REGEX } from 'flavours/glitch/utils/hashtags';
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
@@ -33,12 +34,8 @@ const labelForRecentSearch = search => {
 };
 
 class Search extends PureComponent {
-
-  static contextTypes = {
-    identity: PropTypes.object.isRequired,
-  };
-
   static propTypes = {
+    identity: identityContextPropShape,
     value: PropTypes.string.isRequired,
     recent: ImmutablePropTypes.orderedSet,
     submitted: PropTypes.bool,
@@ -276,7 +273,7 @@ class Search extends PureComponent {
   }
 
   _calculateOptions (value) {
-    const { signedIn } = this.context.identity;
+    const { signedIn } = this.props.identity;
     const trimmedValue = value.trim();
     const options = [];
 
@@ -299,7 +296,7 @@ class Search extends PureComponent {
         options.push({ key: 'go-to-account', label: <FormattedMessage id='search.quick_action.go_to_account' defaultMessage='Go to profile {x}' values={{ x: <mark>@{trimmedValue.replace(/^@/, '')}</mark> }} />, action: this.handleAccountClick });
       }
 
-      const couldBeStatusSearch = searchEnabled;
+      const couldBeStatusSearch = false;
 
       if (couldBeStatusSearch && signedIn) {
         options.push({ key: 'status-search', label: <FormattedMessage id='search.quick_action.status_search' defaultMessage='Posts matching {x}' values={{ x: <mark>{trimmedValue}</mark> }} />, action: this.handleStatusSearch });
@@ -318,7 +315,7 @@ class Search extends PureComponent {
   render () {
     const { intl, value, submitted, recent } = this.props;
     const { expanded, options, selectedOption } = this.state;
-    const { signedIn } = this.context.identity;
+    const { signedIn } = this.props.identity;
 
     const hasValue = value.length > 0 || submitted;
 
@@ -402,4 +399,4 @@ class Search extends PureComponent {
 
 }
 
-export default withRouter(injectIntl(Search));
+export default withRouter(withIdentity(injectIntl(Search)));

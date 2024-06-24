@@ -1,0 +1,9 @@
+pack:
+  common:
+    filename: pack/common.js
+    stylesheet: true
+
+locales: locales
+inherit_locales: glitch
+screenshot: flavours/cybrespace/images/cybrespace-preview.png
+fallback: glitch
