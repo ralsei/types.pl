@@ -21,12 +21,6 @@ class Sanitize
       gemini
     ).freeze
 
-    RUBY_TAG_ATTRS = {
-      'ruby' => %w(),
-      'rt' => %w(),
-      'rp' => %w(),
-    }.freeze
-
     # We remove all "style" attributes. In particular we remove all color
     # attributes and length percentages.
     COMMON_MATH_ATTRS = %w(
@@ -35,6 +29,7 @@ class Sanitize
       mathvariant
       scriptlevel
     ).freeze
+
     MATH_TAG_ATTRS = {
       'annotation' => %w(encoding),
       'annotation-xml' => %w(encoding),
@@ -148,7 +143,7 @@ class Sanitize
     end
 
     MASTODON_STRICT = freeze_config(
-      elements: %w(p br span a abbr del pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li) + RUBY_TAG_ATTRS.keys + MATH_TAG_ATTRS.keys,
+      elements: %w(p br span a abbr del pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li ruby rt rp) + MATH_TAG_ATTRS.keys,
 
       attributes: {
         'a' => %w(href rel class title translate),
@@ -157,8 +152,7 @@ class Sanitize
         'blockquote' => %w(cite),
         'ol' => %w(start reversed),
         'li' => %w(value),
-      }.merge(MATH_TAG_ATTRS)
-       .merge(RUBY_TAG_ATTRS),
+      }.merge(MATH_TAG_ATTRS),
 
       add_attributes: {
         'a' => {

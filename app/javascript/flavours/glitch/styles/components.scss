@@ -120,8 +120,27 @@
       text-decoration: none;
     }
 
-    &:disabled {
-      opacity: 0.5;
+    &.button--destructive {
+      &:active,
+      &:focus,
+      &:hover {
+        border-color: $ui-button-destructive-focus-background-color;
+        color: $ui-button-destructive-focus-background-color;
+      }
+    }
+
+    &:disabled,
+    &.disabled {
+      opacity: 0.7;
+      border-color: $ui-primary-color;
+      color: $ui-primary-color;
+
+      &:active,
+      &:focus,
+      &:hover {
+        border-color: $ui-primary-color;
+        color: $ui-primary-color;
+      }
     }
   }
 
@@ -1518,74 +1537,49 @@ body > [data-popper-placement] {
       }
     }
   }
+}
 
-  &.collapsed {
+.status__wrapper.collapsed {
+  .status {
     background-position: center;
     background-size: cover;
     user-select: none;
     min-height: 0;
+  }
 
-    &.has-background::before {
-      display: block;
-      position: absolute;
-      inset-inline-start: 0;
-      inset-inline-end: 0;
-      top: 0;
-      bottom: 0;
-      background-image: linear-gradient(
-        to bottom,
-        rgba($base-shadow-color, 0.75),
-        rgba($base-shadow-color, 0.65) 24px,
-        rgba($base-shadow-color, 0.8)
-      );
-      pointer-events: none;
-      content: '';
-    }
+  &.has-background::before {
+    display: block;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    top: 0;
+    bottom: 0;
+    background-image: linear-gradient(
+      to bottom,
+      rgba($base-shadow-color, 0.75),
+      rgba($base-shadow-color, 0.65) 24px,
+      rgba($base-shadow-color, 0.8)
+    );
+    pointer-events: none;
+    content: '';
+  }
 
-    .display-name:hover .display-name__html {
+  .display-name:hover .display-name__html {
+    text-decoration: none;
+  }
+
+  .status__content {
+    height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 0;
+    mask-image: linear-gradient(rgb(0 0 0 / 100%), transparent);
+
+    a:hover {
       text-decoration: none;
     }
-
-    .status__content {
-      height: 20px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-top: 0;
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        background: linear-gradient(transparent, var(--background-color));
-        pointer-events: none;
-      }
-
-      a:hover {
-        text-decoration: none;
-      }
-    }
-
-    &:focus > .status__content::after {
-      background: linear-gradient(
-        rgba(lighten($ui-base-color, 4%), 0),
-        rgba(lighten($ui-base-color, 4%), 1)
-      );
-    }
-
-    // TODO: review
-    &.status-direct > .status__content::after {
-      background: linear-gradient(
-        rgba(mix($ui-base-color, $ui-highlight-color, 95%), 0),
-        rgba(mix($ui-base-color, $ui-highlight-color, 95%), 1)
-      );
-    }
   }
-}
 
-.status__wrapper.collapsed {
   .notification__message {
     margin-bottom: 0;
     white-space: nowrap;
@@ -1795,10 +1789,6 @@ body > [data-popper-placement] {
 
 .status__wrapper-direct {
   background: rgba($ui-highlight-color, 0.05);
-
-  &:focus {
-    background: rgba($ui-highlight-color, 0.05);
-  }
 
   .status__prepend {
     color: $highlight-text-color;
@@ -2626,7 +2616,7 @@ a.account__display-name {
 }
 
 .dropdown-animation {
-  animation: dropdown 150ms cubic-bezier(0.1, 0.7, 0.1, 1);
+  animation: dropdown 250ms cubic-bezier(0.1, 0.7, 0.1, 1);
 
   @keyframes dropdown {
     from {
@@ -10902,6 +10892,161 @@ noscript {
     &:focus,
     &:active {
       color: $highlight-text-color;
+    }
+  }
+}
+
+.hover-card-controller[data-popper-reference-hidden='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hover-card {
+  box-shadow: var(--dropdown-shadow);
+  background: var(--modal-background-color);
+  backdrop-filter: var(--background-filter);
+  border: 1px solid var(--modal-border-color);
+  border-radius: 8px;
+  padding: 16px;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &--loading {
+    position: relative;
+    min-height: 100px;
+  }
+
+  &__name {
+    display: flex;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &__number {
+    font-size: 15px;
+    line-height: 22px;
+    color: $secondary-text-color;
+
+    strong {
+      font-weight: 700;
+    }
+  }
+
+  &__text-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__bio {
+    color: $secondary-text-color;
+    font-size: 14px;
+    line-height: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-height: 2 * 20px;
+    overflow: hidden;
+
+    p {
+      margin-bottom: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .display-name {
+    font-size: 15px;
+    line-height: 22px;
+
+    bdi {
+      font-weight: 500;
+      color: $primary-text-color;
+    }
+
+    &__account {
+      display: block;
+      color: $dark-text-color;
+    }
+  }
+
+  .account-fields {
+    color: $secondary-text-color;
+    font-size: 14px;
+    line-height: 20px;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:focus,
+      &:hover,
+      &:active {
+        text-decoration: underline;
+      }
+    }
+
+    dl {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      dt {
+        flex: 0 0 auto;
+        color: $dark-text-color;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      dd {
+        flex: 1 1 auto;
+        font-weight: 500;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: end;
+      }
+
+      &.verified {
+        dd {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 4px;
+          overflow: hidden;
+          white-space: nowrap;
+          color: $valid-value-color;
+
+          & > span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          a {
+            font-weight: 500;
+          }
+
+          .icon {
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
     }
   }
 }

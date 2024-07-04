@@ -35,7 +35,7 @@
   "account.follow_back": "Fylg aftur",
   "account.followers": "Fylgjarar",
   "account.followers.empty": "Ongar fylgjarar enn.",
-  "account.followers_counter": "{count, plural, one {{counter} Fylgjari} other {{counter} Fylgjarar}}",
+  "account.followers_counter": "{count, plural, one {{counter} fylgjari} other {{counter} fylgjarar}}",
   "account.following": "Fylgir",
   "account.following_counter": "{count, plural, one {{counter} fylgir} other {{counter} fylgja}}",
   "account.follows.empty": "Hesin brúkari fylgir ongum enn.",
