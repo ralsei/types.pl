@@ -89,7 +89,7 @@ class Sanitize
       # take care of the rest of the attributes.
     end
 
-    CLASS_WHITELIST_TRANSFORMER = lambda do |env|
+    ALLOWED_CLASS_TRANSFORMER = lambda do |env|
       node = env[:node]
       class_list = node['class']&.split(/[\t\n\f\r ]/)
 
@@ -139,11 +139,11 @@ class Sanitize
                  :relative
                end
 
-      current_node.replace(Nokogiri::XML::Text.new(current_node.text, current_node.document)) unless LINK_PROTOCOLS.include?(scheme)
+      current_node.replace(current_node.document.create_text_node(current_node.text)) unless LINK_PROTOCOLS.include?(scheme)
     end
 
     MASTODON_STRICT = freeze_config(
-      elements: %w(p br span a abbr del pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li ruby rt rp) + MATH_TAG_ATTRS.keys,
+      elements: %w(p br span a abbr del s pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li ruby rt rp) + MATH_TAG_ATTRS.keys,
 
       attributes: {
         'a' => %w(href rel class title translate),
@@ -167,7 +167,7 @@ class Sanitize
       },
 
       transformers: [
-        CLASS_WHITELIST_TRANSFORMER,
+        ALLOWED_CLASS_TRANSFORMER,
         IMG_TAG_TRANSFORMER,
         TRANSLATE_TRANSFORMER,
         UNSUPPORTED_HREF_TRANSFORMER,
@@ -232,7 +232,7 @@ class Sanitize
       add_attributes: {},
 
       transformers: [
-        CLASS_WHITELIST_TRANSFORMER,
+        ALLOWED_CLASS_TRANSFORMER,
         IMG_TAG_TRANSFORMER,
         TRANSLATE_TRANSFORMER,
         UNSUPPORTED_HREF_TRANSFORMER,

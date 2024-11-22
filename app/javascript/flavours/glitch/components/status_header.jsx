@@ -14,18 +14,14 @@ export default class StatusHeader extends PureComponent {
   static propTypes = {
     status: ImmutablePropTypes.map.isRequired,
     friend: ImmutablePropTypes.map,
+    avatarSize: PropTypes.number,
     parseClick: PropTypes.func.isRequired,
   };
 
-  //  Handles clicks on account name/image
-  handleClick = (acct, e) => {
-    const { parseClick } = this.props;
-    parseClick(e, `/@${acct}`);
-  };
-
   handleAccountClick = (e) => {
-    const { status } = this.props;
-    this.handleClick(status.getIn(['account', 'acct']), e);
+    const { status, parseClick } = this.props;
+    parseClick(e, `/@${status.getIn(['account', 'acct'])}`);
+    e.stopPropagation();
   };
 
   //  Rendering.
@@ -33,13 +29,14 @@ export default class StatusHeader extends PureComponent {
     const {
       status,
       friend,
+      avatarSize,
     } = this.props;
 
     const account = status.get('account');
 
     let statusAvatar;
     if (friend === undefined || friend === null) {
-      statusAvatar = <Avatar account={account} size={46} />;
+      statusAvatar = <Avatar account={account} size={avatarSize} />;
     } else {
       statusAvatar = <AvatarOverlay account={account} friend={friend} />;
     }
@@ -51,6 +48,7 @@ export default class StatusHeader extends PureComponent {
         target='_blank'
         onClick={this.handleAccountClick}
         rel='noopener noreferrer'
+        title={status.getIn(['account', 'acct'])}
         data-hover-card-account={status.getIn(['account', 'id'])}
       >
         <div className='status__avatar'>

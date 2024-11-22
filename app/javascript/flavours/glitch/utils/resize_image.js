@@ -17,7 +17,7 @@ const dropOrientationIfNeeded = (orientation) => new Promise(resolve => {
   case false:
     resolve(orientation);
     break;
-  default:
+  default: {
     // black 2x1 JPEG, with the following meta information set:
     // - EXIF Orientation: 6 (Rotated 90° CCW)
     const testImageURL =
@@ -39,6 +39,7 @@ const dropOrientationIfNeeded = (orientation) => new Promise(resolve => {
     };
     img.src = testImageURL;
   }
+  }
 });
 
 // Some browsers don't allow reading from a canvas and instead return all-white
@@ -52,7 +53,7 @@ const checkCanvasReliability = () => new Promise((resolve, reject) => {
   case false:
     resolve();
     break;
-  default:
+  default: {
     // 2×2 GIF with white, red, green and blue pixels
     const testImageURL =
       'data:image/gif;base64,R0lGODdhAgACAKEDAAAA//8AAAD/AP///ywAAAAAAgACAAACA1wEBQA7';
@@ -77,6 +78,7 @@ const checkCanvasReliability = () => new Promise((resolve, reject) => {
       reject('Failed to load test image');
     };
     img.src = testImageURL;
+  }
   }
 });
 
