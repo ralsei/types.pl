@@ -59,7 +59,7 @@ Bundler.require(:pam_authentication) if ENV['PAM_ENABLED'] == 'true'
 module Mastodon
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.2
+    config.load_defaults 8.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -108,13 +108,17 @@ module Mastodon
     config.x.mastodon = config_for(:mastodon)
     config.x.translation = config_for(:translation)
 
+    if ENV.fetch('QUERY_LOG_TAGS_ENABLED', 'false') == 'true'
+      config.active_record.query_log_tags_enabled = ENV.fetch('QUERY_LOG_TAGS_ENABLED', 'false') == 'true'
+      config.active_record.query_log_tags = [:namespaced_controller, :action, :sidekiq_job_class]
+    end
+
     config.to_prepare do
       Doorkeeper::AuthorizationsController.layout 'modal'
       Doorkeeper::AuthorizedApplicationsController.layout 'admin'
       Doorkeeper::Application.include ApplicationExtension
       Doorkeeper::AccessGrant.include AccessGrantExtension
       Doorkeeper::AccessToken.include AccessTokenExtension
-      Doorkeeper::OAuth::PreAuthorization.include OauthPreAuthorizationExtension
       Devise::FailureApp.include AbstractController::Callbacks
       Devise::FailureApp.include Localized
     end

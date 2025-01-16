@@ -6,7 +6,7 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 import { debounce } from 'lodash';
 
 import { TIMELINE_GAP, TIMELINE_SUGGESTIONS } from 'flavours/glitch/actions/timelines';
-import RegenerationIndicator from 'flavours/glitch/components/regeneration_indicator';
+import { RegenerationIndicator } from 'flavours/glitch/components/regeneration_indicator';
 import { InlineFollowSuggestions } from 'flavours/glitch/features/home_timeline/components/inline_follow_suggestions';
 
 import StatusContainer from '../containers/status_container';

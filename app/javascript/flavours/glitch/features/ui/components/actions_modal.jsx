@@ -45,7 +45,7 @@ export default class ActionsModal extends ImmutablePureComponent {
 
     return (
       <li key={`${text}-${i}`}>
-        <a href={href} target='_blank' rel='noopener noreferrer' onClick={this.props.onClick} data-index={i} className={classNames('link', { active })}>
+        <a href={href} target='_blank' rel='noopener' onClick={this.props.onClick} data-index={i} className={classNames('link', { active })}>
           {contents}
         </a>
       </li>

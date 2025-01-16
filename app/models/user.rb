@@ -125,7 +125,7 @@ class User < ApplicationRecord
   scope :signed_in_recently, -> { where(current_sign_in_at: ACTIVE_DURATION.ago..) }
   scope :not_signed_in_recently, -> { where(current_sign_in_at: ...ACTIVE_DURATION.ago) }
   scope :matches_email, ->(value) { where(arel_table[:email].matches("#{value}%")) }
-  scope :matches_ip, ->(value) { left_joins(:ips).merge(IpBlock.contained_by(value)).group('users.id') }
+  scope :matches_ip, ->(value) { left_joins(:ips).merge(IpBlock.contained_by(value)).group(users: [:id]) }
 
   before_validation :sanitize_role
   before_create :set_approved
@@ -163,6 +163,10 @@ class User < ApplicationRecord
     else
       super
     end
+  end
+
+  def signed_in_recently?
+    current_sign_in_at.present? && current_sign_in_at >= ACTIVE_DURATION.ago
   end
 
   def confirmed?
@@ -346,7 +350,7 @@ class User < ApplicationRecord
   end
 
   def revoke_access!
-    Doorkeeper::AccessGrant.by_resource_owner(self).update_all(revoked_at: Time.now.utc)
+    Doorkeeper::AccessGrant.by_resource_owner(self).touch_all(:revoked_at)
 
     Doorkeeper::AccessToken.by_resource_owner(self).in_batches do |batch|
       batch.touch_all(:revoked_at)

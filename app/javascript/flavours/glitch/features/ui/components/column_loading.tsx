@@ -1,4 +1,4 @@
-import Column from 'flavours/glitch/components/column';
+import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import type { Props as ColumnHeaderProps } from 'flavours/glitch/components/column_header';
 

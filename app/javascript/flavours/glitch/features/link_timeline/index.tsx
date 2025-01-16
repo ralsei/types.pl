@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom';
 
 import ExploreIcon from '@/material-icons/400-24px/explore.svg?react';
 import { expandLinkTimeline } from 'flavours/glitch/actions/timelines';
-import Column from 'flavours/glitch/components/column';
+import { Column } from 'flavours/glitch/components/column';
+import type { ColumnRef } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import StatusListContainer from 'flavours/glitch/features/ui/containers/status_list_container';
 import type { Card } from 'flavours/glitch/models/status';
@@ -17,7 +18,7 @@ export const LinkTimeline: React.FC<{
   const { url } = useParams<{ url: string }>();
   const decodedUrl = url ? decodeURIComponent(url) : undefined;
   const dispatch = useAppDispatch();
-  const columnRef = useRef<Column>(null);
+  const columnRef = useRef<ColumnRef>(null);
   const firstStatusId = useAppSelector((state) =>
     decodedUrl
       ? // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

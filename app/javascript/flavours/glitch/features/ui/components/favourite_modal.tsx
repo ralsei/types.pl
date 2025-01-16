@@ -82,6 +82,8 @@ export const FavouriteModal: React.FC<{
           <Button
             onClick={handleFavourite}
             text={intl.formatMessage(messages.favourite)}
+            /* eslint-disable-next-line jsx-a11y/no-autofocus -- We are in the modal */
+            autoFocus
           />
         </div>
       </div>

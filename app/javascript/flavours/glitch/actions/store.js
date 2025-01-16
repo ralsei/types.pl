@@ -1,4 +1,4 @@
-import { Iterable, fromJS } from 'immutable';
+import { fromJS, isIndexed } from 'immutable';
 
 import { hydrateCompose } from './compose';
 import { importFetchedAccounts } from './importer';
@@ -10,7 +10,7 @@ export const STORE_HYDRATE_LAZY = 'STORE_HYDRATE_LAZY';
 
 const convertState = rawState =>
   fromJS(rawState, (k, v) =>
-    Iterable.isIndexed(v) ? v.toList() : v.toMap());
+    isIndexed(v) ? v.toList() : v.toMap());
 
 const applyMigrations = (state) => {
   return state.withMutations(state => {

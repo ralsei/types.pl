@@ -24,6 +24,8 @@ it:
       models:
         account:
           attributes:
+            fields:
+              fields_with_values_missing_labels: contiene valori con label mancanti
             username:
               invalid: deve contenere solo lettere, numeri e trattini bassi
               reserved: è riservato
@@ -39,6 +41,11 @@ it:
           attributes:
             data:
               malformed: è malformato
+        list_account:
+          attributes:
+            account_id:
+              taken: è già nella lista
+          must_be_following: deve essere un account seguito
         status:
           attributes:
             reblog:

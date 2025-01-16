@@ -58,6 +58,7 @@ defaults: &defaults
   require_invite_text: false
   backups_retention_period: 7
   captcha_enabled: false
+  allow_referer_origin: false
 
 development:
   <<: *defaults

@@ -143,11 +143,12 @@ module ApplicationHelper
   end
 
   def body_classes
-    output = body_class_string.split
+    output = []
     output << content_for(:body_classes)
     output << "flavour-#{current_flavour.parameterize}"
     output << "skin-#{current_skin.parameterize}"
     output << 'system-font' if current_account&.user&.setting_system_font_ui
+    output << 'custom-scrollbars' unless current_account&.user&.setting_system_scrollbars_ui
     output << (current_account&.user&.setting_reduce_motion ? 'reduce-motion' : 'no-reduce-motion')
     output << 'rtl' if locale_direction == 'rtl'
     output.compact_blank.join(' ')
@@ -236,6 +237,14 @@ module ApplicationHelper
   def recent_tag_usage(tag)
     people = tag.history.aggregate(2.days.ago.to_date..Time.zone.today).accounts
     I18n.t 'user_mailer.welcome.hashtags_recent_count', people: number_with_delimiter(people), count: people
+  end
+
+  def app_store_url_ios
+    'https://apps.apple.com/app/mastodon-for-iphone-and-ipad/id1571998974'
+  end
+
+  def app_store_url_android
+    'https://play.google.com/store/apps/details?id=org.joinmastodon.android'
   end
 
   # glitch-soc addition to handle the multiple flavors

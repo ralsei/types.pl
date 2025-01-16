@@ -13,11 +13,11 @@ import { debounce } from 'lodash';
 import RefreshIcon from '@/material-icons/400-24px/refresh.svg?react';
 import StarIcon from '@/material-icons/400-24px/star-fill.svg?react';
 import { fetchFavourites, expandFavourites } from 'flavours/glitch/actions/interactions';
+import { Account } from 'flavours/glitch/components/account';
 import ColumnHeader from 'flavours/glitch/components/column_header';
 import { Icon }  from 'flavours/glitch/components/icon';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import AccountContainer from 'flavours/glitch/containers/account_container';
 import Column from 'flavours/glitch/features/ui/components/column';
 
 const messages = defineMessages({
@@ -101,7 +101,7 @@ class Favourites extends ImmutablePureComponent {
           bindToDocument={!multiColumn}
         >
           {accountIds.map(id =>
-            <AccountContainer key={id} id={id} withNote={false} />,
+            <Account key={id} id={id} />,
           )}
         </ScrollableList>
 

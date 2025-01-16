@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import type Immutable from 'immutable';
 
@@ -11,8 +12,7 @@ import { Sparklines, SparklinesCurve } from 'react-sparklines';
 
 import { ShortNumber } from 'flavours/glitch/components/short_number';
 import { Skeleton } from 'flavours/glitch/components/skeleton';
-
-import { Permalink } from './permalink';
+import type { Hashtag as HashtagType } from 'flavours/glitch/models/tags';
 
 interface SilentErrorBoundaryProps {
   children: React.ReactNode;
@@ -64,7 +64,6 @@ interface ImmutableHashtagProps {
 export const ImmutableHashtag = ({ hashtag }: ImmutableHashtagProps) => (
   <Hashtag
     name={hashtag.get('name') as string}
-    href={hashtag.get('url') as string}
     to={`/tags/${hashtag.get('name') as string}`}
     people={
       (hashtag.getIn(['history', 0, 'accounts']) as number) * 1 +
@@ -82,11 +81,26 @@ export const ImmutableHashtag = ({ hashtag }: ImmutableHashtagProps) => (
   />
 );
 
+export const CompatibilityHashtag: React.FC<{
+  hashtag: HashtagType;
+}> = ({ hashtag }) => (
+  <Hashtag
+    name={hashtag.name}
+    to={`/tags/${hashtag.name}`}
+    people={
+      (hashtag.history[0].accounts as unknown as number) * 1 +
+      ((hashtag.history[1]?.accounts ?? 0) as unknown as number) * 1
+    }
+    history={hashtag.history
+      .map((day) => (day.uses as unknown as number) * 1)
+      .reverse()}
+  />
+);
+
 export interface HashtagProps {
   className?: string;
   description?: React.ReactNode;
   history?: number[];
-  href: string;
   name: string;
   people: number;
   to: string;
@@ -96,7 +110,6 @@ export interface HashtagProps {
 
 export const Hashtag: React.FC<HashtagProps> = ({
   name,
-  href,
   to,
   people,
   uses,
@@ -107,7 +120,7 @@ export const Hashtag: React.FC<HashtagProps> = ({
 }) => (
   <div className={classNames('trends__item', className)}>
     <div className='trends__item__name'>
-      <Permalink href={href} to={to}>
+      <Link to={to}>
         {name ? (
           <>
             #<span>{name}</span>
@@ -115,7 +128,7 @@ export const Hashtag: React.FC<HashtagProps> = ({
         ) : (
           <Skeleton width={50} />
         )}
-      </Permalink>
+      </Link>
 
       {description ? (
         <span>{description}</span>

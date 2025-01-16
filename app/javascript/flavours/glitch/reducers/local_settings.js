@@ -23,25 +23,7 @@ const initialState = ImmutableMap({
   rewrite_mentions: 'no',
   content_warnings : ImmutableMap({
     filter       : null,
-    media_outside: false,
     shared_state : false,
-  }),
-  collapsed : ImmutableMap({
-    enabled     : true,
-    auto        : ImmutableMap({
-      all              : false,
-      notifications    : true,
-      lengthy          : true,
-      reblogs          : false,
-      replies          : false,
-      media            : false,
-      height           : 400,
-    }),
-    backgrounds : ImmutableMap({
-      user_backgrounds : false,
-      preview_images   : false,
-    }),
-    show_action_bar : true,
   }),
   media     : ImmutableMap({
     letterbox        : true,

@@ -17,9 +17,7 @@ import filters from './filters';
 import followed_tags from './followed_tags';
 import height_cache from './height_cache';
 import history from './history';
-import listAdder from './list_adder';
-import listEditor from './list_editor';
-import lists from './lists';
+import { listsReducer } from './lists';
 import local_settings from './local_settings';
 import { markersReducer } from './markers';
 import media_attachments from './media_attachments';
@@ -30,17 +28,15 @@ import { notificationPolicyReducer } from './notification_policy';
 import { notificationRequestsReducer } from './notification_requests';
 import notifications from './notifications';
 import { pictureInPictureReducer } from './picture_in_picture';
-import pinnedAccountsEditor from './pinned_accounts_editor';
-import polls from './polls';
+import { pollsReducer } from './polls';
 import push_notifications from './push_notifications';
 import { relationshipsReducer } from './relationships';
-import search from './search';
+import { searchReducer } from './search';
 import server from './server';
 import settings from './settings';
 import status_lists from './status_lists';
 import statuses from './statuses';
-import suggestions from './suggestions';
-import tags from './tags';
+import { suggestionsReducer } from './suggestions';
 import timelines from './timelines';
 import trends from './trends';
 import user_lists from './user_lists';
@@ -66,25 +62,21 @@ const reducers = {
   server,
   contexts,
   compose,
-  search,
+  search: searchReducer,
   media_attachments,
   notifications,
   notificationGroups: notificationGroupsReducer,
   height_cache,
   custom_emojis,
-  lists,
-  listEditor,
-  listAdder,
+  lists: listsReducer,
   filters,
   conversations,
-  suggestions,
-  pinnedAccountsEditor,
-  polls,
+  suggestions: suggestionsReducer,
+  polls: pollsReducer,
   trends,
   markers: markersReducer,
   picture_in_picture: pictureInPictureReducer,
   history,
-  tags,
   followed_tags,
   notificationPolicy: notificationPolicyReducer,
   notificationRequests: notificationRequestsReducer,

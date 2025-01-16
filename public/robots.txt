@@ -36,3 +36,5 @@ User-Agent: BLEXBot
 Disallow: /
 
 User-agent: CheckMarkNetwork/1.0 (+https://www.checkmarknetwork.com/spider.html)
+
+Disallow: /api/v1/instance/domain_blocks

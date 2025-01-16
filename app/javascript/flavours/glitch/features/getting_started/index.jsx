@@ -28,7 +28,7 @@ import { fetchFollowRequests } from 'flavours/glitch/actions/accounts';
 import { fetchLists } from 'flavours/glitch/actions/lists';
 import { openModal } from 'flavours/glitch/actions/modal';
 import Column from 'flavours/glitch/features/ui/components/column';
-import LinkFooter from 'flavours/glitch/features/ui/components/link_footer';
+import { LinkFooter } from 'flavours/glitch/features/ui/components/link_footer';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { canManageReports, canViewAdminDashboard } from 'flavours/glitch/permissions';
 import { preferencesLink } from 'flavours/glitch/utils/backend_links';

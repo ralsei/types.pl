@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { fetchServer } from 'flavours/glitch/actions/server';
+import { Account } from 'flavours/glitch/components/account';
 import { ServerHeroImage } from 'flavours/glitch/components/server_hero_image';
 import { ShortNumber } from 'flavours/glitch/components/short_number';
 import { Skeleton } from 'flavours/glitch/components/skeleton';
-import Account from 'flavours/glitch/containers/account_container';
 import { domain } from 'flavours/glitch/initial_state';
 
 const messages = defineMessages({
@@ -42,7 +42,7 @@ class ServerBanner extends PureComponent {
     return (
       <div className='server-banner'>
         <div className='server-banner__introduction'>
-          <FormattedMessage id='server_banner.is_one_of_many' defaultMessage='{domain} is one of the many independent Mastodon servers you can use to participate in the fediverse.' values={{ domain: <strong>{domain}</strong>, mastodon: <a href='https://joinmastodon.org' target='_blank'>Mastodon</a> }} />
+          <FormattedMessage id='server_banner.is_one_of_many' defaultMessage='{domain} is one of the many independent Mastodon servers you can use to participate in the fediverse.' values={{ domain: <strong>{domain}</strong>, mastodon: <a href='https://joinmastodon.org' target='_blank' rel='noopener'>Mastodon</a> }} />
         </div>
 
         <Link to='/about'>

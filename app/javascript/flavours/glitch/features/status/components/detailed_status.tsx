@@ -4,7 +4,7 @@
                   @typescript-eslint/no-unsafe-assignment */
 
 import type { CSSProperties } from 'react';
-import { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 import { FormattedDate, FormattedMessage } from 'react-intl';
 
@@ -13,15 +13,15 @@ import { Link } from 'react-router-dom';
 
 import { AnimatedNumber } from 'flavours/glitch/components/animated_number';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
+import { ContentWarning } from 'flavours/glitch/components/content_warning';
 import EditedTimestamp from 'flavours/glitch/components/edited_timestamp';
 import type { StatusLike } from 'flavours/glitch/components/hashtag_bar';
 import { getHashtagBarForStatus } from 'flavours/glitch/components/hashtag_bar';
 import { IconLogo } from 'flavours/glitch/components/logo';
+import { MentionsPlaceholder } from 'flavours/glitch/components/mentions_placeholder';
 import { Permalink } from 'flavours/glitch/components/permalink';
 import PictureInPicturePlaceholder from 'flavours/glitch/components/picture_in_picture_placeholder';
-import { useAppHistory } from 'flavours/glitch/components/router';
 import { VisibilityIcon } from 'flavours/glitch/components/visibility_icon';
-import PollContainer from 'flavours/glitch/containers/poll_container';
 import { useAppSelector } from 'flavours/glitch/store';
 
 import { Avatar } from '../../../components/avatar';
@@ -75,7 +75,6 @@ export const DetailedStatus: React.FC<{
   const properStatus = status?.get('reblog') ?? status;
   const [height, setHeight] = useState(0);
   const nodeRef = useRef<HTMLDivElement>();
-  const history = useAppHistory();
 
   const rewriteMentions = useAppSelector(
     (state) => state.local_settings.get('rewrite_mentions', false) as boolean,
@@ -83,13 +82,6 @@ export const DetailedStatus: React.FC<{
   const tagMisleadingLinks = useAppSelector(
     (state) =>
       state.local_settings.get('tag_misleading_links', false) as boolean,
-  );
-  const mediaOutsideCW = useAppSelector(
-    (state) =>
-      state.local_settings.getIn(
-        ['content_warnings', 'media_outside'],
-        false,
-      ) as boolean,
   );
   const letterboxMedia = useAppSelector(
     (state) =>
@@ -109,6 +101,10 @@ export const DetailedStatus: React.FC<{
     },
     [onOpenVideo, status],
   );
+
+  const handleExpandedToggle = useCallback(() => {
+    if (onToggleHidden) onToggleHidden(status);
+  }, [onToggleHidden, status]);
 
   const _measureHeight = useCallback(
     (heightJustChanged?: boolean) => {
@@ -134,47 +130,19 @@ export const DetailedStatus: React.FC<{
     [_measureHeight],
   );
 
-  const handleChildUpdate = useCallback(() => {
-    _measureHeight();
-  }, [_measureHeight]);
-
   const handleTranslate = useCallback(() => {
     if (onTranslate) onTranslate(status);
   }, [onTranslate, status]);
-
-  const parseClick = useCallback(
-    (e: React.MouseEvent, destination: string) => {
-      if (e.button === 0 && !(e.ctrlKey || e.altKey || e.metaKey)) {
-        e.preventDefault();
-        history.push(destination);
-      }
-
-      e.stopPropagation();
-    },
-    [history],
-  );
 
   if (!properStatus) {
     return null;
   }
 
+  let media;
   let applicationLink;
   let reblogLink;
 
-  //  Depending on user settings, some media are considered as parts of the
-  //  contents (affected by CW) while other will be displayed outside of the
-  //  CW.
-  const contentMedia: React.ReactNode[] = [];
-  const contentMediaIcons: string[] = [];
-  const extraMedia: React.ReactNode[] = [];
-  const extraMediaIcons: string[] = [];
-  let media = contentMedia;
-  let mediaIcons: string[] = contentMediaIcons;
-
-  if (mediaOutsideCW) {
-    media = extraMedia;
-    mediaIcons = extraMediaIcons;
-  }
+  const mediaIcons: string[] = [];
 
   const outerStyle = { boxSizing: 'border-box' } as CSSProperties;
 
@@ -186,7 +154,7 @@ export const DetailedStatus: React.FC<{
     status.getIn(['translation', 'language']) || status.get('language');
 
   if (pictureInPicture.get('inUse')) {
-    media.push(<PictureInPicturePlaceholder />);
+    media = <PictureInPicturePlaceholder />;
     mediaIcons.push('video-camera');
   } else if (status.get('media_attachments').size > 0) {
     if (
@@ -196,14 +164,14 @@ export const DetailedStatus: React.FC<{
           (item: Immutable.Map<string, any>) => item.get('type') === 'unknown',
         )
     ) {
-      media.push(<AttachmentList media={status.get('media_attachments')} />);
+      media = <AttachmentList media={status.get('media_attachments')} />;
     } else if (
       ['image', 'gifv', 'unknown'].includes(
         status.getIn(['media_attachments', 0, 'type']) as string,
       ) ||
       status.get('media_attachments').size > 1
     ) {
-      media.push(
+      media = (
         <MediaGallery
           standalone
           sensitive={status.get('sensitive')}
@@ -216,7 +184,7 @@ export const DetailedStatus: React.FC<{
           onOpenMedia={onOpenMedia}
           visible={showMedia}
           onToggleVisibility={onToggleMediaVisibility}
-        />,
+        />
       );
       mediaIcons.push('picture-o');
     } else if (status.getIn(['media_attachments', 0, 'type']) === 'audio') {
@@ -225,7 +193,7 @@ export const DetailedStatus: React.FC<{
         attachment.getIn(['translation', 'description']) ||
         attachment.get('description');
 
-      media.push(
+      media = (
         <Audio
           src={attachment.get('url')}
           alt={description}
@@ -243,7 +211,7 @@ export const DetailedStatus: React.FC<{
           blurhash={attachment.get('blurhash')}
           height={150}
           onToggleVisibility={onToggleMediaVisibility}
-        />,
+        />
       );
       mediaIcons.push('music');
     } else if (status.getIn(['media_attachments', 0, 'type']) === 'video') {
@@ -252,7 +220,7 @@ export const DetailedStatus: React.FC<{
         attachment.getIn(['translation', 'description']) ||
         attachment.get('description');
 
-      media.push(
+      media = (
         <Video
           preview={attachment.get('preview_url')}
           frameRate={attachment.getIn(['meta', 'original', 'frame_rate'])}
@@ -271,31 +239,23 @@ export const DetailedStatus: React.FC<{
           letterbox={letterboxMedia}
           fullwidth={fullwidthMedia}
           preventPlayback={!expanded}
-        />,
+        />
       );
       mediaIcons.push('video-camera');
     }
   } else if (status.get('spoiler_text').length === 0) {
-    media.push(
+    media = (
       <Card
         sensitive={status.get('sensitive')}
         onOpenMedia={onOpenMedia}
         card={status.get('card', null)}
-      />,
+      />
     );
     mediaIcons.push('link');
   }
 
   if (status.get('poll')) {
-    contentMedia.push(
-      <PollContainer
-        pollId={status.get('poll')}
-        // @ts-expect-error -- Poll/PollContainer is not typed yet
-        status={status}
-        lang={status.get('language')}
-      />,
-    );
-    contentMediaIcons.push('tasks');
+    mediaIcons.push('tasks');
   }
 
   if (status.get('application')) {
@@ -359,7 +319,8 @@ export const DetailedStatus: React.FC<{
   const { statusContentProps, hashtagBar } = getHashtagBarForStatus(
     status as StatusLike,
   );
-  contentMedia.push(hashtagBar);
+
+  expanded ||= status.get('spoiler_text').length === 0;
 
   return (
     <div style={outerStyle}>
@@ -393,22 +354,34 @@ export const DetailedStatus: React.FC<{
           )}
         </Permalink>
 
-        <StatusContent
-          status={status}
-          media={contentMedia}
-          extraMedia={extraMedia}
-          mediaIcons={contentMediaIcons}
-          expanded={expanded}
-          collapsed={false}
-          onExpandedToggle={onToggleHidden}
-          onTranslate={handleTranslate}
-          onUpdate={handleChildUpdate}
-          tagLinks={tagMisleadingLinks}
-          rewriteMentions={rewriteMentions}
-          parseClick={parseClick}
-          disabled
-          {...(statusContentProps as any)}
-        />
+        {status.get('spoiler_text').length > 0 && (
+          <ContentWarning
+            text={
+              status.getIn(['translation', 'spoilerHtml']) ||
+              status.get('spoilerHtml')
+            }
+            expanded={expanded}
+            onClick={handleExpandedToggle}
+          />
+        )}
+
+        {expanded && (
+          <>
+            <StatusContent
+              status={status}
+              onTranslate={handleTranslate}
+              tagLinks={tagMisleadingLinks}
+              rewriteMentions={rewriteMentions}
+              {...(statusContentProps as any)}
+            />
+
+            {media}
+            {hashtagBar}
+          </>
+        )}
+
+        {/* This is a glitch-soc addition to have a placeholder */}
+        {!expanded && <MentionsPlaceholder status={status} />}
 
         <div className='detailed-status__meta'>
           <div className='detailed-status__meta__line'>
