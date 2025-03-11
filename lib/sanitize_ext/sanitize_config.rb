@@ -21,6 +21,49 @@ class Sanitize
       gemini
     ).freeze
 
+    # We remove all "style" attributes. In particular we remove all color
+    # attributes and length percentages.
+    COMMON_MATH_ATTRS = %w(
+      dir
+      displaystyle
+      mathvariant
+      scriptlevel
+    ).freeze
+
+    MATH_TAG_ATTRS = {
+      'annotation' => %w(encoding),
+      'annotation-xml' => %w(encoding),
+      'maction' => %w(),
+      'math' => %w(display alttext),
+      'merror' => %w(),
+      # See below
+      'mfrac' => %w(linethickness),
+      'mi' => %w(),
+      'mmultiscripts' => %w(),
+      'mn' => %w(),
+      'mo' => %w(form fence separator stretchy symmetric largeop movablelimits lspace rspace minsize),
+      'mover' => %w(accent),
+      'mpadded' => %w(width height depth lspace voffset),
+      'mphantom' => %w(),
+      'mprescripts' => %w(),
+      'mroot' => %w(),
+      'mrow' => %w(),
+      'ms' => %w(),
+      'mspace' => %w(width height depth),
+      'msqrt' => %w(),
+      'mstyle' => %w(),
+      'msub' => %w(),
+      'msubsup' => %w(),
+      'msup' => %w(),
+      'mtable' => %w(),
+      'mtd' => %w(colspan rowspan),
+      'mtext' => %w(),
+      'mtr' => %w(),
+      'munder' => %w(accentunder),
+      'munderover' => %w(accent accentunder),
+      'semantics' => %w(),
+    }.transform_values { |attr_list| attr_list + COMMON_MATH_ATTRS }.freeze
+
     ALLOWED_CLASS_TRANSFORMER = lambda do |env|
       node = env[:node]
       class_list = node['class']&.split(/[\t\n\f\r ]/)
@@ -74,46 +117,34 @@ class Sanitize
       current_node.replace(current_node.document.create_text_node(current_node.text)) unless LINK_PROTOCOLS.include?(scheme)
     end
 
-    # We assume that incomming <math> nodes are of the form
-    # <math><semantics>...<annotation>...</annotation></semantics></math>
-    # according to the [FEP]. We try to grab the most relevant plain-text
-    # annotation from the semantics node, and use it to display a representation
-    # of the mathematics.
+    # We need some special logic for some math tags.
+    # In particular, <mathfrac> contains a (usually stylistic) attribute
+    # `linethickness`, which denotes the thickness of the horizontal bar.
+    # However, `linethickness="0"`, erases the horizontal bar completely. This
+    # looks more like a two-element table, and could denote a two-element
+    # vector, or (in the MathML Core spec) the binomial coefficient!
+    # For example:
+    #   <mo>(</mo><mfrac linethickness="0"><mi>x</mi><mi>y</mi></mfrac><mo>)</mo>
+    # denotes xCy, while
+    #   <mo>(</mo><mfrac><mi>x</mi><mi>y</mi></mfrac><mo>)</mo>
+    # denotes (x/y). These two constructions are very different and the
+    # distinction needs to be mantained.
     #
     # FEP: https://codeberg.org/fediverse/fep/src/branch/main/fep/dc88/fep-dc88.md
     MATH_TRANSFORMER = lambda do |env|
-      math = env[:node]
-      return if env[:is_allowlisted]
-      return unless math.element? && env[:node_name] == 'math'
+      node = env[:node]
+      return if env[:is_allowlisted] || !node.element?
+      return unless env[:node_name] == 'mfrac'
 
-      semantics = math.element_children[0]
-      return if semantics.nil? || semantics.name != 'semantics'
-
-      # next, we find the plain-text description
-      is_annotation_with_encoding = lambda do |encoding, node|
-        return false unless node.name == 'annotation'
-
-        node.attributes['encoding'].value == encoding
+      node.attribute_nodes.each do |attr|
+        attr.unlink if attr.name == 'linethickness' && attr.value != '0'
       end
-
-      annotation = semantics.children.find(&is_annotation_with_encoding.curry['application/x-tex'])
-      if annotation
-        text = if math.attributes['display']&.value == 'block'
-                 "$$#{annotation.text}$$"
-               else
-                 "$#{annotation.text}$"
-               end
-        math.replace(math.document.create_text_node(text))
-        return
-      end
-      # Don't bother surrounding 'text/plain' annotations with dollar signs,
-      # since it isn't LaTeX
-      annotation = semantics.children.find(&is_annotation_with_encoding.curry['text/plain'])
-      math.replace(math.document.create_text_node(annotation.text)) unless annotation.nil?
+      # we don't allowlist the node. instead we let the CleanElement transformer
+      # take care of the rest of the attributes.
     end
 
     MASTODON_STRICT = freeze_config(
-      elements: %w(p br span a abbr del s pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li ruby rt rp),
+      elements: %w(p br span a abbr del s pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li ruby rt rp) + MATH_TAG_ATTRS.keys,
 
       attributes: {
         'a' => %w(href rel class title translate),
@@ -122,7 +153,7 @@ class Sanitize
         'blockquote' => %w(cite),
         'ol' => %w(start reversed),
         'li' => %w(value),
-      },
+      }.merge(MATH_TAG_ATTRS),
 
       add_attributes: {
         'a' => {
