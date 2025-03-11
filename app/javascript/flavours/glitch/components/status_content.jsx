@@ -259,7 +259,7 @@ class StatusContent extends PureComponent {
 
   _renderMathJax() {
     try {
-      MathJax.typeset([this.contentsNode]); // eslint-disable-line no-undef
+      MathJax.typeset([this.node]); // eslint-disable-line no-undef
     } catch(e) {
       console.warn(e);
     }
