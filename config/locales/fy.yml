@@ -1209,6 +1209,7 @@ fy:
     too_fast: Formulier is te fluch yntsjinne. Probearje it nochris.
     use_security_key: Befeiligingskaai brûke
     user_agreement_html: Ik haw de <a href="%{terms_of_service_path}" target="_blank">gebrûksbetingsten</a> en it <a href="%{privacy_policy_path}" target="_blank">privacybelied</a> lêzen en gean der mei akkoard
+    user_privacy_agreement_html: Ik haw it <a href="%{privacy_policy_path}" target="_blank">privacybelied</a> lêzen en gean dêrmei akkoard
   author_attribution:
     example_title: Faorbyldtekst
     hint_html: Skriuwe jo nijs- of blogartikelen bûten Mastodon? Bepaal hoe’t jo oahelle wurde as dizze dield wurde op Mastodon.
@@ -1935,8 +1936,6 @@ fy:
     terms_of_service_changed:
       agreement: Troch %{domain} brûke te bliuwen, geane jo akkoard mei dizze betingsten. As jo it net iens binne mei de bywurke betingsten, kinne jo jo oerienkomst mei %{domain} op elk winske momint beëinigje troch jo account fuort te smiten.
       changelog: 'Yn ien eachopslach betsjut dizze update foar jo:'
-      description: 'Jo ûntfange dit berjocht, omdat wy inkelde wizigingen oanbringe yn ús gebrûksbetingsten by %{domain}. Wy riede jo oan om de bywurke betingsten hjir folslein te besjen:'
-      description_html: Jo ûntfange dit berjocht, omdat wy inkelde wizigingen oanbringe yn ús gebrûksbetingsten by %{domain}. Wy riede jo oan om de bywurke <a href="%{path}" target="_blank">betingsten hjir folslein te besjen</a>.
       sign_off: It %{domain}-team
       subject: Aktualisaasje fan ús tsjinstbetingsten
       subtitle: De gebrûksbetingsten fan %{domain} wizigje

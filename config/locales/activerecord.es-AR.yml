@@ -20,7 +20,6 @@ es-AR:
           invalid: no es un nombre de dominio válido
       messages:
         invalid_domain_on_line: "%{value} no es un nombre de dominio válido"
-        too_many_lines: está por encima del límite de %{limit} líneas
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ es-AR:
           attributes:
             reblog:
               taken: del mensaje ya existe
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: es demasiado pronto, debe ser posterior a %{date}
         user:
           attributes:
             email:

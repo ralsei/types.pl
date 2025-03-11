@@ -3,7 +3,7 @@ cs:
   simple_form:
     hints:
       account:
-        attribution_domains_as_text: Jeden na řádek. Chrání před falešným připisování autorství.
+        attribution_domains: Jeden na řádek. Chrání před falešným připisování autorství.
         discoverable: Vaše veřejné příspěvky a profil mohou být zobrazeny nebo doporučeny v různých oblastech Mastodonu a váš profil může být navrhován ostatním uživatelům.
         display_name: Vaše celé jméno nebo přezdívka.
         fields: Vaše domovská stránka, zájmena, věk, cokoliv chcete.
@@ -132,15 +132,18 @@ cs:
         name: Můžete měnit pouze velikost písmen, například kvůli lepší čitelnosti
       terms_of_service:
         changelog: Může být strukturováno pomocí Markdown syntaxu.
+        effective_date: Rozumné časové rozpětí může být kdykoliv od 10 do 30 dnů od doby, kdy upozorníte své uživatele.
         text: Může být strukturováno pomocí Markdown syntaxu.
       terms_of_service_generator:
         admin_email: Právní oznámení zahrnují protioznámení, soudní příkazy, žádosti o stáhnutí příspěvků a žádosti od právních vymahačů.
-        arbitration_address: Může být stejné jako výše uvedená fyzická adresa, nebo „N/A“, pokud používáte e-mail
-        arbitration_website: Může být webový formulář nebo „N/A“, pokud používáte e-mail
-        dmca_address: V případě provozovatelů v USA použijte adresu zapsanou v DMCA Designated Agent Directory. Na přímou žádost je možné použít namísto domovské adresy PO box, použijte DMCA Designated Agent Post Office Box Waiver Request k e-mailovaní Copyright Office a řekněte jim, že jste malým moderátorem obsahu, který se obavá pomsty nabo odplaty za Vaši práci a potřebujete použít PO box, abyste schovali Vaši domovskou adresu před širokou veřejností.
-        dmca_email: Může být stejný e-mail použitý pro „E-mail adresy pro právní upozornění“
+        arbitration_address: Může být stejné jako výše uvedená fyzická adresa, nebo „N/A“, pokud používáte e-mail.
+        arbitration_website: Může být webový formulář nebo „N/A“, pokud používáte email.
+        choice_of_law: Město, region, území nebo stát, jehož vnitřní hmotné právo stanovuje povinnosti pro veškeré nároky.
+        dmca_address: V případě provozovatelů v USA použijte adresu zapsanou v DMCA Designated Agent Directory. Na přímou žádost je možné použít namísto domovské adresy PO box. V tomto případě použijte DMCA Designated Agent Post Office Box Waiver Request k zaslání emailu Copyright Office a řekněte jim, že jste malým moderátorem obsahu, který se obavá pomsty nabo odplaty za Vaši práci a potřebujete použít PO box, abyste schovali Vaši domovskou adresu před širokou veřejností.
+        dmca_email: Může být stejný e-mail použitý pro „E-mailová adresa pro právní upozornění.“
         domain: Jedinečná identifikace online služby, kterou poskytujete.
         jurisdiction: Uveďte zemi, kde žije ten, kdo platí účty. Pokud je to společnost nebo jiný subjekt, uveďte zemi, v níž je zapsán do obchodního rejstříku, a město, region, území, případně stát, pokud je to povinné.
+        min_age: Neměla by být pod minimálním věkem požadovaným zákony vaší jurisdikce.
       user:
         chosen_languages: Po zaškrtnutí budou ve veřejných časových osách zobrazeny pouze příspěvky ve zvolených jazycích
         role: Role určuje, která oprávnění uživatel má.
@@ -156,7 +159,7 @@ cs:
         url: Kam budou události odesílány
     labels:
       account:
-        attribution_domains_as_text: Webové stránky s povolením Vám připsat autorství
+        attribution_domains: Webové stránky s povolením Vám připsat autorství
         discoverable: Zobrazovat profil a příspěvky ve vyhledávacích algoritmech
         fields:
           name: Označení
@@ -233,6 +236,7 @@ cs:
         setting_display_media_show_all: Zobrazit vše
         setting_expand_spoilers: Vždy rozbalit příspěvky označené varováními o obsahu
         setting_hide_network: Skrýt mou síť
+        setting_missing_alt_text_modal: Zobrazit potvrzovací dialog před odesláním médií bez alt textu
         setting_reduce_motion: Omezit pohyb v animacích
         setting_system_font_ui: Použít výchozí písmo systému
         setting_system_scrollbars_ui: Použít výchozí posuvník systému
@@ -332,15 +336,18 @@ cs:
         usable: Povolit příspěvkům používat tento hashtag lokálně
       terms_of_service:
         changelog: Co se změnilo?
+        effective_date: Datum platnosti
         text: Podmínky užití
       terms_of_service_generator:
         admin_email: E-mailová adresa pro právní upozornění
         arbitration_address: Fyzická adresa pro upozornění na arbitrační řízení
         arbitration_website: Webová stránka pro zasílání arbitračních upozornění
+        choice_of_law: Volba zákona
         dmca_address: Fyzická adresa pro oznámení DMCA/porušení autorských práv
         dmca_email: E-mailová adresa pro oznámení DMCA/porušení autorských práv
         domain: Doména
         jurisdiction: Právní příslušnost
+        min_age: Věková hranice
       user:
         role: Role
         time_zone: Časové pásmo

@@ -20,7 +20,6 @@ da:
           invalid: er ikke et gyldigt domænenavn
       messages:
         invalid_domain_on_line: "%{value} er ikke et gyldigt domænenavn"
-        too_many_lines: overstiger grænsen på %{limit} linjer
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ da:
           attributes:
             reblog:
               taken: af status findes allerede
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: er for tidligt, skal være efter %{date}
         user:
           attributes:
             email:

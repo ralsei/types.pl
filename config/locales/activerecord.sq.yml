@@ -20,7 +20,6 @@ sq:
           invalid: s’është emër i vlefshëm përkatësie
       messages:
         invalid_domain_on_line: "%{value} s’është emër i vlefshëm përkatësie"
-        too_many_lines: është tej kufirit prej %{limit} rreshta
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ sq:
           attributes:
             reblog:
               taken: e gjendjes ekziston tashmë
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: është shumë herët, duhet të jetë më vonë se %{date}
         user:
           attributes:
             email:

@@ -20,7 +20,6 @@ de:
           invalid: ist kein gültiger Domain-Name
       messages:
         invalid_domain_on_line: "%{value} ist kein gültiger Domain-Name"
-        too_many_lines: übersteigt das Limit von %{limit} Zeilen
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ de:
           attributes:
             reblog:
               taken: des Beitrags existiert bereits
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: Datum muss später als %{date} sein
         user:
           attributes:
             email:

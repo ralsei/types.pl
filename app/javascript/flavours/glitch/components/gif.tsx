@@ -1,4 +1,4 @@
-import { useHovering } from '@/hooks/useHovering';
+import { useHovering } from 'flavours/glitch/hooks/useHovering';
 import { autoPlayGif } from 'flavours/glitch/initial_state';
 
 export const GIF: React.FC<{

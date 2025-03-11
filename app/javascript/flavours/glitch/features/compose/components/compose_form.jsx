@@ -10,11 +10,12 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { length } from 'stringz';
 
+import { missingAltTextModal } from 'flavours/glitch/initial_state';
+
 import AutosuggestInput from '../../../components/autosuggest_input';
 import AutosuggestTextarea from '../../../components/autosuggest_textarea';
 import { Button } from '../../../components/button';
 import EmojiPickerDropdown from '../containers/emoji_picker_dropdown_container';
-import LanguageDropdown from '../containers/language_dropdown_container';
 import PollButtonContainer from '../containers/poll_button_container';
 import PrivacyDropdownContainer from '../containers/privacy_dropdown_container';
 import SpoilerButtonContainer from '../containers/spoiler_button_container';
@@ -26,6 +27,7 @@ import { CharacterCounter } from './character_counter';
 import { ContentTypeButton } from './content_type_button';
 import { EditIndicator } from './edit_indicator';
 import { FederationButton } from './federation_button';
+import { LanguageDropdown } from './language_dropdown';
 import { NavigationBar } from './navigation_bar';
 import { PollForm } from "./poll_form";
 import { ReplyIndicator } from './reply_indicator';
@@ -72,9 +74,8 @@ class ComposeForm extends ImmutablePureComponent {
     autoFocus: PropTypes.bool,
     withoutNavigation: PropTypes.bool,
     anyMedia: PropTypes.bool,
+    missingAltText: PropTypes.bool,
     media: ImmutablePropTypes.list,
-    mediaDescriptionConfirmation: PropTypes.bool,
-    onMediaDescriptionConfirm: PropTypes.func.isRequired,
     isInReply: PropTypes.bool,
     singleColumn: PropTypes.bool,
     lang: PropTypes.string,
@@ -131,16 +132,10 @@ class ComposeForm extends ImmutablePureComponent {
       return;
     }
 
+    this.props.onSubmit(missingAltTextModal && this.props.missingAltText && this.props.privacy !== 'direct', overridePrivacy);
+
     if (e) {
       e.preventDefault();
-    }
-
-    // Submit unless there are media with missing descriptions
-    if (this.props.mediaDescriptionConfirmation && this.props.media && this.props.media.some(item => !item.get('description'))) {
-      const firstWithoutDescription = this.props.media.find(item => !item.get('description'));
-      this.props.onMediaDescriptionConfirm(firstWithoutDescription.get('id'), overridePrivacy);
-    } else {
-      this.props.onSubmit(overridePrivacy);
     }
   };
 
@@ -335,6 +330,7 @@ class ComposeForm extends ImmutablePureComponent {
                 />
                 <Button
                   type='submit'
+                  compact
                   text={intl.formatMessage(this.props.isEditing ? messages.saveChanges : (this.props.isInReply ? messages.reply : messages.publish))}
                   disabled={!this.canSubmit()}
                 />

@@ -20,7 +20,6 @@ ca:
           invalid: no és un nom de domini vàlid
       messages:
         invalid_domain_on_line: "%{value} no és un nom de domini vàlid"
-        too_many_lines: sobrepassa el límit de %{limit} línies
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ ca:
           attributes:
             reblog:
               taken: de la publicació ja existeix
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: és massa aviat, ha de ser després de %{date}
         user:
           attributes:
             email:

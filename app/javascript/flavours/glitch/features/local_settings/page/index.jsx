@@ -202,14 +202,6 @@ class LocalSettingsPage extends PureComponent {
         </LocalSettingsPageItem>
         <LocalSettingsPageItem
           settings={settings}
-          item={['confirm_missing_media_description']}
-          id='mastodon-settings--confirm_missing_media_description'
-          onChange={onChange}
-        >
-          <FormattedMessage id='settings.confirm_missing_media_description' defaultMessage='Show confirmation dialog before sending toots lacking media descriptions' />
-        </LocalSettingsPageItem>
-        <LocalSettingsPageItem
-          settings={settings}
           item={['confirm_before_clearing_draft']}
           id='mastodon-settings--confirm_before_clearing_draft'
           onChange={onChange}

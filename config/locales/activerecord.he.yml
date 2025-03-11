@@ -20,7 +20,6 @@ he:
           invalid: אינו שם מתחם קביל
       messages:
         invalid_domain_on_line: "%{value} אינו שם מתחם קביל"
-        too_many_lines: מעבר למגבלה של %{limit} שורות
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ he:
           attributes:
             reblog:
               taken: של ההודעה כבר קיים
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: מוקדם מדי, חייב להיות אחרי %{date}
         user:
           attributes:
             email:

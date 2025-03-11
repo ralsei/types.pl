@@ -13,8 +13,6 @@ jobs:
     uses: ./.github/workflows/build-container-image.yml
     with:
       file_to_build: Dockerfile
-      platforms: linux/amd64,linux/arm64
-      use_native_arm64_builder: false
       push_to_images: |
         ghcr.io/${{ github.repository_owner }}/mastodon
       # Do not use cache when building releases, so apt update is always ran and the release always contain the latest packages
@@ -33,8 +31,6 @@ jobs:
     uses: ./.github/workflows/build-container-image.yml
     with:
       file_to_build: streaming/Dockerfile
-      platforms: linux/amd64,linux/arm64
-      use_native_arm64_builder: false
       push_to_images: |
         ghcr.io/${{ github.repository_owner }}/mastodon-streaming
       # Do not use cache when building releases, so apt update is always ran and the release always contain the latest packages

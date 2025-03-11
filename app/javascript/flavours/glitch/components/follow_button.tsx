@@ -2,6 +2,8 @@ import { useCallback, useEffect } from 'react';
 
 import { useIntl, defineMessages } from 'react-intl';
 
+import classNames from 'classnames';
+
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import {
   fetchRelationships,
@@ -22,7 +24,8 @@ const messages = defineMessages({
 
 export const FollowButton: React.FC<{
   accountId?: string;
-}> = ({ accountId }) => {
+  compact?: boolean;
+}> = ({ accountId, compact }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const { signedIn } = useIdentity();
@@ -54,7 +57,7 @@ export const FollowButton: React.FC<{
       );
     }
 
-    if (!relationship) return;
+    if (!relationship || !accountId) return;
 
     if (accountId === me) {
       return;
@@ -75,10 +78,10 @@ export const FollowButton: React.FC<{
     label = intl.formatMessage(messages.edit_profile);
   } else if (!relationship) {
     label = <LoadingIndicator />;
-  } else if (!relationship.following && relationship.followed_by) {
-    label = intl.formatMessage(messages.followBack);
   } else if (relationship.following || relationship.requested) {
     label = intl.formatMessage(messages.unfollow);
+  } else if (relationship.followed_by) {
+    label = intl.formatMessage(messages.followBack);
   } else {
     label = intl.formatMessage(messages.follow);
   }
@@ -89,7 +92,9 @@ export const FollowButton: React.FC<{
         href='/settings/profile'
         target='_blank'
         rel='noopener'
-        className='button button-secondary'
+        className={classNames('button button-secondary', {
+          'button--compact': compact,
+        })}
       >
         {label}
       </a>
@@ -106,6 +111,7 @@ export const FollowButton: React.FC<{
           (account?.suspended || !!account?.moved))
       }
       secondary={following}
+      compact={compact}
       className={following ? 'button--destructive' : undefined}
     >
       {label}

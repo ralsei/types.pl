@@ -4,16 +4,16 @@ import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 
+import type { Map as ImmutableMap, List as ImmutableList } from 'immutable';
+
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import CloseIcon from '@/material-icons/400-20px/close.svg?react';
 import EditIcon from '@/material-icons/400-24px/edit.svg?react';
 import WarningIcon from '@/material-icons/400-24px/warning.svg?react';
-import {
-  undoUploadCompose,
-  initMediaEditModal,
-} from 'flavours/glitch/actions/compose';
+import { undoUploadCompose } from 'flavours/glitch/actions/compose';
+import { openModal } from 'flavours/glitch/actions/modal';
 import { Blurhash } from 'flavours/glitch/components/blurhash';
 import { Icon } from 'flavours/glitch/components/icon';
 import type { MediaAttachment } from 'flavours/glitch/models/media_attachment';
@@ -27,16 +27,15 @@ export const Upload: React.FC<{
   wide?: boolean;
 }> = ({ id, dragging, overlay, tall, wide }) => {
   const dispatch = useAppDispatch();
-  const media = useAppSelector(
-    (state) =>
-      state.compose // eslint-disable-line @typescript-eslint/no-unsafe-call
-        .get('media_attachments') // eslint-disable-line @typescript-eslint/no-unsafe-member-access
-        .find((item: MediaAttachment) => item.get('id') === id) as  // eslint-disable-line @typescript-eslint/no-unsafe-member-access
-        | MediaAttachment
-        | undefined,
+  const media = useAppSelector((state) =>
+    (
+      (state.compose as ImmutableMap<string, unknown>).get(
+        'media_attachments',
+      ) as ImmutableList<MediaAttachment>
+    ).find((item) => item.get('id') === id),
   );
   const sensitive = useAppSelector(
-    (state) => state.compose.get('sensitive') as boolean, // eslint-disable-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    (state) => state.compose.get('sensitive') as boolean,
   );
 
   const handleUndoClick = useCallback(() => {
@@ -44,7 +43,9 @@ export const Upload: React.FC<{
   }, [dispatch, id]);
 
   const handleFocalPointClick = useCallback(() => {
-    dispatch(initMediaEditModal(id));
+    dispatch(
+      openModal({ modalType: 'FOCAL_POINT', modalProps: { mediaId: id } }),
+    );
   }, [dispatch, id]);
 
   const { attributes, listeners, setNodeRef, transform, transition } =

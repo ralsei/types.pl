@@ -3,7 +3,7 @@ fy:
   simple_form:
     hints:
       account:
-        attribution_domains_as_text: Ien per rigel. Beskermet tsjin falske attribúsjes.
+        attribution_domains: Ien per rigel. Beskermet tsjin falske attribúsjes.
         discoverable: Jo iepenbiere berjochten kinne útljochte wurde op ferskate plakken binnen Mastodon en jo account kin oanrekommandearre wurde oan oare brûkers.
         display_name: Jo folsleine namme of in aardige bynamme.
         fields: Jo website, persoanlike foarnammewurden, leeftiid, alles wat jo mar kwyt wolle.
@@ -135,10 +135,7 @@ fy:
         text: Kin strukturearre wurde mei Markdown-syntaksis.
       terms_of_service_generator:
         admin_email: Juridyske meidielingen binne û.o. tsjinoantekeningen, rjochterlike befelen, ferwiderfersiken en fersiken om wetshanthaving.
-        arbitration_address: Kin itselde wêze as boppesteande strjitteof ‘N/A’ by gebrûk fan e-mail
-        arbitration_website: Kin in webformulier wêze, of ‘N/A’ as e-mail brûkt wurdt
         dmca_address: 'Brûk foar behearders yn de FS: it adres dat registrearre is yn de DMCA Designated Agent Directory. Op fersyk is der in postbuslist beskikber. Brûk it DMCA Designated Agent Post Office Box Waiver Request om it Copyright Office te e-mailen en te beskriuwen dat jo in thúsbasearre ynhâldsmoderator binne dy’t wraak of fergelding frezet foar jo dieden en in postbus brûke moat om jo húsadres út it publike domein te hâlden.'
-        dmca_email: Kin itselde e-mailadres wêze as ‘E-mailadres foar juridyske berjochten’ hjirboppe
         domain: In unike identifikaasje fan de online tsjinst dy’t ferliend wurdt.
         jurisdiction: Fermeld it lân wêr’t de persoan wennet dy’t de rekkeningen betellet. As it in bedriuw of in oare entiteit is, fermeld it lân wêr’t it opnommen is en de stêd, regio, grûngebiet of steat, foar safier fan tapassing.
       user:
@@ -156,7 +153,7 @@ fy:
         url: Wêr’t eveneminten nei ta stjoerd wurde
     labels:
       account:
-        attribution_domains_as_text: Websites dy’t jo wurdearring jaan meie
+        attribution_domains: Websites dy’t jo wurdearring jaan meie
         discoverable: Profyl en bydragen yn sykalgoritmen opnimme litte
         fields:
           name: Label

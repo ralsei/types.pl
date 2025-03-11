@@ -1209,6 +1209,7 @@ nn:
     too_fast: Skjemaet ble sendt inn for raskt, prøv på nytt.
     use_security_key: Bruk sikkerhetsnøkkel
     user_agreement_html: Eg godtek <a href="%{terms_of_service_path}" target="_blank">bruksvilkåra</a> og <a href="%{privacy_policy_path}" target="_blank">personvernvllkåra</a>
+    user_privacy_agreement_html: Eg har lese og godtar <a href="%{privacy_policy_path}" target="_blank">personvernerklæringa</a>
   author_attribution:
     example_title: Eksempeltekst
     hint_html: Skriv du nyhende eller blogginnlegg utanfor Mastodon? Her kan du kontrollera korleis du blir kreditert når artiklane dine blir delte på Mastodon.
@@ -1935,8 +1936,6 @@ nn:
     terms_of_service_changed:
       agreement: Viss du held fram å bruka %{domain}, seier du deg einig i vilkåra. Viss du er usamd i dei oppdaterte vilkåra, kan du slutta å bruka %{domain} når du vil ved å sletta brukarkontoen din.
       changelog: 'Denne oppdateringa, kort fortalt:'
-      description: 'Du får denne eposten fordi me har endra bruksvilkåra på %{domain}. Det er fint om du ser gjennom endringane her:'
-      description_html: Du får denne eposten fordi me endrar bruksvilkåra på %{domain}. Me oppmodar deg til å lesa gjennom <a href="%{path}" target="_blank">dei oppdaterte bruksvilkåra her</a>.
       sign_off: Folka på %{domain}
       subject: Endra bruksvilkår
       subtitle: Bruksvilkåra på %{domain} er endra

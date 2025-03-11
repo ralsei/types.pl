@@ -11,7 +11,7 @@ import { TimelineHint } from 'flavours/glitch/components/timeline_hint';
 import ProfileColumnHeader from 'flavours/glitch/features/account/components/profile_column_header';
 import BundleColumnError from 'flavours/glitch/features/ui/components/bundle_column_error';
 import { normalizeForLookup } from 'flavours/glitch/reducers/accounts_map';
-import { getAccountHidden } from 'flavours/glitch/selectors';
+import { getAccountHidden } from 'flavours/glitch/selectors/accounts';
 import { useAppSelector } from 'flavours/glitch/store';
 
 import { lookupAccount, fetchAccount } from '../../actions/accounts';
@@ -21,8 +21,8 @@ import { LoadingIndicator } from '../../components/loading_indicator';
 import StatusList from '../../components/status_list';
 import Column from '../ui/components/column';
 
+import { AccountHeader } from './components/account_header';
 import { LimitedAccountHint } from './components/limited_account_hint';
-import HeaderContainer from './containers/header_container';
 
 const emptyList = ImmutableList();
 
@@ -199,7 +199,7 @@ class AccountTimeline extends ImmutablePureComponent {
         <ProfileColumnHeader onClick={this.handleHeaderClick} multiColumn={multiColumn} />
 
         <StatusList
-          prepend={<HeaderContainer accountId={this.props.accountId} hideTabs={forceEmptyState} tagged={this.props.params.tagged} />}
+          prepend={<AccountHeader accountId={this.props.accountId} hideTabs={forceEmptyState} tagged={this.props.params.tagged} />}
           alwaysPrepend
           append={remoteMessage}
           scrollKey='account_timeline'

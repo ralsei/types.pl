@@ -1,8 +1,6 @@
-import { defineMessages, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 
 import { connect } from 'react-redux';
-
-import { privacyPreference } from 'flavours/glitch/utils/privacy_preference';
 
 import {
   changeCompose,
@@ -13,27 +11,11 @@ import {
   changeComposeSpoilerText,
   insertEmojiCompose,
   uploadCompose,
-} from '../../../actions/compose';
-import { changeLocalSetting } from '../../../actions/local_settings';
-import {
-  openModal,
-} from '../../../actions/modal';
-import ComposeForm from '../components/compose_form';
+} from 'flavours/glitch/actions/compose';
+import { openModal } from 'flavours/glitch/actions/modal';
+import { privacyPreference } from 'flavours/glitch/utils/privacy_preference';
 
-const messages = defineMessages({
-  missingDescriptionMessage: {
-    id: 'confirmations.missing_media_description.message',
-    defaultMessage: 'At least one media attachment is lacking a description. Consider describing all media attachments for the visually impaired before sending your toot.',
-  },
-  missingDescriptionConfirm: {
-    id: 'confirmations.missing_media_description.confirm',
-    defaultMessage: 'Send anyway',
-  },
-  missingDescriptionEdit: {
-    id: 'confirmations.missing_media_description.edit',
-    defaultMessage: 'Edit media',
-  },
-});
+import ComposeForm from '../components/compose_form';
 
 const sideArmPrivacy = state => {
   const inReplyTo = state.getIn(['compose', 'in_reply_to']);
@@ -68,22 +50,29 @@ const mapStateToProps = state => ({
   isChangingUpload: state.getIn(['compose', 'is_changing_upload']),
   isUploading: state.getIn(['compose', 'is_uploading']),
   anyMedia: state.getIn(['compose', 'media_attachments']).size > 0,
+  missingAltText: state.getIn(['compose', 'media_attachments']).some(media => ['image', 'gifv'].includes(media.get('type')) && (media.get('description') ?? '').length === 0),
   isInReply: state.getIn(['compose', 'in_reply_to']) !== null,
   lang: state.getIn(['compose', 'language']),
   sideArm: sideArmPrivacy(state),
   media: state.getIn(['compose', 'media_attachments']),
-  mediaDescriptionConfirmation: state.getIn(['local_settings', 'confirm_missing_media_description']),
   maxChars: state.getIn(['server', 'server', 'configuration', 'statuses', 'max_characters'], 500),
 });
 
-const mapDispatchToProps = (dispatch, { intl }) => ({
+const mapDispatchToProps = (dispatch) => ({
 
   onChange (text) {
     dispatch(changeCompose(text));
   },
 
-  onSubmit (overridePrivacy = null) {
-    dispatch(submitCompose(overridePrivacy));
+  onSubmit (missingAltText, overridePrivacy = null) {
+    if (missingAltText) {
+      dispatch(openModal({
+        modalType: 'CONFIRM_MISSING_ALT_TEXT',
+        modalProps: { overridePrivacy },
+      }));
+    } else {
+      dispatch(submitCompose(overridePrivacy));
+    }
   },
 
   onClearSuggestions () {
@@ -108,25 +97,6 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
 
   onPickEmoji (position, data, needsSpace) {
     dispatch(insertEmojiCompose(position, data, needsSpace));
-  },
-
-  onMediaDescriptionConfirm (mediaId, overridePrivacy = null) {
-    dispatch(openModal({
-      modalType: 'CONFIRM',
-      modalProps: {
-        message: intl.formatMessage(messages.missingDescriptionMessage),
-        confirm: intl.formatMessage(messages.missingDescriptionConfirm),
-        onConfirm: () => {
-          dispatch(submitCompose(overridePrivacy));
-        },
-        secondary: intl.formatMessage(messages.missingDescriptionEdit),
-        onSecondary: () => dispatch(openModal({
-          modalType: 'FOCAL_POINT',
-          modalProps: { id: mediaId },
-        })),
-        onDoNotAsk: () => dispatch(changeLocalSetting(['confirm_missing_media_description'], false)),
-      },
-    }));
   },
 
 });

@@ -3,7 +3,7 @@ cy:
   simple_form:
     hints:
       account:
-        attribution_domains_as_text: Un i bob llinell. Yn amddiffyn rhag priodoli ffug.
+        attribution_domains: Un i bob llinell. Yn amddiffyn rhag priodoli ffug.
         discoverable: Mae'n bosibl y bydd eich postiadau cyhoeddus a'ch proffil yn cael sylw neu'n cael eu hargymell mewn gwahanol feysydd o Mastodon ac efallai y bydd eich proffil yn cael ei awgrymu i ddefnyddwyr eraill.
         display_name: Eich enw llawn neu'ch enw hwyl.
         fields: Eich tudalen cartref, rhagenwau, oed, neu unrhyw beth.
@@ -135,10 +135,7 @@ cy:
         text: Mae modd ei strwythuro gyda chystrawen Markdown.
       terms_of_service_generator:
         admin_email: Mae hysbysiadau cyfreithiol yn cynnwys gwrth-hysbysiadau, gorchmynion llys, ceisiadau tynnu i lawr, a cheisiadau gorfodi'r gyfraith.
-        arbitration_address: Gall fod yr un peth â'r cyfeiriad ffisegol uchod, neu “D/A” os ydych chi'n defnyddio e-bost
-        arbitration_website: Gall fod yn ffurflen we, neu “D/A” os ydych chi'n defnyddio e-bost
         dmca_address: Ar gyfer gweithredwyr yr Unol Daleithiau, defnyddiwch y cyfeiriad sydd wedi'i gofrestru yn Designated Agent Directory y DMCA. Mae rhestriad blychau post ar gael ar gais uniongyrchol, defnyddiwch gais Designated Agent Post Office Box Waiver Request y DMCA i anfon e-bost at y Swyddfa Hawlfraint a disgrifiwch eich bod yn gymedrolwr cynnwys yn y cartref sy'n ofni dial neu ddialedd am eich gweithredoedd ac sydd angen defnyddio Blwch P.O. i dynnu eich cyfeiriad cartref o olwg y cyhoedd.
-        dmca_email: Gall fod yr un e-bost sy'n cael ei ddefnyddio ar gyfer “Cyfeiriad e-bost ar gyfer hysbysiadau cyfreithiol” uchod
         domain: Dynodiad unigryw o'r gwasanaeth ar-lein rydych chi'n ei ddarparu.
         jurisdiction: Rhestrwch y wlad lle mae pwy bynnag sy'n talu'r biliau yn byw. Os yw'n gwmni neu'n endid arall, rhestrwch y wlad lle mae wedi'i ymgorffori, a'r ddinas, rhanbarth, tiriogaeth neu wladwriaeth fel y bo'n briodol.
       user:
@@ -156,7 +153,7 @@ cy:
         url: I ble bydd digwyddiadau'n cael eu hanfon
     labels:
       account:
-        attribution_domains_as_text: Gwefannau sy'n cael caniatâd i'ch cydnabod chi
+        attribution_domains: Gwefannau sy'n cael caniatâd i'ch cydnabod chi
         discoverable: Proffil nodwedd a phostiadau mewn algorithmau darganfod
         fields:
           name: Label
@@ -233,6 +230,7 @@ cy:
         setting_display_media_show_all: Dangos popeth
         setting_expand_spoilers: Dangos postiadau wedi'u marcio â rhybudd cynnwys bob tro
         setting_hide_network: Cuddio eich graff cymdeithasol
+        setting_missing_alt_text_modal: Dangos deialog cadarnhau cyn postio cyfrwng heb destun amgen
         setting_reduce_motion: Lleihau mudiant mewn animeiddiadau
         setting_system_font_ui: Defnyddio ffont rhagosodedig y system
         setting_system_scrollbars_ui: Defnyddiwch far sgrolio rhagosodedig y system

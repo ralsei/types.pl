@@ -20,7 +20,6 @@ nl:
           invalid: is een ongeldige domeinnaam
       messages:
         invalid_domain_on_line: "%{value} is een ongeldige domeinnaam"
-        too_many_lines: overschrijdt de limiet van %{limit} regels
       models:
         account:
           attributes:
@@ -50,6 +49,10 @@ nl:
           attributes:
             reblog:
               taken: van bericht bestaat al
+        terms_of_service:
+          attributes:
+            effective_date:
+              too_soon: is te vroeg, moet later zijn dan %{date}
         user:
           attributes:
             email:

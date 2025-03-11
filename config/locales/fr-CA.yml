@@ -1212,6 +1212,7 @@ fr-CA:
     too_fast: Formulaire envoyé trop rapidement, veuillez réessayer.
     use_security_key: Utiliser la clé de sécurité
     user_agreement_html: J'ai lu et j'accepte les <a href="%{terms_of_service_path}" target="_blank">conditions d'utilisation</a> et la <a href="%{privacy_policy_path}" target="_blank">politique de confidentialité</a>
+    user_privacy_agreement_html: J’ai lu et j’accepte la <a href="%{privacy_policy_path}" target="_blank">politique de confidentialité</a>
   author_attribution:
     example_title: Exemple de texte
     hint_html: Vous écrivez des nouvelles ou des articles de blog en dehors de Mastodon ? Contrôlez la façon dont vous êtes crédité lorsqu'ils sont partagés sur Mastodon.
@@ -1938,8 +1939,6 @@ fr-CA:
     terms_of_service_changed:
       agreement: En continuant d'utiliser %{domain}, vous acceptez ces conditions. Si vous n'êtes pas d'accord avec les conditions mises à jour, vous pouvez résilier votre accord avec %{domain} à tout moment en supprimant votre compte.
       changelog: 'En un coup d''œil, voici ce que cette mise à jour signifie pour vous :'
-      description: 'Vous recevez cet e-mail car nous apportons des modifications à nos conditions d''utilisation sur %{domain}. Nous vous encourageons à consulter l''intégralité des conditions mises à jour ici :'
-      description_html: Vous recevez cet e-mail car nous apportons des modifications à nos conditions d'utilisation sur %{domain}. Nous vous encourageons à consulter l'intégralité des <a href="%{path}" target="_blank">conditions mises à jour ici</a>.
       sign_off: L'équipe %{domain}
       subject: Mises à jour de nos conditions d'utilisation
       subtitle: Les conditions d'utilisation de `%{domain}` changent

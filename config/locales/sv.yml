@@ -1209,6 +1209,7 @@ sv:
     too_fast: Formuläret har skickats för snabbt, försök igen.
     use_security_key: Använd säkerhetsnyckel
     user_agreement_html: Jag har läst och godkänner <a href="%{terms_of_service_path}" target="_blank">användarvillkoren</a> och <a href="%{privacy_policy_path}" target="_blank">integritetspolicy</a>
+    user_privacy_agreement_html: Jag har läst och godkänner <a href="%{privacy_policy_path}" target="_blank">integritetspolicyn</a>
   author_attribution:
     example_title: Exempeltext
     hint_html: Skriver du nyheter eller bloggartiklar utanför Mastodon? Kontrollera hur du får krediteras när de delas på Mastodon.
@@ -1935,8 +1936,6 @@ sv:
     terms_of_service_changed:
       agreement: Genom att fortsätta använda %{domain} godkänner du dessa villkor. Om du inte håller med om de uppdaterade villkoren kan du när som helst säga upp ditt avtal med %{domain} genom att radera ditt konto.
       changelog: 'I korthet, här är vad denna uppdatering innebär för dig:'
-      description: 'Du får detta e-postmeddelande eftersom vi gör vissa ändringar i våra användarvillkor på %{domain}. Vi uppmanar dig att granska de uppdaterade villkoren i sin helhet här:'
-      description_html: Du får detta e-postmeddelande eftersom vi gör vissa ändringar i våra användarvillkor på %{domain}. Vi uppmanar dig att granska de uppdaterade villkoren i <a href="%{path}" target="_blank">sin helhet här</a>.
       sign_off: "%{domain} teamet"
       subject: Uppdateringar till våra användarvillkor
       subtitle: Villkoren för tjänsten på %{domain} ändras

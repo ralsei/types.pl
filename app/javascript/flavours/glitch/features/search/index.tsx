@@ -4,7 +4,6 @@ import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import { Helmet } from 'react-helmet';
 
-import { useSearchParam } from '@/hooks/useSearchParam';
 import FindInPageIcon from '@/material-icons/400-24px/find_in_page.svg?react';
 import PeopleIcon from '@/material-icons/400-24px/group.svg?react';
 import SearchIcon from '@/material-icons/400-24px/search.svg?react';
@@ -20,6 +19,7 @@ import { Icon } from 'flavours/glitch/components/icon';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
 import Status from 'flavours/glitch/containers/status_container';
 import { Search } from 'flavours/glitch/features/compose/components/search';
+import { useSearchParam } from 'flavours/glitch/hooks/useSearchParam';
 import type { Hashtag as HashtagType } from 'flavours/glitch/models/tags';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
