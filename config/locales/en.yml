@@ -1884,6 +1884,9 @@ en:
     contrast: Mastodon (High contrast)
     default: Mastodon (Dark)
     mastodon-light: Mastodon (Light)
+    twitter-dark: Twitter (Dark)
+    twitter-light: Twitter (Light)
+    twitter-contrast: Twitter (High contrast)
     system: Automatic (use system theme)
   time:
     formats:

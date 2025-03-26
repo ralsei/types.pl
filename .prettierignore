@@ -98,3 +98,13 @@ app/javascript/flavours/glitch/styles/reset.scss
 
 # Ignore win95 theme
 app/javascript/styles/win95.scss
+
+# Ignore mastomodern theme
+app/javascript/flavours/glitch/styles/modern/style.scss
+
+# Ignore twitter theme
+app/javascript/styles/twitter-dark.scss
+app/javascript/styles/twitter-light.scss
+app/javascript/styles/twitter-contrast.scss
+app/javascript/styles/twitter/layout-multiple-columns.scss
+app/javascript/styles/twitter/layout-single-column.scss
