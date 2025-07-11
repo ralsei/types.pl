@@ -9,15 +9,22 @@ import { isFulfilled } from '@reduxjs/toolkit';
 
 import Toggle from 'react-toggle';
 
+import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import { fetchList } from 'flavours/glitch/actions/lists';
 import { createList, updateList } from 'flavours/glitch/actions/lists_typed';
 import { apiGetAccounts } from 'flavours/glitch/api/lists';
+import type { ApiAccountJSON } from 'flavours/glitch/api_types/accounts';
 import type { RepliesPolicyType } from 'flavours/glitch/api_types/lists';
+import { Avatar } from 'flavours/glitch/components/avatar';
+import { AvatarGroup } from 'flavours/glitch/components/avatar_group';
 import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
+import { Icon } from 'flavours/glitch/components/icon';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
+
+import { messages as membersMessages } from './members';
 
 const messages = defineMessages({
   edit: { id: 'column.edit_list', defaultMessage: 'Edit list' },
@@ -27,42 +34,40 @@ const messages = defineMessages({
 const MembersLink: React.FC<{
   id: string;
 }> = ({ id }) => {
-  const [count, setCount] = useState(0);
-  const [avatars, setAvatars] = useState<string[]>([]);
+  const intl = useIntl();
+  const [avatarCount, setAvatarCount] = useState(0);
+  const [avatarAccounts, setAvatarAccounts] = useState<ApiAccountJSON[]>([]);
 
   useEffect(() => {
     void apiGetAccounts(id)
       .then((data) => {
-        setCount(data.length);
-        setAvatars(data.slice(0, 3).map((a) => a.avatar));
-        return '';
+        setAvatarCount(data.length);
+        setAvatarAccounts(data.slice(0, 3));
       })
       .catch(() => {
         // Nothing
       });
-  }, [id, setCount, setAvatars]);
+  }, [id]);
 
   return (
     <Link to={`/lists/${id}/members`} className='app-form__link'>
       <div className='app-form__link__text'>
         <strong>
-          <FormattedMessage
-            id='lists.list_members'
-            defaultMessage='List members'
-          />
+          {intl.formatMessage(membersMessages.manageMembers)}
+          <Icon id='chevron_right' icon={ChevronRightIcon} />
         </strong>
         <FormattedMessage
           id='lists.list_members_count'
           defaultMessage='{count, plural, one {# member} other {# members}}'
-          values={{ count }}
+          values={{ count: avatarCount }}
         />
       </div>
 
-      <div className='avatar-pile'>
-        {avatars.map((url) => (
-          <img key={url} src={url} alt='' />
+      <AvatarGroup compact>
+        {avatarAccounts.map((a) => (
+          <Avatar key={a.id} account={a} size={30} />
         ))}
-      </div>
+      </AvatarGroup>
     </Link>
   );
 };

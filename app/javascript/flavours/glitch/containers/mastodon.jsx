@@ -19,6 +19,7 @@ import initialState, { title as siteTitle } from 'flavours/glitch/initial_state'
 import { IntlProvider } from 'flavours/glitch/locales';
 import { store } from 'flavours/glitch/store';
 import { isProduction } from 'flavours/glitch/utils/environment';
+import { BodyScrollLock } from 'flavours/glitch/features/ui/components/body_scroll_lock';
 
 const title = isProduction() ? siteTitle : `${siteTitle} (Dev)`;
 
@@ -63,6 +64,7 @@ export default class Mastodon extends PureComponent {
                 <ScrollContext shouldUpdateScroll={this.shouldUpdateScroll}>
                   <Route path='/' component={UI} />
                 </ScrollContext>
+                <BodyScrollLock />
               </Router>
 
               <Helmet defaultTitle={title} titleTemplate={`%s - ${title}`} />

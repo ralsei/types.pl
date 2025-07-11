@@ -815,7 +815,6 @@ sl:
         preamble: Izpostavljanje zanimivih vsebin je ključno za pridobivanje novih uporabnikov, ki morda ne poznajo nikogar na Mastodonu. Nadzirajte, kako različne funkcionalnosti razkritja delujejo na vašem strežniku.
         profile_directory: Imenik profilov
         public_timelines: Javne časovnice
-        publish_discovered_servers: Objavi odkrite strežnike
         publish_statistics: Objavi statistiko
         title: Razkrivanje
         trends: Trendi
@@ -2105,7 +2104,6 @@ sl:
       post_action: Sestavi
       post_step: Pozdravite cel svet z besedilom, fotografijami, videoposnetki ali anketami.
       post_title: Ustvarite svojo prvo objavo
-      share_action: Delite
       share_step: Naj prijatelji izvejo, kako vas najdejo na Mastodonu.
       share_title: Delite svoj profil Mastodon z drugimi
       sign_in_action: Prijava

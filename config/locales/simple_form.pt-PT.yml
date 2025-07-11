@@ -56,6 +56,7 @@ pt-PT:
         scopes: Quais as API a que a aplicação terá permissão para aceder. Se selecionar um âmbito de nível superior, não precisa de selecionar âmbitos individuais.
         setting_aggregate_reblogs: Não mostrar os novos impulsos para publicações que tenham sido recentemente impulsionadas (apenas afeta os impulsos recentemente recebidos)
         setting_always_send_emails: Normalmente as notificações por e-mail não serão enviadas quando estiver a utilizar ativamente o Mastodon
+        setting_default_quote_policy: Os utilizadores mencionados têm sempre permissão para citar. Esta definição só terá efeito para publicações criadas com a próxima versão do Mastodon, mas pode selecionar a sua preferência em antecipação
         setting_default_sensitive: Os multimédia sensíveis são ocultados por predefinição e podem ser revelados com um clique/toque
         setting_display_media_default: Esconder multimédia marcada como sensível
         setting_display_media_hide_all: Esconder sempre toda a multimédia
@@ -75,6 +76,7 @@ pt-PT:
       filters:
         action: Escolha qual a ação a executar quando uma publicação corresponde ao filtro
         actions:
+          blur: Esconder multimédia com um aviso à frente, sem esconder o texto
           hide: Ocultar completamente o conteúdo filtrado, comportando-se como se não existisse
           warn: Ocultar o conteúdo filtrado por trás de um aviso mencionando o título do filtro
       form_admin_settings:
@@ -88,6 +90,7 @@ pt-PT:
         favicon: WEBP, PNG, GIF ou JPG. Substitui o ícone de favorito padrão do Mastodon por um ícone personalizado.
         mascot: Sobrepõe-se à ilustração na interface web avançada.
         media_cache_retention_period: Os ficheiros multimédia de publicações feitas por utilizadores remotos são armazenados em cache no seu servidor. Quando definido para um valor positivo, os ficheiros multimédia serão eliminados após o número de dias especificado. Se os ficheiros multimédia forem solicitados depois de terem sido eliminados, serão transferidos novamente, se o conteúdo de origem ainda estiver disponível. Devido a restrições sobre a frequência com que os cartões de pré-visualização de links pesquisam sites de terceiros, recomenda-se que este valor seja definido para, pelo menos, 14 dias, ou os cartões de pré-visualização de links não serão atualizados a pedido antes desse período.
+        min_age: Os utilizadores serão convidados a confirmar a sua data de nascimento durante o processo de inscrição
         peers_api_enabled: Uma lista de nomes de domínio que este servidor encontrou no fediverso. Nenhum dado é incluído aqui sobre se você federa com um determinado servidor, apenas que o seu servidor o conhece. Este serviço é utilizado por serviços que recolhem estatísticas na federação, em termos gerais.
         profile_directory: O diretório de perfis lista todos os utilizadores que optaram por ter a sua conta a ser sugerida a outros.
         require_invite_text: Quando as incrições exigirem aprovação manual, faça o texto "Por que se quer juntar a nós?" da solicitação de convite ser obrigatório, em vez de opcional
@@ -101,9 +104,9 @@ pt-PT:
         theme: Tema que os visitantes e os novos utilizadores veem.
         thumbnail: Uma imagem de cerca de 2:1, apresentada ao lado da informação do seu servidor.
         timeline_preview: Os visitantes sem sessão iniciada poderão consultar as publicações públicas mais recentes disponíveis no servidor.
-        trendable_by_default: Ignorar a revisão manual do conteúdo de tendências. Os itens individuais ainda podem ser removidos das tendências após a apresentação.
+        trendable_by_default: Ignorar a revisão manual do conteúdo em destaque. Os itens individuais poderão ainda assim ser posteriormente removidos das tendências.
         trends: As tendências mostram quais as publicações, etiquetas e notícias que estão a ganhar destaque no seu servidor.
-        trends_as_landing_page: Mostrar conteúdo de tendências a utilizadores e visitantes com sessão terminada em vez de uma descrição deste servidor. Requer que as tendências estejam ativadas.
+        trends_as_landing_page: Mostrar conteúdo em destaque a utilizadores sem sessão iniciada e visitantes, ao invés de uma descrição deste servidor. Requer que os destaques estejam ativados.
       form_challenge:
         current_password: Está a entrar numa área segura
       imports:
@@ -146,6 +149,9 @@ pt-PT:
         min_age: Não deve ter menos do que a idade mínima exigida pela legislação da sua jurisdição.
       user:
         chosen_languages: Quando selecionado, só serão mostradas nas cronologias públicas as publicações nos idiomas escolhidos
+        date_of_birth:
+          one: Temos de nos certificar que tem pelo menos %{count} para utilizar o Mastodon. Não vamos guardar esta informação.
+          other: Temos de nos certificar que tem pelo menos %{count} para utilizar o Mastodon. Não vamos guardar esta informação.
         role: A função controla as permissões que o utilizador tem.
       user_role:
         color: Cor a ser utilizada para a função em toda a interface de utilizador, como RGB no formato hexadecimal
@@ -226,6 +232,7 @@ pt-PT:
         setting_boost_modal: Mostrar caixa de diálogo de confirmação antes de impulsionar
         setting_default_language: Idioma de publicação
         setting_default_privacy: Privacidade da publicação
+        setting_default_quote_policy: Quem pode citar
         setting_default_sensitive: Marcar sempre os multimédia como sensíveis
         setting_delete_modal: Solicitar confirmação antes de eliminar uma publicação
         setting_disable_hover_cards: Desativar visualização de perfil ao passar o cursor
@@ -258,6 +265,7 @@ pt-PT:
         name: Etiqueta
       filters:
         actions:
+          blur: Esconder multimédia com um aviso
           hide: Ocultar por completo
           warn: Ocultar com um aviso
       form_admin_settings:
@@ -271,6 +279,7 @@ pt-PT:
         favicon: Ícone de favoritos
         mascot: Mascote personalizada (legado)
         media_cache_retention_period: Período de retenção de ficheiros multimédia em cache
+        min_age: Idade mínima requerida
         peers_api_enabled: Publicar lista de servidores descobertos na API
         profile_directory: Ativar o diretório de perfis
         registrations_mode: Quem se pode inscrever
@@ -288,8 +297,8 @@ pt-PT:
         thumbnail: Miniatura do servidor
         timeline_preview: Permitir acesso não autenticado às cronologias públicas
         trendable_by_default: Permitir tendências sem revisão prévia
-        trends: Ativar tendências
-        trends_as_landing_page: Usar tendências como página inicial
+        trends: Ativar destaques
+        trends_as_landing_page: Usar destaques como página de apresentação
       interactions:
         must_be_follower: Bloquear notificações de não-seguidores
         must_be_following: Bloquear notificações de pessoas que não segues
@@ -322,7 +331,7 @@ pt-PT:
           label: Está disponível uma nova versão do Mastodon
           none: Nunca notificar atualizações (não recomendado)
           patch: Notificar sobre atualizações de correções de problemas
-        trending_tag: Uma nova publicação em tendência requer revisão
+        trending_tag: Um novo destaque requer revisão
       rule:
         hint: Informação Adicional
         text: Regra
@@ -332,7 +341,7 @@ pt-PT:
       tag:
         listable: Permitir que esta etiqueta apareça em pesquisas e no diretório de perfis
         name: Etiqueta
-        trendable: Permitir que esta etiqueta apareça nas tendências
+        trendable: Permitir que esta etiqueta apareça nos destaques
         usable: Permitir que as publicações usem esta etiqueta localmente
       terms_of_service:
         changelog: O que mudou?
@@ -349,6 +358,9 @@ pt-PT:
         jurisdiction: Jurisdição legal
         min_age: Idade mínima
       user:
+        date_of_birth_1i: Dia
+        date_of_birth_2i: Mês
+        date_of_birth_3i: Ano
         role: Função
         time_zone: Fuso horário
       user_role:

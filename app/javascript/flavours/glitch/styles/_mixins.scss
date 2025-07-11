@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 @mixin fullwidth-gallery {
   &.full-width {
     margin-left: -14px;

@@ -12,15 +12,15 @@ import { length } from 'stringz';
 
 import { missingAltTextModal } from 'mastodon/initial_state';
 
-import AutosuggestInput from '../../../components/autosuggest_input';
-import AutosuggestTextarea from '../../../components/autosuggest_textarea';
-import { Button } from '../../../components/button';
+import AutosuggestInput from 'mastodon/components/autosuggest_input';
+import AutosuggestTextarea from 'mastodon/components/autosuggest_textarea';
+import { Button } from 'mastodon/components/button';
+import { LoadingIndicator } from 'mastodon/components/loading_indicator';
 import EmojiPickerDropdown from '../containers/emoji_picker_dropdown_container';
 import PollButtonContainer from '../containers/poll_button_container';
 import PrivacyDropdownContainer from '../containers/privacy_dropdown_container';
 import SpoilerButtonContainer from '../containers/spoiler_button_container';
 import UploadButtonContainer from '../containers/upload_button_container';
-import WarningContainer from '../containers/warning_container';
 import { countableText } from '../util/counter';
 
 import { CharacterCounter } from './character_counter';
@@ -30,6 +30,7 @@ import { NavigationBar } from './navigation_bar';
 import { PollForm } from "./poll_form";
 import { ReplyIndicator } from './reply_indicator';
 import { UploadForm } from './upload_form';
+import { Warning } from './warning';
 
 const allowedAroundShortCode = '><\u0085\u0020\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029\u0009\u000a\u000b\u000c\u000d';
 
@@ -225,15 +226,14 @@ class ComposeForm extends ImmutablePureComponent {
   };
 
   render () {
-    const { intl, onPaste, autoFocus, withoutNavigation, maxChars } = this.props;
+    const { intl, onPaste, autoFocus, withoutNavigation, maxChars, isSubmitting } = this.props;
     const { highlighted } = this.state;
-    const disabled = this.props.isSubmitting;
 
     return (
       <form className='compose-form' onSubmit={this.handleSubmit}>
         <ReplyIndicator />
         {!withoutNavigation && <NavigationBar />}
-        <WarningContainer />
+        <Warning />
 
         <div className={classNames('compose-form__highlightable', { active: highlighted })} ref={this.setRef}>
           <div className='compose-form__scrollable'>
@@ -246,7 +246,7 @@ class ComposeForm extends ImmutablePureComponent {
                 <AutosuggestInput
                   placeholder={intl.formatMessage(messages.spoiler_placeholder)}
                   value={this.props.spoilerText}
-                  disabled={disabled}
+                  disabled={isSubmitting}
                   onChange={this.handleChangeSpoilerText}
                   onKeyDown={this.handleKeyDown}
                   ref={this.setSpoilerText}
@@ -268,7 +268,7 @@ class ComposeForm extends ImmutablePureComponent {
             <AutosuggestTextarea
               ref={this.textareaRef}
               placeholder={intl.formatMessage(messages.placeholder)}
-              disabled={disabled}
+              disabled={isSubmitting}
               value={this.props.text}
               onChange={this.handleChange}
               suggestions={this.props.suggestions}
@@ -305,9 +305,15 @@ class ComposeForm extends ImmutablePureComponent {
                 <Button
                   type='submit'
                   compact
-                  text={intl.formatMessage(this.props.isEditing ? messages.saveChanges : (this.props.isInReply ? messages.reply : messages.publish))}
                   disabled={!this.canSubmit()}
-                />
+                  loading={isSubmitting}
+                >
+                  {intl.formatMessage(
+                    this.props.isEditing ?
+                      messages.saveChanges : 
+                      (this.props.isInReply ? messages.reply : messages.publish)
+                  )}
+                </Button>
               </div>
             </div>
           </div>

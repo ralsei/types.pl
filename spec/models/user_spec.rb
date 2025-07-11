@@ -11,17 +11,6 @@ RSpec.describe User do
 
   it_behaves_like 'two_factor_backupable'
 
-  describe 'legacy_otp_secret' do
-    it 'is encrypted with OTP_SECRET environment variable' do
-      user = Fabricate(:user,
-                       encrypted_otp_secret: "Fttsy7QAa0edaDfdfSz094rRLAxc8cJweDQ4BsWH/zozcdVA8o9GLqcKhn2b\nGi/V\n",
-                       encrypted_otp_secret_iv: 'rys3THICkr60BoWC',
-                       encrypted_otp_secret_salt: '_LMkAGvdg7a+sDIKjI3mR2Q==')
-
-      expect(user.send(:legacy_otp_secret)).to eq 'anotpsecretthatshouldbeencrypted'
-    end
-  end
-
   describe 'otp_secret' do
     it 'encrypts the saved value' do
       user = Fabricate(:user, otp_secret: '123123123')
@@ -174,6 +163,34 @@ RSpec.describe User do
       user = described_class.new(email: 'foo@mvrht.com.topdomain.tld', account: account, password: password, agreement: true)
 
       expect(user).to_not be_valid
+    end
+  end
+
+  describe '#email_domain' do
+    subject { described_class.new(email: email).email_domain }
+
+    context 'when value is nil' do
+      let(:email) { nil }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'when value is blank' do
+      let(:email) { '' }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'when value has valid domain' do
+      let(:email) { 'user@host.example' }
+
+      it { is_expected.to eq('host.example') }
+    end
+
+    context 'when value has no split' do
+      let(:email) { 'user$host.example' }
+
+      it { is_expected.to be_nil }
     end
   end
 
@@ -489,7 +506,7 @@ RSpec.describe User do
     let!(:access_token) { Fabricate(:access_token, resource_owner_id: user.id) }
     let!(:web_push_subscription) { Fabricate(:web_push_subscription, access_token: access_token) }
 
-    let(:redis_pipeline_stub) { instance_double(Redis::Namespace, publish: nil) }
+    let(:redis_pipeline_stub) { instance_double(Redis::PipelinedConnection, publish: nil) }
 
     before { stub_redis }
 

@@ -13,9 +13,9 @@ import { fetchLists } from 'flavours/glitch/actions/lists';
 import { openModal } from 'flavours/glitch/actions/modal';
 import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
+import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
 import { Icon } from 'flavours/glitch/components/icon';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import DropdownMenuContainer from 'flavours/glitch/containers/dropdown_menu_container';
 import { getOrderedLists } from 'flavours/glitch/selectors/lists';
 import { useAppSelector, useAppDispatch } from 'flavours/glitch/store';
 
@@ -60,12 +60,11 @@ const ListItem: React.FC<{
         <span>{title}</span>
       </Link>
 
-      <DropdownMenuContainer
+      <Dropdown
         scrollKey='lists'
         items={menu}
-        icons='ellipsis-h'
+        icon='ellipsis-h'
         iconComponent={MoreHorizIcon}
-        direction='right'
         title={intl.formatMessage(messages.more)}
       />
     </div>
@@ -80,7 +79,7 @@ const Lists: React.FC<{
   const lists = useAppSelector((state) => getOrderedLists(state));
 
   useEffect(() => {
-    dispatch(fetchLists());
+    void dispatch(fetchLists());
   }, [dispatch]);
 
   const emptyMessage = (

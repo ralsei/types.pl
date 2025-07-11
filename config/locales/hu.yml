@@ -319,6 +319,7 @@ hu:
         create: Közlemény létrehozása
         title: Új közlemény
       preview:
+        disclaimer: Mivel a felhasználók nem iratkozhatnak le róluk, az e-mailes értesítéseket érdemes a fontos bejelentésekre korlátozni, mint a személyes adatokat érintő adatvédelmi incidensek vagy a kiszolgáló bezárására vonatkozó értesítések.
         explanation_html: 'Az e-mail <strong>%{display_count} felhasználónak</strong> lesz elküldve. A következő szöveg fog szerepelni a levélben:'
         title: Közleményértesítés előnézete
       publish: Közzététel
@@ -479,6 +480,36 @@ hu:
       new:
         title: Domain tiltások importálása
       no_file: Nincs fájl kiválasztva
+    fasp:
+      debug:
+        callbacks:
+          created_at: Létrehozva
+          delete: Törlés
+          ip: IP-cím
+          request_body: Kérés törzse
+          title: Hibakeresési visszahívások
+      providers:
+        active: Aktív
+        base_url: Alapwebcím
+        callback: Visszahívás
+        delete: Törlés
+        edit: Szolgáltató szerkesztése
+        finish_registration: Regisztráció befejezése
+        name: Név
+        providers: Szolgáltatók
+        public_key_fingerprint: Nyilvános kulcs ujjlenyomata
+        registration_requested: Regisztráció kérve
+        registrations:
+          confirm: Megerősítés
+          description: Regisztrációt kaptál egy FASP-től. Ha nem te kérted, utasítsd el. Ha te kérted, akkor a regisztráció megerősítése előtt figyelmesen hasonlítsd össze a nevét és a kulcsának ujjlenyomatát.
+          reject: Elutasítás
+          title: FASP regisztráció megerősítése
+        save: Mentés
+        select_capabilities: Képességek kiválasztása
+        sign_in: Bejelentkezés
+        status: Állapot
+        title: A Födiverzum segédszolgáltatói
+      title: FASP
     follow_recommendations:
       description_html: "<strong>A követési ajánlatok segítik az új felhasználókat az érdekes tartalmak gyors megtalálásában</strong>. Ha egy felhasználó még nem érintkezett eleget másokkal ahhoz, hogy személyre szabott ajánlatokat kapjon, ezeket a fiókokat ajánljuk helyette. Ezeket naponta újraszámítjuk a nemrég legtöbb embert foglalkoztató, illetve legtöbb helyi követővel rendelkező fiókok alapján."
       language: Ezen a nyelven
@@ -547,6 +578,13 @@ hu:
         all: Mind
         limited: Korlátozott
         title: Moderáció
+      moderation_notes:
+        create: Moderátori megjegyzés hozzáadása
+        created_msg: A példány moderátori megjegyzése sikeresen létrehozva!
+        description_html: Megtekintés, és megjegyzések hagyása más moderátoroknak és saját magának
+        destroyed_msg: A példány moderátori megjegyzése sikeresen törölve!
+        placeholder: Információk erről a példányról, a végzett műveletekről vagy bármi másról, amely segít a példány jövőbeli moderációjában.
+        title: Moderátori megjegyzések
       private_comment: Privát megjegyzés
       public_comment: Nyilvános megjegyzés
       purge: Végleges törlés
@@ -755,17 +793,26 @@ hu:
       title: Szerepek
     rules:
       add_new: Szabály hozzáadása
+      add_translation: Fordítás hozzáadása
       delete: Törlés
       description_html: Bár a többség azt állítja, hogy elolvasták és egyetértenek a felhasználói feltételekkel, általában ez nem teljesül, amíg egy probléma elő nem jön. <strong>Tedd könnyebbé a kiszolgálód szabályainak áttekintését azzal, hogy pontokba foglalod azt egy listában.</strong> Az egyes szabályok legyenek rövidek és egyszerűek. Próbáld meg nem túl sok önálló pontra darabolni őket.
       edit: Szabály szerkesztése
       empty: Még nincsenek meghatározva a kiszolgáló szabályai.
+      move_down: Mozgás lefelé
+      move_up: Mozgatás felfelé
       title: Kiszolgáló szabályai
+      translation: Fordítás
+      translations: Fordítások
+      translations_explanation: Fordításokat is hozzáadhatóak a szabályokhoz. Az alapértelmezett érték lesz megjelenítve, ha nem érhető el lefordított változat. Győződj meg arról, hogy a megadott fordítás szinkronban van az alapértelmezett értékkel.
     settings:
       about:
         manage_rules: Kiszolgáló szabályainak kezelése
         preamble: Adj meg részletes információkat arról, hogy a kiszolgáló hogyan működik, miként moderálják és finanszírozzák.
         rules_hint: Van egy helyünk a szabályoknak, melyeket a felhasználóidnak be kellene tartani.
         title: Névjegy
+      allow_referrer_origin:
+        desc: Amikor a felhasználók külső webhelyekre mutató hivatkozásokra kattintanak, a böngészőjük elküldheti a Mastodon kiszolgálócímét hivatkozóként (Referer fejléc). Kapcsold ki a funkciót, ha ez egyértelműen azonosítaná a felhasználókat, például ha ez egy személyes Mastodon-kiszolgáló.
+        title: Engedélyezés, hogy külső oldalak a Mastodon-kiszolgálódat lássák a forgalom forrásaként
       appearance:
         preamble: A Mastodon webes felületének testreszabása.
         title: Megjelenés
@@ -785,9 +832,9 @@ hu:
       discovery:
         follow_recommendations: Ajánlottak követése
         preamble: Az érdekes tartalmak felszínre hozása fontos szerepet játszik az új felhasználók bevonásában, akik esetleg nem ismerik a Mastodont. Szabályozd, hogy a különböző felfedezési funkciók hogyan működjenek a kiszolgálón.
+        privacy: Adatvédelem
         profile_directory: Profiladatbázis
         public_timelines: Nyilvános idővonalak
-        publish_discovered_servers: Felfedezett kiszolgálók közzététele
         publish_statistics: Statisztikák közzététele
         title: Felfedezés
         trends: Trendek
@@ -872,6 +919,8 @@ hu:
     system_checks:
       database_schema_check:
         message_html: Vannak esedékes adatbázis migrációink. Kérlek, futtasd őket, hogy biztosítsd, hogy az alkalmazás megfelelően működjön
+      elasticsearch_analysis_index_mismatch:
+        message_html: Az Elasticsearch indexelemző beállításai elavultak. Futtasd a <code>tootctl search deploy --only-mapping --only=%{value}</code> parancsot.
       elasticsearch_health_red:
         message_html: Az Elasticsearch klaszter egészségtelen (piros állapotú), a keresési funkciók nem érhetők el
       elasticsearch_health_yellow:
@@ -1825,6 +1874,10 @@ hu:
       limit: Elérted a kitűzhető bejegyzések maximális számát
       ownership: Nem tűzheted ki valaki más bejegyzését
       reblog: Megtolt bejegyzést nem tudsz kitűzni
+    quote_policies:
+      followers: Követők és említett felhasználók
+      nobody: Csak említett felhasználók
+      public: Mindenki
     title: "%{name}: „%{quote}”"
     visibilities:
       direct: Közvetlen
@@ -1878,6 +1931,11 @@ hu:
     does_not_match_previous_name: nem illeszkedik az előző névvel
   terms_of_service:
     title: Felhasználási feltételek
+  terms_of_service_interstitial:
+    future_preamble_html: A használati feltételekben módosításokat végzünk, amely <strong>%{date}</strong> dátummal lép életbe. Ajánljuk a frissített feltételek elolvasását.
+    past_preamble_html: A legutóbbi látogatásod óta módosítottunk a felhasználási feltétleinken. Azt javasoljuk, hogy tekintsd át a frissített feltételeket.
+    review_link: Felhasználási feltételek áttekintése
+    title: A(z) %{domain} felhasználási feltételei megváltoznak
   themes:
     contrast: Mastodon (nagy kontrasztú)
     default: Mastodon (sötét)
@@ -2017,7 +2075,6 @@ hu:
       post_action: Bejegyzés írása
       post_step: Köszöntsd a világot szöveggel, fotókkal, videókkal vagy szavazásokkal.
       post_title: Az első bejegyzés létrehozása
-      share_action: Megosztás
       share_step: Tudasd az ismerőseiddel, hogyan találhatnak meg a Mastodonon.
       share_title: Oszd meg a Mastodon profilodat
       sign_in_action: Bejelentkezés

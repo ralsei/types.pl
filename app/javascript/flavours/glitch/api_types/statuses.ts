@@ -123,3 +123,8 @@ export interface ApiStatusJSON {
   local_only?: boolean;
   content_type?: string;
 }
+
+export interface ApiContextJSON {
+  ancestors: ApiStatusJSON[];
+  descendants: ApiStatusJSON[];
+}

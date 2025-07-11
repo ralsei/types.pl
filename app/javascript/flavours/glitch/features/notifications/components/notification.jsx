@@ -16,7 +16,7 @@ import PersonAddIcon from '@/material-icons/400-24px/person_add-fill.svg?react';
 import { Account } from 'flavours/glitch/components/account';
 import { Icon }  from 'flavours/glitch/components/icon';
 import { Permalink } from 'flavours/glitch/components/permalink';
-import StatusContainer from 'flavours/glitch/containers/status_container';
+import { StatusQuoteManager } from 'flavours/glitch/components/status_quoted';
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
 import FollowRequestContainer from '../containers/follow_request_container';
@@ -159,7 +159,7 @@ class Notification extends ImmutablePureComponent {
 
   renderMention (notification) {
     return (
-      <StatusContainer
+      <StatusQuoteManager
         id={notification.get('status')}
         containerId={notification.get('id')}
         withDismiss
@@ -181,7 +181,7 @@ class Notification extends ImmutablePureComponent {
 
   renderFavourite (notification) {
     return (
-      <StatusContainer
+      <StatusQuoteManager
         containerId={notification.get('id')}
         hidden={!!this.props.hidden}
         id={notification.get('status')}
@@ -206,7 +206,7 @@ class Notification extends ImmutablePureComponent {
 
   renderReblog (notification) {
     return (
-      <StatusContainer
+      <StatusQuoteManager
         containerId={notification.get('id')}
         hidden={!!this.props.hidden}
         id={notification.get('status')}
@@ -231,7 +231,7 @@ class Notification extends ImmutablePureComponent {
 
   renderStatus (notification) {
     return (
-      <StatusContainer
+      <StatusQuoteManager
         containerId={notification.get('id')}
         hidden={!!this.props.hidden}
         id={notification.get('status')}
@@ -256,7 +256,7 @@ class Notification extends ImmutablePureComponent {
 
   renderUpdate (notification) {
     return (
-      <StatusContainer
+      <StatusQuoteManager
         containerId={notification.get('id')}
         hidden={!!this.props.hidden}
         id={notification.get('status')}
@@ -281,7 +281,7 @@ class Notification extends ImmutablePureComponent {
 
   renderPoll (notification) {
     return (
-      <StatusContainer
+      <StatusQuoteManager
         containerId={notification.get('id')}
         hidden={!!this.props.hidden}
         id={notification.get('status')}

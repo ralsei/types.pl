@@ -319,6 +319,7 @@ it:
         create: Crea annuncio
         title: Nuovo annuncio
       preview:
+        disclaimer: Poiché gli utenti non possono disattivarle, le notifiche e-mail dovrebbero essere limitate ad annunci importanti, come notifiche di violazione dei dati personali o di chiusura del server.
         explanation_html: 'L''e-mail verrà inviata a <strong>%{display_count} utenti</strong>. Il seguente testo sarà incluso nell''e-mail:'
         title: Anteprima della notifica dell'annuncio
       publish: Pubblica
@@ -479,6 +480,36 @@ it:
       new:
         title: Importare i blocchi di dominio
       no_file: Nessun file selezionato
+    fasp:
+      debug:
+        callbacks:
+          created_at: Creato il
+          delete: Cancella
+          ip: Indirizzo IP
+          request_body: Request body
+          title: Debug Callbacks
+      providers:
+        active: Attivo
+        base_url: Url di base
+        callback: Callback
+        delete: Cancella
+        edit: Modifica Provider
+        finish_registration: Registrazione terminata
+        name: Nome
+        providers: Providers
+        public_key_fingerprint: Chiave pubblica fingerprint
+        registration_requested: Registrazione richiesta
+        registrations:
+          confirm: Conferma
+          description: Hai ricevuto una registrazione da un FASP. Rifiutala se non l'hai avviata tu. Se l'hai avviata tu, confronta attentamente nome e impronta della chiave prima di confermare la registrazione.
+          reject: Rifiuta
+          title: Conferma registrazione FASP
+        save: Salva
+        select_capabilities: Seleziona Capacità
+        sign_in: Connettiti
+        status: Stato
+        title: Fornitori di Servizi Ausiliari per il Fediverso
+      title: FASP
     follow_recommendations:
       description_html: "<strong>I consigli su chi seguire aiutano i nuovi utenti a trovare rapidamente dei contenuti interessanti</strong>. Quando un utente non ha interagito abbastanza con altri per avere dei consigli personalizzati, vengono consigliati questi account. Sono ricalcolati ogni giorno da un misto di account con le più alte interazioni recenti e con il maggior numero di seguaci locali per una data lingua."
       language: Per lingua
@@ -547,6 +578,13 @@ it:
         all: Tutto
         limited: Limitato
         title: Moderazione
+      moderation_notes:
+        create: Aggiungi Nota di Moderazione
+        created_msg: Nota di moderazione dell'istanza creata con successo!
+        description_html: Visualizza e lascia note per altri moderatori e per il futuro te
+        destroyed_msg: Nota di moderazione dell'istanza eliminata con successo!
+        placeholder: Informazioni su questa istanza, azioni compiute, o qualsiasi cosa possa aiutarti a moderare questa istanza in futuro.
+        title: Note di Moderazione
       private_comment: Commento privato
       public_comment: Commento pubblico
       purge: Ripulisci
@@ -755,17 +793,26 @@ it:
       title: Ruoli
     rules:
       add_new: Aggiungi regola
+      add_translation: Aggiungi traduzione
       delete: Cancella
       description_html: Mentre la maggior parte degli utenti sostiene di aver letto e accettato i termini di servizio, di solito non li leggono fino a quando sorge un problema. <strong>Rendi più facile vedere le regole del server, fornendole in un semplice elenco</strong>. Cerca di mantenere le singole regole brevi e semplici, ma cerca anche di non dividerle in molti elementi separati.
       edit: Modifica regola
       empty: Non sono ancora state definite regole del server.
+      move_down: Sposta giu
+      move_up: Muovi su
       title: Regole del server
+      translation: Traduzione
+      translations: Traduzioni
+      translations_explanation: Puoi opzionalmente aggiungere delle traduzioni per le regole. Il valore predefinito verrà mostrato se non è disponibile nessuna versione tradotta. Assicurarsi sempre che qualsiasi traduzione fornita sia sincronizzata con il valore predefinito.
     settings:
       about:
         manage_rules: Gestisci le regole del server
         preamble: Fornire informazioni approfondite su come, il server, venga gestito, moderato e finanziato.
         rules_hint: C'è un'area dedicata per le regole che i tuoi utenti dovrebbero rispettare.
         title: Info
+      allow_referrer_origin:
+        desc: Quando i tuoi utenti cliccano su link a siti esterni, il loro browser potrebbe inviare l'indirizzo del tuo server Mastodon come referente. Disattiva questa opzione se ciò identificherebbe in modo univoco i tuoi utenti, ad esempio se si tratta di un server Mastodon personale.
+        title: Consenti ai siti esterni di vedere il tuo server Mastodon come fonte di traffico
       appearance:
         preamble: Personalizza l'interfaccia web di Mastodon.
         title: Aspetto
@@ -785,9 +832,9 @@ it:
       discovery:
         follow_recommendations: Segui le raccomandazioni
         preamble: La comparsa di contenuti interessanti è determinante per l'arrivo di nuovi utenti che potrebbero non conoscere nessuno su Mastodon. Controlla in che modo varie funzionalità di scoperta funzionano sul tuo server.
+        privacy: Privacy
         profile_directory: Directory del profilo
         public_timelines: Timeline pubbliche
-        publish_discovered_servers: Pubblica i server scoperti
         publish_statistics: Pubblica le statistiche
         title: Scopri
         trends: Tendenze
@@ -872,6 +919,8 @@ it:
     system_checks:
       database_schema_check:
         message_html: Ci sono migrazioni del database in attesa. Sei pregato di eseguirle per assicurarti che l'applicazione si comporti come previsto
+      elasticsearch_analysis_index_mismatch:
+        message_html: Le impostazioni dell'analizzatore di indice Elasticsearch sono obsolete. Si prega di eseguire <code>tootctl search deploy --only-mapping --only=%{value}</code>
       elasticsearch_health_red:
         message_html: Il cluster Elasticsearch non è integro (stato rosso), le funzionalità di ricerca non sono disponibili
       elasticsearch_health_yellow:
@@ -1187,7 +1236,7 @@ it:
       back: Indietro
       invited_by: 'Puoi unirti a %{domain} grazie all''invito che hai ricevuto da:'
       preamble: Questi sono impostati e applicati dai moderatori di %{domain}.
-      preamble_invited: Prima di procedere, si prega di considera le regole di base stabilite dai moderatori di %{domain}.
+      preamble_invited: Prima di procedere, si prega di considerare le regole di base stabilite dai moderatori di %{domain}.
       title: Alcune regole di base.
       title_invited: Sei stato/a invitato/a.
     security: Credenziali
@@ -1827,6 +1876,10 @@ it:
       limit: Hai già fissato in cima il massimo numero di post
       ownership: Non puoi fissare in cima un post di qualcun altro
       reblog: Un toot condiviso non può essere fissato in cima
+    quote_policies:
+      followers: Seguaci e utenti menzionati
+      nobody: Solo gli utenti menzionati
+      public: Tutti
     title: '%{name}: "%{quote}"'
     visibilities:
       direct: Diretto
@@ -1880,6 +1933,11 @@ it:
     does_not_match_previous_name: non corrisponde al nome precedente
   terms_of_service:
     title: Termini di Servizio
+  terms_of_service_interstitial:
+    future_preamble_html: Stiamo apportando alcune modifiche ai nostri termini di servizio, che entreranno in vigore in data <strong>%{date}</strong>. Ti invitiamo a consultare i termini aggiornati.
+    past_preamble_html: Abbiamo modificato i nostri termini di servizio dalla tua ultima visita. Ti invitiamo a consultare i termini aggiornati.
+    review_link: Rivedi i termini di servizio
+    title: I termini di servizio di %{domain} stanno cambiando
   themes:
     contrast: Mastodon (contrasto elevato)
     default: Mastodon (scuro)
@@ -2019,7 +2077,6 @@ it:
       post_action: Scrivi
       post_step: Salutate il mondo con testo, foto, video o sondaggi.
       post_title: Scrivi il tuo primo post
-      share_action: Condividi
       share_step: Fai sapere ai tuoi amici come trovarti su Mastodon.
       share_title: Condividi il tuo profilo Mastodon
       sign_in_action: Accedi

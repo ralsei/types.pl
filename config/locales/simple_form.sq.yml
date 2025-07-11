@@ -56,6 +56,7 @@ sq:
         scopes: Cilat API do të lejohen të përdorin aplikacioni. Nëse përzgjidhni një shkallë të epërme, nuk ju duhet të përzgjidhni individualet një nga një.
         setting_aggregate_reblogs: Mos shfaq përforcime të reja për mesazhe që janë përforcuar tani së fundi (prek vetëm përforcime të marra rishtas)
         setting_always_send_emails: Normalisht s’do të dërgohen njoftime, kur përdorni aktivisht Mastodon-in
+        setting_default_quote_policy: Përdoruesit e përmendur lejohen përherë të citojnë. Ky rregullim do të ketë efekt vetëm për postime të krijuar me versionin pasues të Mastodon-it, por mund të përzgjidhni paraprakisht parapëlqimin tuaj
         setting_default_sensitive: Media rezervat fshihet, si parazgjedhje, dhe mund të shfaqet me një klikim
         setting_display_media_default: Fshih media me shenjën rezervat
         setting_display_media_hide_all: Fshih përherë mediat
@@ -75,6 +76,7 @@ sq:
       filters:
         action: Zgjidhni cili veprim të kryhet, kur një postim ka përputhje me një filtër
         actions:
+          blur: Fshihe median pas një sinjalizimi, pa fshehur vetë tekstin
           hide: Fshihe plotësisht lëndën e filtruar, duke u sjellë sikur të mos ekzistonte
           warn: Fshihe lëndën e filtruar pas një sinjalizimi që përmend titullin e filtrit
       form_admin_settings:
@@ -88,6 +90,7 @@ sq:
         favicon: WEBP, PNG, GIF, ose JPG. Anashkalon favikonën parazgjedhje Mastodon me një ikonë vetjake.
         mascot: Anashkalon ilustrimin te ndërfaqja web e thelluar.
         media_cache_retention_period: Kartela media nga postime të bëra nga përdorues të largët ruhen në një fshehtinë në shërbyesin tuaj. Kur i jepet një vlerë pozitive, media do të fshihet pas numrit të dhënë të ditëve. Nëse të dhënat e medias duhen pas fshirjes, do të rishkarkohen, nëse lënda burim mund të kihet ende. Për shkak kufizimesh mbi sa shpesh skeda paraparjesh lidhjesh ndërveprojnë me sajte palësh të treta, rekomandohet të vihet kjo vlerë të paktën 14 ditë, ose skedat e paraparjes së lidhje s’do të përditësohen duke e kërkuar para asaj kohe.
+        min_age: Përdoruesve do t’ju kërkohet gjatë regjistrimit të ripohojnë datën e lindjes
         peers_api_enabled: Një listë emrash përkatësish që ky shërbyes ka hasur në fedivers. Këtu s’jepen të dhëna nëse jeni i federuar me shërbyesin e dhënë, thjesht tregohet se shërbyesi juaj e njeh. Kjo përdoret nga shërbime që mbledhin statistika mbi federimin në kuptimin e përgjithshëm.
         profile_directory: Drejtoria e profileve paraqet krejt përdoruesit që kanë zgjedhur të jenë të zbulueshëm.
         require_invite_text: Kur regjistrimet lypin miratim dorazi, bëje tekstin “Përse doni të bëheni pjesë?” të detyrueshëm, në vend se opsional
@@ -225,6 +228,7 @@ sq:
         setting_boost_modal: Shfaq dialog ripohimi përpara përforcimi
         setting_default_language: Gjuhë postimi
         setting_default_privacy: Privatësi postimi
+        setting_default_quote_policy: Cilët mund të citojnë
         setting_default_sensitive: Mediave vëru përherë shenjë si rezervat
         setting_delete_modal: Shfaq dialog ripohimi përpara fshirjes së një mesazhi
         setting_disable_hover_cards: Çaktivizo paraparje profili, kur i kalohet kursori përsipër
@@ -257,6 +261,7 @@ sq:
         name: Hashtag
       filters:
         actions:
+          blur: Fshihe median me një sinjalizim
           hide: Fshihe plotësisht
           warn: Fshihe me një sinjalizim
       form_admin_settings:
@@ -270,6 +275,7 @@ sq:
         favicon: Favikonë
         mascot: Simbol vetjak (e dikurshme)
         media_cache_retention_period: Periudhë mbajtjeje lënde media
+        min_age: Domosdosmëri moshe minimum
         peers_api_enabled: Publiko te API listë shërbyesish të zbuluar
         profile_directory: Aktivizo drejtori profilesh
         registrations_mode: Kush mund të regjistrohet
@@ -348,6 +354,9 @@ sq:
         jurisdiction: Juridiksion ligjor
         min_age: Mosha minimale
       user:
+        date_of_birth_1i: Ditë
+        date_of_birth_2i: Muaj
+        date_of_birth_3i: Vit
         role: Rol
         time_zone: Zonë kohore
       user_role:

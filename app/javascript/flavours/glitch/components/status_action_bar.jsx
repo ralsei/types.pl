@@ -18,15 +18,15 @@ import StarIcon from '@/material-icons/400-24px/star-fill.svg?react';
 import StarBorderIcon from '@/material-icons/400-24px/star.svg?react';
 import VisibilityIcon from '@/material-icons/400-24px/visibility.svg?react';
 import RepeatActiveIcon from '@/svg-icons/repeat_active.svg?react';
-import RepeatDisabledIcon from '@/svg-icons/repeat_disabled.svg';
-import RepeatPrivateIcon from '@/svg-icons/repeat_private.svg';
+import RepeatDisabledIcon from '@/svg-icons/repeat_disabled.svg?react';
+import RepeatPrivateIcon from '@/svg-icons/repeat_private.svg?react';
 import RepeatPrivateActiveIcon from '@/svg-icons/repeat_private_active.svg?react';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'flavours/glitch/permissions';
 import { accountAdminLink, statusAdminLink } from 'flavours/glitch/utils/backend_links';
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
-import DropdownMenuContainer from '../containers/dropdown_menu_container';
+import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
 import { me } from '../initial_state';
 
 import { IconButton } from './icon_button';
@@ -351,7 +351,7 @@ class StatusActionBar extends ImmutablePureComponent {
         {filterButton}
 
         <div className='status__action-bar__button-wrapper'>
-          <DropdownMenuContainer
+          <Dropdown
             scrollKey={scrollKey}
             status={status}
             items={menu}

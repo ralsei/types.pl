@@ -133,6 +133,7 @@ export const Directory: React.FC<{
   }, [dispatch, order, local]);
 
   const pinned = !!columnId;
+  const initialLoad = isLoading && accountIds.size === 0;
 
   const scrollableArea = (
     <div className='scrollable'>
@@ -173,7 +174,7 @@ export const Directory: React.FC<{
       </div>
 
       <div className='directory__list'>
-        {isLoading ? (
+        {initialLoad ? (
           <LoadingIndicator />
         ) : (
           accountIds.map((accountId) => (
@@ -182,7 +183,11 @@ export const Directory: React.FC<{
         )}
       </div>
 
-      <LoadMore onClick={handleLoadMore} visible={!isLoading} />
+      <LoadMore
+        onClick={handleLoadMore}
+        visible={!initialLoad}
+        loading={isLoading}
+      />
     </div>
   );
 

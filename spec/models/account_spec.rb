@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Account do
-  include_examples 'Account::Search'
-  include_examples 'Reviewable'
+  it_behaves_like 'Account::Search'
+  it_behaves_like 'Reviewable'
 
   context 'with an account record' do
     subject { Fabricate(:account) }
@@ -386,36 +386,6 @@ RSpec.describe Account do
     end
   end
 
-  describe '.following_map' do
-    it 'returns an hash' do
-      expect(described_class.following_map([], 1)).to be_a Hash
-    end
-  end
-
-  describe '.followed_by_map' do
-    it 'returns an hash' do
-      expect(described_class.followed_by_map([], 1)).to be_a Hash
-    end
-  end
-
-  describe '.blocking_map' do
-    it 'returns an hash' do
-      expect(described_class.blocking_map([], 1)).to be_a Hash
-    end
-  end
-
-  describe '.requested_map' do
-    it 'returns an hash' do
-      expect(described_class.requested_map([], 1)).to be_a Hash
-    end
-  end
-
-  describe '.requested_by_map' do
-    it 'returns an hash' do
-      expect(described_class.requested_by_map([], 1)).to be_a Hash
-    end
-  end
-
   describe 'MENTION_RE' do
     subject { described_class::MENTION_RE }
 
@@ -670,19 +640,6 @@ RSpec.describe Account do
       end
     end
 
-    describe 'alphabetic' do
-      it 'sorts by alphabetic order of domain and username' do
-        matches = [
-          { username: 'a', domain: 'a' },
-          { username: 'b', domain: 'a' },
-          { username: 'a', domain: 'b' },
-          { username: 'b', domain: 'b' },
-        ].map(&method(:Fabricate).curry(2).call(:account))
-
-        expect(described_class.without_internal.alphabetic).to eq matches
-      end
-    end
-
     describe 'matches_display_name' do
       it 'matches display name which starts with the given string' do
         match = Fabricate(:account, display_name: 'pattern and suffix')
@@ -806,8 +763,8 @@ RSpec.describe Account do
     end
   end
 
-  include_examples 'AccountAvatar', :account
-  include_examples 'AccountHeader', :account
+  it_behaves_like 'AccountAvatar', :account
+  it_behaves_like 'AccountHeader', :account
 
   describe '#increment_count!' do
     subject { Fabricate(:account) }

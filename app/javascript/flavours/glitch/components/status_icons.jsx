@@ -61,16 +61,14 @@ class StatusIcons extends PureComponent {
             className='status__reply-icon'
             id='comment'
             icon={ForumIcon}
-            aria-hidden='true'
-            title={intl.formatMessage(messages.inReplyTo)}
+            aria-label={intl.formatMessage(messages.inReplyTo)}
           />
         ) : null}
         {settings.get('local_only') && status.get('local_only') &&
           <Icon
             id='home'
             icon={HomeIcon}
-            aria-hidden='true'
-            title={intl.formatMessage(messages.localOnly)}
+            aria-label={intl.formatMessage(messages.localOnly)}
           />}
         {settings.get('media') && !!mediaIcons && mediaIcons.map(icon => (<MediaIcon key={`media-icon--${icon}`} className='status__media-icon' icon={icon} />))}
         {settings.get('visibility') && <VisibilityIcon visibility={status.get('visibility')} />}

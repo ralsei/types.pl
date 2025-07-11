@@ -21,11 +21,10 @@ import {
   IgnoreNotificationsModal,
   AnnualReportModal,
 } from 'flavours/glitch/features/ui/util/async-components';
-import { getScrollbarWidth } from 'flavours/glitch/utils/scrollbar';
 
 import BundleContainer from '../containers/bundle_container';
 
-import ActionsModal from './actions_modal';
+import { ActionsModal } from './actions_modal';
 import AudioModal from './audio_modal';
 import { BoostModal } from './boost_modal';
 import {
@@ -43,7 +42,7 @@ import {
 import DeprecatedSettingsModal from './deprecated_settings_modal';
 import DoodleModal from './doodle_modal';
 import { FavouriteModal } from './favourite_modal';
-import ImageModal from './image_modal';
+import { ImageModal } from './image_modal';
 import MediaModal from './media_modal';
 import { ModalPlaceholder } from './modal_placeholder';
 import VideoModal from './video_modal';
@@ -97,16 +96,6 @@ export default class ModalRoot extends PureComponent {
   state = {
     backgroundColor: null,
   };
-
-  componentDidUpdate () {
-    if (this.props.type) {
-      document.body.classList.add('with-modals--active');
-      document.documentElement.style.marginRight = `${getScrollbarWidth()}px`;
-    } else {
-      document.body.classList.remove('with-modals--active');
-      document.documentElement.style.marginRight = '0';
-    }
-  }
 
   setBackgroundColor = color => {
     this.setState({ backgroundColor: color });

@@ -9,28 +9,15 @@ RSpec.describe 'NewStatuses', :inline_jobs, :js, :streaming do
   let(:password)            { 'password' }
   let(:confirmed_at)        { Time.zone.now }
   let(:finished_onboarding) { true }
+  let(:status_text) { 'This is a new status!' }
 
   before { as_a_logged_in_user }
 
   it 'can be posted' do
     visit_homepage
-    status_text = 'This is a new status!'
 
     within('.compose-form') do
-      fill_in "What's on your mind?", with: status_text
-      click_on 'TOOT!'
-    end
-
-    expect(page)
-      .to have_css('.status__content__text', text: status_text)
-  end
-
-  it 'can be posted again' do
-    visit_homepage
-    status_text = 'This is a second status!'
-
-    within('.compose-form') do
-      fill_in "What's on your mind?", with: status_text
+      fill_in frontend_translations('compose_form.placeholder'), with: status_text
       click_on 'TOOT!'
     end
 

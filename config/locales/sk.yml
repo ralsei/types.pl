@@ -645,7 +645,6 @@ sk:
         follow_recommendations: Odporúčania pre nasledovanie
         profile_directory: Katalóg profilov
         public_timelines: Verejné časové osi
-        publish_discovered_servers: Zverejni objavené servery
         publish_statistics: Zverejni štatistiky
         title: Objavovanie
         trends: Trendy
@@ -1374,7 +1373,6 @@ sk:
       follow_title: Prispôsob svoj domáci kanál
       follows_title: Koho nasledovať
       post_title: Vytvor svoj prvý príspevok
-      share_action: Zdieľaj
       sign_in_action: Prihlás sa
       subject: Vitaj na Mastodone
       title: Vitaj na palube, %{name}!

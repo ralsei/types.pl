@@ -232,7 +232,7 @@ he:
         silence_account: הגבלת חשבון
         suspend_account: השעיית חשבון
         unassigned_report: ביטול הקצאת דו"ח
-        unblock_email_account: ביטול חסימת כתובת דוא"ל
+        unblock_email_account: הסרת חסימת כתובת דוא"ל
         unsensitive_account: ביטול Force-Sensitive לחשבון
         unsilence_account: ביטול השתקת חשבון
         unsuspend_account: ביטול השעיית חשבון
@@ -263,11 +263,11 @@ he:
         create_user_role_html: "%{name} יצר את התפקיד של %{target}"
         demote_user_html: "%{name} הוריד/ה בדרגה את המשתמש %{target}"
         destroy_announcement_html: "%{name} מחק/ה את ההכרזה %{target}"
-        destroy_canonical_email_block_html: "%{name} הסיר/ה חסימה מדואל %{target}"
+        destroy_canonical_email_block_html: "%{name} הסירו חסימה מדואל %{target}"
         destroy_custom_emoji_html: "%{name} מחק אמוג'י של %{target}"
         destroy_domain_allow_html: "%{name} לא התיר/ה פדרציה עם הדומיין %{target}"
-        destroy_domain_block_html: "%{name} הסיר/ה חסימה מהדומיין %{target}"
-        destroy_email_domain_block_html: '%{name} הסיר/ה חסימה מדומיין הדוא"ל %{target}'
+        destroy_domain_block_html: החסימה על מתחם %{target} הוסרה ע"י %{name}
+        destroy_email_domain_block_html: הוסרה חסימת מתחם דוא"ל %{target} בידי %{name}
         destroy_instance_html: "%{name} טיהר/ה את הדומיין %{target}"
         destroy_ip_block_html: "%{name} מחק/ה את הכלל עבור IP %{target}"
         destroy_relay_html: "%{name} מחקו את הממסר %{target}"
@@ -325,6 +325,7 @@ he:
         create: יצירת הכרזה
         title: הכרזה חדשה
       preview:
+        disclaimer: כיוון שהמשתמשים לא יכולים לבטל אותם, הודעות דוא"ל צריכות להיות מוגבלות בשימוש להודעות חשובות כגון הודעות על גניבת מידע אישי או הודעות על סגירת השרת.
         explanation_html: 'הדואל ישלח אל <strong>%{display_count} משתמשיםות</strong>. להלן המלל שישלח בדואל:'
         title: צפיה מקדימה בהודעה
       publish: פרסום
@@ -495,6 +496,36 @@ he:
       new:
         title: יבוא רשימת שרתים חסומים
       no_file: לא נבחר קובץ
+    fasp:
+      debug:
+        callbacks:
+          created_at: תאריך יצירה
+          delete: מחיקה
+          ip: כתובת IP
+          request_body: גוף הבקשה
+          title: ניפוי תקלות בקריאות חוזרות
+      providers:
+        active: פעילים
+        base_url: קישור בסיס
+        callback: קריאה חוזרת
+        delete: מחיקה
+        edit: עריכת ספק
+        finish_registration: סיום הרשמה
+        name: שם
+        providers: ספקים
+        public_key_fingerprint: טביעת האצבע של המפתח הציבורי
+        registration_requested: נדרשת הרשמה
+        registrations:
+          confirm: אישור
+          description: קיבלת הרשמה דרך FASP. יש לדחות אותה אם לא ביקשת את ההרשמה הזו מיוזמתך. אם זו בקשה מיוזמתך, יש להשוות בהקפדה אם השם וטביעת האצבע של המפתח הציבורי תואמים לפני אישור הרישום.
+          reject: דחיה
+          title: אישור הרשמת FASP
+        save: שמירה
+        select_capabilities: בחירת יכולות
+        sign_in: כניסה
+        status: מצב
+        title: ספקי משנה לפדיוורס
+      title: פרוטוקול FASP
     follow_recommendations:
       description_html: "<strong>עקבו אחר ההמלצות על מנת לעזור למשתמשים חדשים למצוא תוכן מעניין</strong>. במידה ומשתמש לא תקשר מספיק עם משתמשים אחרים כדי ליצור המלצות מעקב, חשבונות אלה יומלצו במקום. הם מחושבים מחדש על בסיסי יומיומי מתערובת של החשבונות הפעילים ביותר עם החשבונות הנעקבים ביותר עבור שפה נתונה."
       language: עבור שפה
@@ -569,6 +600,13 @@ he:
         all: הכל
         limited: מוגבלים
         title: ניהול דיון
+      moderation_notes:
+        create: הוספת הערות מנחה דיונים
+        created_msg: הודעת מנחה לגבי שרת נוצרה בהצלחה!
+        description_html: צפייה והשארת הערות עבור מנחים אחרים או לעצמך לעתיד
+        destroyed_msg: הודעת מנחה לגבי שרת נמחקה בהצלחה!
+        placeholder: מידע לגבי שרת זה, פעולות שננקטו, או כל מידע אחר שיסייע לך להחליט כיצד למתן הודעות משרת זה בעתיד.
+        title: הודעות מנחה דיונים
       private_comment: הערה פרטית
       public_comment: תגובה פומבית
       purge: טיהור
@@ -783,17 +821,26 @@ he:
       title: תפקידים
     rules:
       add_new: הוספת כלל
+      add_translation: הוספת תרגום
       delete: מחיקה
       description_html: בעוד הרוב טוען שקרא והסכים לתנאי השימוש, אנשים לא נוטים לקרוא אותם עד הסוף עד שמתעוררת בעיה. <strong>כדי שיקל לראות את כללי השרת במבט, יש לספקם כרשימת נקודות.</strong> כדאי לשמור על הכללים קצרים ופשוטים, אבל מאידך גם לא לפצל אותם ליותר מדי נקודות נפרדות.
       edit: עריכת כלל
       empty: שום כללי שרת לא הוגדרו עדיין.
+      move_down: הזזה למטה
+      move_up: הזזה למעלה
       title: כללי שרת
+      translation: תרגום
+      translations: תרגומים
+      translations_explanation: באפשרותך להוסיף גרסאות מתורגמות לשפות נוספות של תנאי השימוש. ברירת המחדף תופיע אם גרסאות מתורגמות אינן בנמצא. עליך לוודא כי הגרסאות המתורגמות מעודכנות יחד עם שפת ברירת המחדל.
     settings:
       about:
         manage_rules: ניהול כללי שרת
         preamble: תיאור מעמיק על דרכי ניהול השרת, ניהול הדיונים, ומקורות המימון שלו.
         rules_hint: קיים מקום ייעודי לחוקים שעל המשתמשים שלך לדבוק בהם.
         title: אודות
+      allow_referrer_origin:
+        desc: כאשר משתמשיך לוחצים על קישור לאתר חיצוני, הדפדפן ישלח את כתובת אתר המסטודון בתור האתר המפנה. ניתן לבטל את האפשרות אם עולה בך חשש שמתמשיך יזוהו בצורה זו, למשל אם מדובר בשרת מסטודון פרטי.
+        title: אפשר לאתרים חיצוניים לראות את שרת המסטודון שלך בתור האתר המפנה
       appearance:
         preamble: התאמה מיוחדת של מנשק המשתמש של מסטודון.
         title: מראה
@@ -813,9 +860,9 @@ he:
       discovery:
         follow_recommendations: המלצות מעקב
         preamble: הצפה של תוכן מעניין בקבלת פני משתמשות חדשות שאולי אינן מכירות עדיין א.נשים במסטודון. ניתן לשלוט איך אפשרויות גילוי שונות עובדות על השרת שלך.
+        privacy: פרטיות
         profile_directory: ספריית פרופילים
         public_timelines: פידים פומביים
-        publish_discovered_servers: פרסום שרתים שנתגלו
         publish_statistics: פרסום הסטטיסטיקות בפומבי
         title: תגליות
         trends: נושאים חמים
@@ -900,6 +947,8 @@ he:
     system_checks:
       database_schema_check:
         message_html: נדרשות הגירות מבני נתונים. אנא הריצו אותן כדי להבטיח שהיישום מתנהג כצפוי
+      elasticsearch_analysis_index_mismatch:
+        message_html: מאפייני בוחן האינדקס של Elasticsearch אינם עדכניים. יש להריץ <code>tootctl search deploy --only-mapping --only=%{value}</code>
       elasticsearch_health_red:
         message_html: אשכול שירותי חיפוש Elasticsearch אינו זמין כעת (מצב אדום), אפשרויות חיפוש אינן זמינות כרגע
       elasticsearch_health_yellow:
@@ -1338,6 +1387,10 @@ he:
     basic_information: מידע בסיסי
     hint_html: "<strong>התאמה אישית של מה שיראו אחרים בפרופיל הציבורי שלך וליד הודעותיך.</strong> אחרים עשויים יותר להחזיר עוקב וליצור אתך שיחה אם הפרופיל והתמונה יהיו מלאים."
     other: אחר
+  emoji_styles:
+    auto: אוטומטי
+    native: מקומי
+    twemoji: Twemoji
   errors:
     '400': הבקשה שהגשת לא תקינה.
     '403': חסרות לך הרשאות לצפיה בעמוד זה.
@@ -1911,6 +1964,10 @@ he:
       limit: הגעת למספר המירבי של ההודעות המוצמדות
       ownership: הודעות של אחרים לא יכולות להיות מוצמדות
       reblog: אין אפשרות להצמיד הדהודים
+    quote_policies:
+      followers: עוקבים ומאוזכרים
+      nobody: רק מאוזכרים ומאוזכרות
+      public: כולם
     title: '%{name}: "%{quote}"'
     visibilities:
       direct: ישיר
@@ -1964,6 +2021,11 @@ he:
     does_not_match_previous_name: לא תואם את השם האחרון
   terms_of_service:
     title: תנאי השירות
+  terms_of_service_interstitial:
+    future_preamble_html: אנו מבצעים שינויים בתנאי השירות, שיכנסו לתוקף בתאריך <strong>%{date}</strong>. אנו מבקשים ממך לעבור על העידכונים.
+    past_preamble_html: שינינו את תנאי השירות שלנו מאז ביקורך האחרון. אנו ממליצים לך לעבור על העידכונים.
+    review_link: קריאת תנאי השירות
+    title: תנאי השירות של %{domain} משתנים
   themes:
     contrast: מסטודון (ניגודיות גבוהה)
     default: מסטודון (כהה)
@@ -2105,7 +2167,6 @@ he:
       post_action: חיבור הודעה
       post_step: ברכו לשלום את העולם עם מלל, תמונות, חוזי או משאלים.
       post_title: כתבו את הפוסט הראשון שלכםן
-      share_action: שיתוף
       share_step: ספרו לחברים איך למצוא אתכם במסטודון.
       share_title: שיתוף פרופיל מסטודון
       sign_in_action: התחברות

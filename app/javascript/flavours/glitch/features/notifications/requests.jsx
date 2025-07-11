@@ -23,7 +23,7 @@ import Column from 'flavours/glitch/components/column';
 import ColumnHeader from 'flavours/glitch/components/column_header';
 import { Icon } from 'flavours/glitch/components/icon';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
-import DropdownMenuContainer from 'flavours/glitch/containers/dropdown_menu_container';
+import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
 
 import { NotificationRequest } from './components/notification_request';
 import { PolicyControls } from './components/policy_controls';
@@ -126,7 +126,7 @@ const SelectRow = ({selectAllChecked, toggleSelectAll, selectedItems, selectionM
       <div className='column-header__select-row__checkbox'>
         <CheckBox checked={selectAllChecked} indeterminate={selectedCount > 0 && !selectAllChecked} onChange={handleSelectAll} />
       </div>
-      <DropdownMenuContainer
+      <Dropdown
         items={menu}
         icons='ellipsis-h'
         iconComponent={MoreHorizIcon}
@@ -139,7 +139,7 @@ const SelectRow = ({selectAllChecked, toggleSelectAll, selectedItems, selectionM
           </span>
           <Icon id='down' icon={ArrowDropDownIcon} />
         </button>
-      </DropdownMenuContainer>
+      </Dropdown>
       <div className='column-header__select-row__mode-button'>
         <button className='text-btn' tabIndex={0} onClick={handleToggleSelectionMode}>
           {selectionMode ? (

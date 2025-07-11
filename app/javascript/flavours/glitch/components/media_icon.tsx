@@ -48,7 +48,7 @@ export const MediaIcon: React.FC<{
       className={className}
       id={icon}
       icon={iconComponents[icon]}
-      title={intl.formatMessage(messages[icon])}
+      aria-label={intl.formatMessage(messages[icon])}
       aria-hidden='true'
     />
   );

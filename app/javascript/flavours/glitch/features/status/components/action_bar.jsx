@@ -24,7 +24,7 @@ import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'flavours/
 import { accountAdminLink, statusAdminLink } from 'flavours/glitch/utils/backend_links';
 
 import { IconButton } from '../../../components/icon_button';
-import DropdownMenuContainer from '../../../containers/dropdown_menu_container';
+import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
 import { me } from '../../../initial_state';
 
 const messages = defineMessages({
@@ -256,7 +256,7 @@ class ActionBar extends PureComponent {
         <div className='detailed-status__button'><IconButton className='bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={bookmarkTitle} icon='bookmark' iconComponent={status.get('bookmarked') ? BookmarkIcon : BookmarkBorderIcon} onClick={this.handleBookmarkClick} /></div>
 
         <div className='detailed-status__action-bar-dropdown'>
-          <DropdownMenuContainer size={18} icon='ellipsis-h' iconComponent={MoreHorizIcon} items={menu} direction='left' title={intl.formatMessage(messages.more)} />
+          <Dropdown icon='ellipsis-h' iconComponent={MoreHorizIcon} items={menu} direction='left' title={intl.formatMessage(messages.more)} />
         </div>
       </div>
     );

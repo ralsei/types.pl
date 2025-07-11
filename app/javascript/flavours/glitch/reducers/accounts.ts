@@ -4,9 +4,9 @@ import { Map as ImmutableMap } from 'immutable';
 import {
   followAccountSuccess,
   unfollowAccountSuccess,
-  importAccounts,
   revealAccount,
 } from 'flavours/glitch/actions/accounts_typed';
+import { importAccounts } from 'flavours/glitch/actions/importer/accounts';
 import type { ApiAccountJSON } from 'flavours/glitch/api_types/accounts';
 import { me } from 'flavours/glitch/initial_state';
 import type { Account } from 'flavours/glitch/models/account';

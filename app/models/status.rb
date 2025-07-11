@@ -30,6 +30,7 @@
 #  trendable                    :boolean
 #  ordered_media_attachment_ids :bigint(8)        is an Array
 #  fetched_replies_at           :datetime
+#  quote_approval_policy        :integer          default(0), not null
 #
 
 class Status < ApplicationRecord
@@ -37,6 +38,7 @@ class Status < ApplicationRecord
   include Discard::Model
   include Paginable
   include RateLimitable
+  include Status::FaspConcern
   include Status::FetchRepliesConcern
   include Status::SafeReblogInsert
   include Status::SearchConcern
@@ -45,6 +47,13 @@ class Status < ApplicationRecord
   include Status::Visibility
 
   MEDIA_ATTACHMENTS_LIMIT = 4
+
+  QUOTE_APPROVAL_POLICY_FLAGS = {
+    unknown: (1 << 0),
+    public: (1 << 1),
+    followers: (1 << 2),
+    followed: (1 << 3),
+  }.freeze
 
   rate_limit by: :account, family: :statuses
 
@@ -95,6 +104,7 @@ class Status < ApplicationRecord
   has_one :status_stat, inverse_of: :status, dependent: nil
   has_one :poll, inverse_of: :status, dependent: :destroy
   has_one :trend, class_name: 'StatusTrend', inverse_of: :status, dependent: nil
+  has_one :quote, inverse_of: :status, dependent: :destroy
 
   validates :uri, uniqueness: true, presence: true, unless: :local?
   validates :text, presence: true, unless: -> { with_media? || reblog? }
@@ -113,6 +123,7 @@ class Status < ApplicationRecord
   scope :with_accounts, ->(ids) { where(id: ids).includes(:account) }
   scope :without_replies, -> { not_reply.or(reply_to_account) }
   scope :not_reply, -> { where(reply: false) }
+  scope :only_reblogs, -> { where.not(reblog_of_id: nil) }
   scope :reply_to_account, -> { where(arel_table[:in_reply_to_account_id].eq arel_table[:account_id]) }
   scope :without_reblogs, -> { where(statuses: { reblog_of_id: nil }) }
   scope :tagged_with, ->(tag_ids) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag_ids }) }
@@ -161,23 +172,25 @@ class Status < ApplicationRecord
                    :status_stat,
                    :tags,
                    :preloadable_poll,
+                   quote: { status: { account: [:account_stat, user: :role] } },
                    preview_cards_status: { preview_card: { author_account: [:account_stat, user: :role] } },
                    account: [:account_stat, user: :role],
                    active_mentions: :account,
                    reblog: [
                      :application,
-                     :tags,
                      :media_attachments,
                      :conversation,
                      :status_stat,
+                     :tags,
                      :preloadable_poll,
+                     quote: { status: { account: [:account_stat, user: :role] } },
                      preview_cards_status: { preview_card: { author_account: [:account_stat, user: :role] } },
                      account: [:account_stat, user: :role],
                      active_mentions: :account,
                    ],
                    thread: :account
 
-  delegate :domain, to: :account, prefix: true
+  delegate :domain, :indexable?, to: :account, prefix: true
 
   REAL_TIME_WINDOW = 6.hours
 
@@ -385,7 +398,7 @@ class Status < ApplicationRecord
     end
 
     def bookmarks_map(status_ids, account_id)
-      Bookmark.select(:status_id).where(status_id: status_ids).where(account_id: account_id).map { |f| [f.status_id, true] }.to_h
+      Bookmark.select(:status_id).where(status_id: status_ids).where(account_id: account_id).to_h { |f| [f.status_id, true] }
     end
 
     def reblogs_map(status_ids, account_id)

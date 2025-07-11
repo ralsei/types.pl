@@ -26,6 +26,7 @@ module Status::SnapshotConcern
       account_id: account_id || self.account_id,
       content_type: content_type,
       created_at: at_time || edited_at,
+      quote_id: quote&.id,
       rate_limit: rate_limit
     )
   end

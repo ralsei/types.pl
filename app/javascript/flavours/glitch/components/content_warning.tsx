@@ -20,6 +20,6 @@ export const ContentWarning: React.FC<{
         key={`icon-${icon}`}
       />
     ))}
-    <p dangerouslySetInnerHTML={{ __html: text }} />
+    <span dangerouslySetInnerHTML={{ __html: text }} />
   </StatusBanner>
 );

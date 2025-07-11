@@ -9,7 +9,7 @@ RSpec.describe Status do
   let(:bob)   { Fabricate(:account, username: 'bob') }
   let(:other) { Fabricate(:status, account: bob, text: 'Skulls for the skull god! The enemy\'s gates are sideways!') }
 
-  include_examples 'Status::Visibility'
+  it_behaves_like 'Status::Visibility'
 
   describe '#local?' do
     it 'returns true when no remote URI is set' do
@@ -436,6 +436,17 @@ RSpec.describe Status do
       Fabricate(:mention, account: account, status: not_followed_direct_status)
       results2 = described_class.as_direct_timeline(account)
       expect(results2).to include(not_followed_direct_status)
+    end
+  end
+
+  describe '.only_reblogs' do
+    let!(:status) { Fabricate :status }
+    let!(:reblog) { Fabricate :status, reblog: Fabricate(:status) }
+
+    it 'returns the expected statuses' do
+      expect(described_class.only_reblogs)
+        .to include(reblog)
+        .and not_include(status)
     end
   end
 

@@ -325,6 +325,7 @@ uk:
         create: Створити оголошення
         title: Нове оголошення
       preview:
+        disclaimer: Оскільки користувачі не можуть відмовитися від них, сповіщення по електронній пошті повинні обмежуватися важливими оголошеннями, такими як порушення особистих даних або повідомлення про закриття серверу.
         explanation_html: 'Електронний лист буде надіслано <strong>%{display_count} користувачам</strong>. До електронного листа буде включено такий текст:'
         title: Попередній перегляд сповіщення
       publish: Опублікувати
@@ -569,6 +570,9 @@ uk:
         all: Усі
         limited: Обмежені
         title: Модерація
+      moderation_notes:
+        create: Додати нотатку модерації
+        title: Нотатки модераторів
       private_comment: Приватний коментар
       public_comment: Публічний коментар
       purge: Очисти
@@ -813,9 +817,9 @@ uk:
       discovery:
         follow_recommendations: Поради щодо підписок
         preamble: Показ цікавих матеріалів відіграє важливу роль у залученні нових користувачів, які, можливо, не знають нікого з Mastodon. Контролюйте роботу різних функцій виявлення на вашому сервері.
+        privacy: Конфіденційність
         profile_directory: Каталог профілів
         public_timelines: Публічна стрічка
-        publish_discovered_servers: Опублікувати знайдені сервери
         publish_statistics: Публікувати статистику
         title: Виявлення
         trends: Популярні
@@ -900,6 +904,8 @@ uk:
     system_checks:
       database_schema_check:
         message_html: Існують відкладені перенесення бази даних. Запустіть їх, щоб забезпечити очікувану роботу програми
+      elasticsearch_analysis_index_mismatch:
+        message_html: Налаштування індексу Elasticsearch застарілі. Будь ласка, запустіть <code>tootctl search deploy --only-mapping --only=%{value}</code>
       elasticsearch_health_red:
         message_html: Кластер Elasticsearch нездоровий (червоний статус), функції пошуку недоступні
       elasticsearch_health_yellow:
@@ -2035,7 +2041,6 @@ uk:
       post_action: Створити
       post_step: Привітайтеся зі світом, з текстом, світлинами, відео та опитуваннями.
       post_title: Напишіть свій перший допис
-      share_action: Поділитися
       share_step: Розкажіть друзям, як знайти вас на Mastodon.
       share_title: Поділіться своїм профілем Mastodon
       sign_in_action: Увійти

@@ -56,10 +56,12 @@ es:
         scopes: Qué APIs de la aplicación tendrán acceso. Si seleccionas el alcance de nivel mas alto, no necesitas seleccionar las individuales.
         setting_aggregate_reblogs: No mostrar nuevos impulsos para las publicaciones que han sido recientemente impulsadas (sólo afecta a los impulsos recibidos recientemente)
         setting_always_send_emails: Normalmente las notificaciones por correo electrónico no se enviarán cuando estés usando Mastodon activamente
+        setting_default_quote_policy: Los usuarios mencionados siempre pueden citar. Este ajuste solo afecta a las publicaciones creadas con la próxima versión de Mastodon, pero puedes seleccionar tus preferencias anticipadamente
         setting_default_sensitive: El contenido multimedia sensible está oculto por defecto y puede ser mostrado con un click
         setting_display_media_default: Ocultar contenido multimedia marcado como sensible
         setting_display_media_hide_all: Siempre ocultar todo el contenido multimedia
         setting_display_media_show_all: Mostrar siempre contenido multimedia marcado como sensible
+        setting_emoji_style: Cómo se mostrarán los emojis. "Auto" intentará usar emojis nativos, cambiando a Twemoji en navegadores antiguos.
         setting_system_scrollbars_ui: Solo aplica para navegadores de escritorio basados en Safari y Chrome
         setting_use_blurhash: Los gradientes se basan en los colores de las imágenes ocultas pero haciendo borrosos los detalles
         setting_use_pending_items: Ocultar nuevas publicaciones detrás de un clic en lugar de desplazar automáticamente el feed
@@ -75,6 +77,7 @@ es:
       filters:
         action: Elegir qué acción realizar cuando una publicación coincide con el filtro
         actions:
+          blur: Ocultar contenido multimedia detrás de una advertencia, sin ocultar el texto en sí
           hide: Ocultar completamente el contenido filtrado, comportándose como si no existiera
           warn: Ocultar el contenido filtrado detrás de una advertencia mencionando el título del filtro
       form_admin_settings:
@@ -88,6 +91,7 @@ es:
         favicon: WEBP, PNG, GIF o JPG. Reemplaza el favicon predeterminado de Mastodon con un icono personalizado.
         mascot: Reemplaza la ilustración en la interfaz web avanzada.
         media_cache_retention_period: Los archivos multimedia de las publicaciones creadas por usuarios remotos se almacenan en caché en tu servidor. Cuando se establece un valor positivo, estos archivos se eliminarán después del número especificado de días. Si los datos multimedia se solicitan después de eliminarse, se volverán a descargar, si el contenido fuente todavía está disponible. Debido a restricciones en la frecuencia con la que las tarjetas de previsualización de enlaces realizan peticiones a sitios de terceros, se recomienda establecer este valor a al menos 14 días, o las tarjetas de previsualización de enlaces no se actualizarán bajo demanda antes de ese momento.
+        min_age: Se pedirá a los usuarios que confirmen su fecha de nacimiento durante el registro
         peers_api_enabled: Una lista de nombres de dominio que este servidor ha encontrado en el Fediverso. Aquí no se incluye ningún dato sobre si federas con un servidor determinado, solo que tu servidor lo conoce. Esto es utilizado por los servicios que recopilan estadísticas sobre la federación en un sentido general.
         profile_directory: El directorio de perfiles lista a todos los usuarios que han optado por que su cuenta pueda ser descubierta.
         require_invite_text: Cuando los registros requieren aprobación manual, hace obligatoria la entrada de texto "¿Por qué quieres unirte?" en lugar de opcional
@@ -146,6 +150,9 @@ es:
         min_age: No debería estar por debajo de la edad mínima requerida por las leyes de su jurisdicción.
       user:
         chosen_languages: Cuando se marca, solo se mostrarán las publicaciones en los idiomas seleccionados en las líneas de tiempo públicas
+        date_of_birth:
+          one: Tenemos que asegurarnos de que tienes al menos %{count} años para usar Mastodon. No guardaremos este dato.
+          other: Tenemos que asegurarnos de que tienes al menos %{count} años para usar Mastodon. No guardaremos este dato.
         role: El rol controla qué permisos tiene el usuario.
       user_role:
         color: Color que se utilizará para el rol a lo largo de la interfaz de usuario, como RGB en formato hexadecimal
@@ -226,6 +233,7 @@ es:
         setting_boost_modal: Mostrar diálogo de confirmación antes de impulsar una publicación
         setting_default_language: Idioma de publicación
         setting_default_privacy: Privacidad de publicaciones
+        setting_default_quote_policy: Quién puede citar
         setting_default_sensitive: Marcar siempre imágenes como sensibles
         setting_delete_modal: Mostrar diálogo de confirmación antes de borrar una publicación
         setting_disable_hover_cards: Desactivar vista previa del perfil al pasar el cursor
@@ -234,6 +242,7 @@ es:
         setting_display_media_default: Por defecto
         setting_display_media_hide_all: Ocultar todo
         setting_display_media_show_all: Mostrar todo
+        setting_emoji_style: Estilo de emoji
         setting_expand_spoilers: Siempre expandir las publicaciones marcadas con advertencias de contenido
         setting_hide_network: Ocultar tu red
         setting_missing_alt_text_modal: Mostrar diálogo de confirmación antes de publicar medios sin texto alternativo
@@ -258,6 +267,7 @@ es:
         name: Etiqueta
       filters:
         actions:
+          blur: Ocultar contenido multimedia con una advertencia
           hide: Ocultar completamente
           warn: Ocultar con una advertencia
       form_admin_settings:
@@ -271,6 +281,7 @@ es:
         favicon: Favicon
         mascot: Mascota personalizada (legado)
         media_cache_retention_period: Período de retención de caché multimedia
+        min_age: Edad mínima requerida
         peers_api_enabled: Publicar lista de servidores descubiertos en la API
         profile_directory: Habilitar directorio de perfiles
         registrations_mode: Quién puede registrarse
@@ -349,6 +360,9 @@ es:
         jurisdiction: Jurisdicción legal
         min_age: Edad mínima
       user:
+        date_of_birth_1i: Día
+        date_of_birth_2i: Mes
+        date_of_birth_3i: Año
         role: Rol
         time_zone: Zona horaria
       user_role:

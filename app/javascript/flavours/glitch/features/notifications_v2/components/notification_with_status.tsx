@@ -15,7 +15,7 @@ import {
 } from 'flavours/glitch/actions/statuses';
 import type { IconProp } from 'flavours/glitch/components/icon';
 import { Icon } from 'flavours/glitch/components/icon';
-import Status from 'flavours/glitch/containers/status_container';
+import { StatusQuoteManager } from 'flavours/glitch/components/status_quoted';
 import { getStatusHidden } from 'flavours/glitch/selectors/filters';
 import { useAppSelector, useAppDispatch } from 'flavours/glitch/store';
 
@@ -106,8 +106,7 @@ export const NotificationWithStatus: React.FC<{
           {label}
         </div>
 
-        <Status
-          // @ts-expect-error -- <Status> is not yet typed
+        <StatusQuoteManager
           id={statusId}
           contextType='notifications'
           withDismiss

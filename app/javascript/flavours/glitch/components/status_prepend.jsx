@@ -45,10 +45,6 @@ export default class StatusPrepend extends PureComponent {
       </Permalink>
     );
     switch (type) {
-    case 'featured':
-      return (
-        <FormattedMessage id='status.pinned' defaultMessage='Pinned post' />
-      );
     case 'reblogged_by':
       return (
         <FormattedMessage

@@ -1,19 +1,24 @@
 import { useState, useCallback } from 'react';
 
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import { useHovering } from 'flavours/glitch/hooks/useHovering';
 import { autoPlayGif } from 'flavours/glitch/initial_state';
 import type { Account } from 'flavours/glitch/models/account';
 
 interface Props {
-  account: Account | undefined; // FIXME: remove `undefined` once we know for sure its always there
-  size: number;
+  account:
+    | Pick<Account, 'id' | 'acct' | 'avatar' | 'avatar_static'>
+    | undefined; // FIXME: remove `undefined` once we know for sure its always there
+  size?: number;
   style?: React.CSSProperties;
   inline?: boolean;
   animate?: boolean;
+  withLink?: boolean;
   counter?: number | string;
   counterBorderColor?: string;
+  className?: string;
 }
 
 export const Avatar: React.FC<Props> = ({
@@ -21,7 +26,9 @@ export const Avatar: React.FC<Props> = ({
   animate = autoPlayGif,
   size = 20,
   inline = false,
+  withLink = false,
   style: styleFromParent,
+  className,
   counter,
   counterBorderColor,
 }) => {
@@ -35,10 +42,7 @@ export const Avatar: React.FC<Props> = ({
     height: `${size}px`,
   };
 
-  const src =
-    hovering || animate
-      ? account?.get('avatar')
-      : account?.get('avatar_static');
+  const src = hovering || animate ? account?.avatar : account?.avatar_static;
 
   const handleLoad = useCallback(() => {
     setLoading(false);
@@ -48,16 +52,16 @@ export const Avatar: React.FC<Props> = ({
     setError(true);
   }, [setError]);
 
-  return (
+  const avatar = (
     <div
-      className={classNames('account__avatar', {
+      className={classNames(className, 'account__avatar', {
         'account__avatar--inline': inline,
         'account__avatar--loading': loading,
       })}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={style}
-      data-avatar-of={account && `@${account.get('acct')}`}
+      data-avatar-of={account && `@${account.acct}`}
     >
       {src && !error && (
         <img src={src} alt='' onLoad={handleLoad} onError={handleError} />
@@ -73,4 +77,18 @@ export const Avatar: React.FC<Props> = ({
       )}
     </div>
   );
+
+  if (withLink) {
+    return (
+      <Link
+        to={`/@${account?.acct}`}
+        title={`@${account?.acct}`}
+        data-hover-card-account={account?.id}
+      >
+        {avatar}
+      </Link>
+    );
+  }
+
+  return avatar;
 };
