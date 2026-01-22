@@ -1,4 +1,4 @@
-@import 'index';
+@use 'common';
 
 /* customize ya stuff */
 :root {
@@ -9,9 +9,13 @@
   --text-color-secondary: 96, 105, 132; /* less bright, for unimportant bits */
   --background-color: 18, 18, 37;
   --background-color-brighter: 22, 22, 47;
-  --app-background-color: 8, 8, 17; /* used only for the VERY background in the back */
+  --app-background-color:
+    8, 8, 17; /* used only for the VERY background in the back */
+
   --accent-color: 39, 183, 145;
-  --accent-color-secondary: 62, 91, 84; /* less saturated ver of --accent-color */
+  --accent-color-secondary:
+    62, 91, 84; /* less saturated ver of --accent-color */
+
   --accent-color-bright: 92, 193, 162;
 }
 
