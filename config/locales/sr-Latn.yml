@@ -745,7 +745,6 @@ sr-Latn:
         title: Podrazumevano isključi korisnike iz indeksiranja pretraživača
       discovery:
         follow_recommendations: Preporuke za praćenje
-        preamble: Održavanje zanimljivih sadržaja na površini je ključno u privlačenju novih korisnika koji možda ne znaju nikoga na Mastodon-u. Kontrolišite kako različiti načini istraživanja funkcionišu na vašem serveru.
         profile_directory: Direktorijum profilâ
         public_timelines: Javne vremenske linije
         publish_statistics: Objavi statistiku
@@ -1003,10 +1002,7 @@ sr-Latn:
     hint_html: Ako želite da se preselite sa drugog naloga na ovaj, ovde možete napraviti pseudonim, koji je neophodan pre nego što možete nastaviti sa prebacivanjem pratilaca sa starog naloga na ovaj. Ova radnja sama po sebi je <strong>bezopasna i reverzibilna</strong>. <strong>Preseljenje naloga se inicira sa starog naloga</strong>.
     remove: Odveži pseudonim
   appearance:
-    advanced_web_interface: Napredno veb okruženje
-    advanced_web_interface_hint: 'Ako želite da iskoristite celu širinu ekrana, napredno veb okruženje vam omogućuje da konfigurišete mnogo različitih kolona da biste videli onoliko informacija u isto vreme koliko želite: početnu stranicu, obaveštenja, združenu vremensku liniju, bilo koji broj lista i heš oznaka.'
     animations_and_accessibility: Animacije i pristupačnost
-    confirmation_dialogs: Dijalozi potvrde
     discovery: Otkrivanje
     localization:
       body: Mastodon prevode dobrovoljci.
@@ -1402,7 +1398,6 @@ sr-Latn:
       disabled_account: Vaš trenutni nalog više neće biti upotrebljiv. Međutim, imaćete pristup izvozu podataka kao i reaktivaciji.
       followers: Ova radnja će premestiti sve pratioce sa trenutnog naloga na novi nalog
       only_redirect_html: Umesto preseljenja, možete <a href="%{path}">samo dodati preusmeravajući link na svoj profil.</a>.
-      other_data: Ostali podaci neće biti automatski prebačeni
       redirect: Profil Vašeg sadašnjeg naloga će biti ažuriran sa obaveštenjem o preusmerenju i biće isključen iz pretrage
   moderation:
     title: Moderacija
@@ -1655,22 +1650,14 @@ sr-Latn:
       reblog: Podrška ne može da se prikači
     title: "%{name}: „%{quote}”"
     visibilities:
-      direct: Direktno
-      private: Samo pratioci
-      private_long: Prikaži samo pratiocima
       public: Javno
-      public_long: Svako može da vidi
-      unlisted: Neizlistano
-      unlisted_long: Svako može da vidi, ali nije izlistano na javnim vremenskim linijama
   statuses_cleanup:
     enabled: Automatski izbriši stare objave
     enabled_hint: Automatski briše vaše objave kada dostignu određeni starosni prag, osim ako se ne podudaraju sa jednim od izuzetaka u nastavku
     exceptions: Izuzeci
-    explanation: Pošto je brisanje objava skupa operacija, ovo se radi polako tokom vremena kada server inače nije zauzet. Iz tog razloga, vaše objave mogu biti izbrisane neko vreme nakon što dostignu starosni prag.
     ignore_favs: Ignoriši omiljene
     ignore_reblogs: Ignoriši podržavanja
     interaction_exceptions: Izuzeci zasnovani na interakcijama
-    interaction_exceptions_explanation: Imajte na umu da ne postoji garancija da će objave biti izbrisane ako broj označavanja kao omiljenih ili broj podržavanja padne ispod praga nakon što ga premaše.
     keep_direct: Zadrži direktne poruke
     keep_direct_hint: Ne briše nijednu od vaših direktnih poruka
     keep_media: Zadrži objave sa medijskim prilozima

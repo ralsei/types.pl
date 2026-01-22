@@ -736,7 +736,6 @@ zh-HK:
         title: 預設用戶不在搜尋引擎索引之內
       discovery:
         follow_recommendations: 追蹤建議
-        preamble: 呈現有趣的內容有助於吸引不認識 Mastodon 的使用者新手上路。控制各種探索功能在你的伺服器上的運作方式。
         privacy: 私隱
         profile_directory: 個人檔案目錄
         public_timelines: 公共時間軸
@@ -1001,10 +1000,7 @@ zh-HK:
     hint_html: 如果你想由另一個帳戶轉移到此帳號，你可以在此處創建別名 (alias)，然後系統容許你將關注者由舊帳戶轉移到此帳號。此操作是<strong>無害且可以還原的</strong>。 <strong>帳號遷移程序，需要在舊帳號啟動</strong>。
     remove: 取消連結別名 (Alias)
   appearance:
-    advanced_web_interface: 進階網頁介面
-    advanced_web_interface_hint: 如果你想善用整個螢幕闊度，你可以啟用「進階網頁介面」，在畫面上配置多個不同的欄目，讓你能根據需要，同時查看盡可能多的信息，支援的欄位包括：主頁、通知、其他站點和任何的列表和標籤。
     animations_and_accessibility: 動畫和輔助功能
-    confirmation_dialogs: 確認對話框
     discovery: 探索
     localization:
       body: Mastodon 是由志願者翻譯的。
@@ -1386,7 +1382,6 @@ zh-HK:
       disabled_account: 你的當前帳號將不能完整地運作。但你將會有權力匯出你的數據和重新啟用你的帳號。
       followers: 此操作將會由當前帳號轉移所有追隨者至新帳號
       only_redirect_html: 另外，你亦可<a href="%{path}">只在你的個人資料頁面放上重新定向標記</a>.
-      other_data: 並不會自動轉移其他數據
       redirect: 你的當前帳號的個人資料頁面將會加上一個重新定向公告，並會在搜尋結果中被剔除。
   moderation:
     title: 營運
@@ -1633,22 +1628,15 @@ zh-HK:
       reblog: 不能置頂轉推
     title: "%{name}：「%{quote}」"
     visibilities:
-      direct: 私人訊息
-      private: 關注者觀看
-      private_long: 只有關注你的人能看到
+      direct: 私訊
       public: 公開
-      public_long: 所有人都能看到
-      unlisted: 公開，但不在公共時間軸顯示
-      unlisted_long: 所有人都能看到，但不在公共時間軸（本站時間軸、跨站時間軸）顯示
   statuses_cleanup:
     enabled: 自動刪除舊嘟文
     enabled_hint: 當您的嘟文達到指定的時間門檻後，自動刪除嘟文，除非他們符合其中以下例外條件之一
     exceptions: 例外
-    explanation: 由於刪除嘟文對伺服器而言是相當耗費資源的操作，將僅於伺服器不繁忙時慢慢執行。由此緣故，您的嘟文將可能超過設定之時間門檻一會兒後才被刪除。
     ignore_favs: 忽略最愛
     ignore_reblogs: 忽略轉嘟
     interaction_exceptions: 根據互動的例外
-    interaction_exceptions_explanation: 請注意嘟文是無法保證被刪除的，如果在一次處理過後嘟文低於最愛或轉嘟的門檻。
     keep_direct: 保留私訊
     keep_direct_hint: 不會刪除任何您的私訊
     keep_media: 保留包含媒體內容的嘟文

@@ -1,5 +1,5 @@
 !!! 5
-%html{ lang: I18n.locale }
+%html{ lang: I18n.locale, 'data-contrast': 'auto', 'data-color-scheme': 'light', 'data-user-flavour': current_flavour.parameterize }
   %head
     %meta{ charset: 'utf-8' }/
     %meta{ name: 'robots', content: 'noindex' }/
@@ -14,7 +14,7 @@
     %script{ src: '/MathJax/config.js' }
     %script{ src: '/MathJax/es5/tex-chtml.js' }
 
-    = flavoured_stylesheet_pack_tag 'common', media: 'all', crossorigin: 'anonymous' # upstream uses `common` but that's implicitly defined
+    = javascript_inline_tag 'theme-selection.js'
     = vite_client_tag
     = vite_react_refresh_tag
     = vite_polyfills_tag

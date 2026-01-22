@@ -45,28 +45,32 @@ class MoveWorker
     end
 
     # Then handle accounts that follow both the old and new account
-    @source_account.passive_relationships
-                   .where(account: Account.local)
-                   .where(account: @target_account.followers.local)
-                   .in_batches do |follows|
-      ListAccount.where(follow: follows).includes(:list).find_each do |list_account|
-        list_account.list.accounts << @target_account
-      rescue ActiveRecord::RecordInvalid
-        nil
-      end
+    source_local_followers
+      .where(account: @target_account.followers.local)
+      .in_batches do |follows|
+        ListAccount.where(follow: follows).includes(:list).find_each do |list_account|
+          list_account.list.accounts << @target_account
+        rescue ActiveRecord::RecordInvalid
+          nil
+        end
     end
 
     # Finally, handle the common case of accounts not following the new account
-    @source_account.passive_relationships
-                   .where(account: Account.local)
-                   .where.not(account: @target_account.followers.local)
-                   .where.not(account_id: @target_account.id)
-                   .in_batches do |follows|
-      ListAccount.where(follow: follows).in_batches.update_all(account_id: @target_account.id)
-      num_moved += follows.update_all(target_account_id: @target_account.id)
+    source_local_followers
+      .where.not(account: @target_account.followers.local)
+      .where.not(account_id: @target_account.id)
+      .in_batches do |follows|
+        ListAccount.where(follow: follows).in_batches.update_all(account_id: @target_account.id)
+        num_moved += follows.update_all(target_account_id: @target_account.id)
     end
 
     num_moved
+  end
+
+  def source_local_followers
+    @source_account
+      .passive_relationships
+      .where(account: Account.local)
   end
 
   def queue_follow_unfollows!
@@ -81,7 +85,7 @@ class MoveWorker
 
   def copy_account_notes!
     AccountNote.where(target_account: @source_account).find_each do |note|
-      text = I18n.with_locale(note.account.user&.locale.presence || I18n.default_locale) do
+      text = I18n.with_locale(note.account.user_locale.presence || I18n.default_locale) do
         I18n.t('move_handler.copy_account_note_text', acct: @source_account.acct)
       end
 
@@ -104,7 +108,7 @@ class MoveWorker
 
   def carry_blocks_over!
     @source_account.blocked_by_relationships.where(account: Account.local).find_each do |block|
-      unless block.account.blocking?(@target_account) || block.account.following?(@target_account)
+      unless skip_block_move?(block)
         BlockService.new.call(block.account, @target_account)
         add_account_note_if_needed!(block.account, 'move_handler.carry_blocks_over_text')
       end
@@ -115,19 +119,29 @@ class MoveWorker
 
   def carry_mutes_over!
     @source_account.muted_by_relationships.where(account: Account.local).find_each do |mute|
-      MuteService.new.call(mute.account, @target_account, notifications: mute.hide_notifications) unless mute.account.muting?(@target_account) || mute.account.following?(@target_account)
-      add_account_note_if_needed!(mute.account, 'move_handler.carry_mutes_over_text')
+      unless skip_mute_move?(mute)
+        MuteService.new.call(mute.account, @target_account, notifications: mute.hide_notifications)
+        add_account_note_if_needed!(mute.account, 'move_handler.carry_mutes_over_text')
+      end
     rescue => e
       @deferred_error = e
     end
   end
 
   def add_account_note_if_needed!(account, id)
-    unless AccountNote.exists?(account: account, target_account: @target_account)
-      text = I18n.with_locale(account.user&.locale.presence || I18n.default_locale) do
-        I18n.t(id, acct: @source_account.acct)
-      end
-      AccountNote.create!(account: account, target_account: @target_account, comment: text)
+    return if AccountNote.exists?(account: account, target_account: @target_account)
+
+    text = I18n.with_locale(account.user_locale.presence || I18n.default_locale) do
+      I18n.t(id, acct: @source_account.acct)
     end
+    AccountNote.create!(account: account, target_account: @target_account, comment: text)
+  end
+
+  def skip_mute_move?(mute)
+    mute.account.muting?(@target_account) || mute.account.following?(@target_account)
+  end
+
+  def skip_block_move?(block)
+    block.account.blocking?(@target_account) || block.account.following?(@target_account)
   end
 end

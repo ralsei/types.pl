@@ -1,8 +1,9 @@
 import Trie from 'substring-trie';
 
+import { getIsSystemTheme, isDarkMode } from '@/flavours/glitch/utils/theme';
 import { assetHost } from 'flavours/glitch/utils/config';
 
-import { autoPlayGif, useSystemEmojiFont } from '../../initial_state';
+import { autoPlayGif } from '../../initial_state';
 
 import { unicodeMapping } from './emoji_unicode_mapping_light';
 
@@ -39,13 +40,13 @@ const emojifyTextNode = (node, customEmojis) => {
   for (;;) {
     let unicode_emoji;
 
-    // Skip to the next potential emoji to replace (either custom emoji or custom emoji :shortcode:)
+    // Skip to the next potential emoji to replace (either custom emoji or custom emoji :shortcode:
     if (customEmojis === null) {
-      while (i < str.length && (useSystemEmojiFont || !(unicode_emoji = trie.search(str.slice(i))))) {
+      while (i < str.length && !(unicode_emoji = trie.search(str.slice(i)))) {
         i += str.codePointAt(i) < 65536 ? 1 : 2;
       }
     } else {
-      while (i < str.length && str[i] !== ':' && (useSystemEmojiFont || !(unicode_emoji = trie.search(str.slice(i))))) {
+      while (i < str.length && str[i] !== ':' && !(unicode_emoji = trie.search(str.slice(i)))) {
         i += str.codePointAt(i) < 65536 ? 1 : 2;
       }
     }
@@ -97,9 +98,9 @@ const emojifyTextNode = (node, customEmojis) => {
       const { filename, shortCode } = unicodeMapping[unicode_emoji];
       const title = shortCode ? `:${shortCode}:` : '';
 
-      const isSystemTheme = !!document.body?.classList.contains('theme-system');
+      const isSystemTheme = getIsSystemTheme();
 
-      const theme = (isSystemTheme || document.body?.classList.contains('theme-mastodon-light')) ? 'light' : 'dark';
+      const theme = (isSystemTheme || !isDarkMode()) ? 'light' : 'dark';
 
       const imageFilename = emojiFilename(filename, theme);
 
@@ -148,6 +149,12 @@ const emojifyNode = (node, customEmojis) => {
   }
 };
 
+/**
+ * Legacy emoji processing function.
+ * @param {string} str
+ * @param {object} customEmojis
+ * @returns {string}
+ */
 const emojify = (str, customEmojis = {}) => {
   const wrapper = document.createElement('div');
   wrapper.innerHTML = str;

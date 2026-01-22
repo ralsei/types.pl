@@ -55,6 +55,11 @@ type ColumnMap = ImmutableMap<'id' | 'uuid' | 'params', string>;
 const glitchProbability = 1 - 0.0420215528;
 const totalElefriends = 3;
 
+const pickRandomFriend = () =>
+  Math.random() < glitchProbability
+    ? Math.floor(Math.random() * totalElefriends)
+    : totalElefriends;
+
 const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
@@ -75,11 +80,7 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
         false,
       ) as boolean,
   );
-  const [elefriend, setElefriend] = useState(
-    Math.random() < glitchProbability
-      ? Math.floor(Math.random() * totalElefriends)
-      : totalElefriends,
-  );
+  const [elefriend, setElefriend] = useState(pickRandomFriend());
 
   useEffect(() => {
     dispatch(mountCompose());

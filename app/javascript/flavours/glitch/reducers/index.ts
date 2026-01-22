@@ -34,6 +34,7 @@ import { relationshipsReducer } from './relationships';
 import { searchReducer } from './search';
 import server from './server';
 import settings from './settings';
+import { sliceReducers } from './slices';
 import status_lists from './status_lists';
 import statuses from './statuses';
 import { suggestionsReducer } from './suggestions';
@@ -82,6 +83,7 @@ const reducers = {
   notificationPolicy: notificationPolicyReducer,
   notificationRequests: notificationRequestsReducer,
   navigation: navigationReducer,
+  ...sliceReducers,
 };
 
 // We want the root state to be an ImmutableRecord, which is an object with a defined list of keys,
@@ -103,9 +105,9 @@ const RootStateRecord = ImmutableRecord(initialRootState, 'RootState');
 export const rootReducer = combineReducers(reducers, RootStateRecord);
 
 export function reducerWithInitialState(
-  stateOverrides: Record<string, unknown> = {},
+  ...stateOverrides: Record<string, unknown>[]
 ) {
-  const initialStateRecord = mergeDeep(initialRootState, stateOverrides);
+  const initialStateRecord = mergeDeep(initialRootState, ...stateOverrides);
   const PatchedRootStateRecord = ImmutableRecord(
     initialStateRecord,
     'RootState',

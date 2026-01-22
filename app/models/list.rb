@@ -17,6 +17,7 @@ class List < ApplicationRecord
   include Paginable
 
   PER_ACCOUNT_LIMIT = 50
+  TITLE_LENGTH_LIMIT = 256
 
   enum :replies_policy, { list: 0, followed: 1, none: 2 }, prefix: :show, validate: true
 
@@ -26,11 +27,13 @@ class List < ApplicationRecord
   has_many :accounts, through: :list_accounts
   has_many :active_accounts, -> { merge(ListAccount.active) }, through: :list_accounts, source: :account
 
-  validates :title, presence: true
+  validates :title, presence: true, length: { maximum: TITLE_LENGTH_LIMIT }
 
   validate :validate_account_lists_limit, on: :create
 
   before_destroy :clean_feed_manager
+
+  scope :with_list_account, ->(account) { joins(:list_accounts).where(list_accounts: { account: }) }
 
   private
 

@@ -31,6 +31,10 @@ module User::HasSettings
     settings['web.reblog_modal']
   end
 
+  def setting_quick_boosting
+    settings['web.quick_boosting']
+  end
+
   def setting_delete_modal
     settings['web.delete_modal']
   end
@@ -47,10 +51,6 @@ module User::HasSettings
     settings['web.use_system_font']
   end
 
-  def setting_system_emoji_font
-    settings['web.use_system_emoji_font']
-  end
-
   def setting_system_scrollbars_ui
     settings['web.use_system_scrollbars']
   end
@@ -65,6 +65,14 @@ module User::HasSettings
 
   def setting_skin
     settings['skin']
+  end
+
+  def setting_color_scheme
+    settings['web.color_scheme']
+  end
+
+  def setting_contrast
+    settings['web.contrast']
   end
 
   def setting_display_media
@@ -125,6 +133,10 @@ module User::HasSettings
 
   def setting_hide_followers_count
     settings['hide_followers_count']
+  end
+
+  def setting_default_quote_policy
+    settings['default_quote_policy'] || 'public'
   end
 
   def allows_report_emails?

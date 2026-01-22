@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 
 import { debounce } from 'lodash';
 
-import { scrollTopTimeline, loadPending } from '../../../actions/timelines';
-import StatusList from '../../../components/status_list';
-import { me } from '../../../initial_state';
+import { scrollTopTimeline, loadPending } from '@/flavours/glitch/actions/timelines';
+import { isNonStatusId } from '@/flavours/glitch/actions/timelines_typed';
+import StatusList from '@/flavours/glitch/components/status_list';
+import { me } from '@/flavours/glitch/initial_state';
 
 const getRegex = createSelector([
   (state, { regex }) => regex,
@@ -28,7 +29,7 @@ const makeGetStatusIds = (pending = false) => createSelector([
   getRegex,
 ], (columnSettings, statusIds, statuses, regex) => {
   return statusIds.filter(id => {
-    if (id === null || id === 'inline-follow-suggestions') return true;
+    if (isNonStatusId(id)) return true;
 
     const statusForId = statuses.get(id);
 
@@ -63,10 +64,10 @@ const makeMapStateToProps = () => {
   const getStatusIds = makeGetStatusIds();
   const getPendingStatusIds = makeGetStatusIds(true);
 
-  const mapStateToProps = (state, { timelineId, regex }) => ({
+  const mapStateToProps = (state, { timelineId, regex, initialLoadingState = true }) => ({
     statusIds: getStatusIds(state, { type: timelineId, regex }),
     lastId:    state.getIn(['timelines', timelineId, 'items'])?.last(),
-    isLoading: state.getIn(['timelines', timelineId, 'isLoading'], true),
+    isLoading: state.getIn(['timelines', timelineId, 'isLoading'], initialLoadingState),
     isPartial: state.getIn(['timelines', timelineId, 'isPartial'], false),
     hasMore:   state.getIn(['timelines', timelineId, 'hasMore']),
     numPending: getPendingStatusIds(state, { type: timelineId }).size,

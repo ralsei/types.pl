@@ -20,6 +20,8 @@ class REST::AccountSerializer < ActiveModel::Serializer
 
   attribute :memorial, if: :memorial?
 
+  attribute :feature_approval, if: -> { Mastodon::Feature.collections_enabled? }
+
   class AccountDecorator < SimpleDelegator
     def self.model_name
       Account.model_name
@@ -65,7 +67,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
   end
 
   def url
-    ActivityPub::TagManager.instance.url_for(object)
+    ActivityPub::TagManager.instance.url_for(object) || ActivityPub::TagManager.instance.uri_for(object)
   end
 
   def uri
@@ -160,5 +162,13 @@ class REST::AccountSerializer < ActiveModel::Serializer
 
   def moved_and_not_nested?
     object.moved?
+  end
+
+  def feature_approval
+    {
+      automatic: object.feature_policy_as_keys(:automatic),
+      manual: object.feature_policy_as_keys(:manual),
+      current_user: object.feature_policy_for_account(current_user&.account),
+    }
   end
 end

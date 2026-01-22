@@ -21,6 +21,8 @@ class ApplicationController < ActionController::Base
   helper_method :current_flavour
   helper_method :current_skin
   helper_method :current_theme
+  helper_method :color_scheme
+  helper_method :contrast
   helper_method :single_user_mode?
   helper_method :use_seamless_external_login?
   helper_method :sso_account_settings
@@ -31,7 +33,7 @@ class ApplicationController < ActionController::Base
   rescue_from Mastodon::NotPermittedError, with: :forbidden
   rescue_from ActionController::RoutingError, ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActionController::UnknownFormat, with: :not_acceptable
-  rescue_from ActionController::InvalidAuthenticityToken, with: :unprocessable_entity
+  rescue_from ActionController::InvalidAuthenticityToken, with: :unprocessable_content
   rescue_from Mastodon::RateLimitExceededError, with: :too_many_requests
 
   rescue_from(*Mastodon::HTTP_CONNECTION_ERRORS, with: :internal_server_error)
@@ -126,7 +128,7 @@ class ApplicationController < ActionController::Base
     respond_with_error(410)
   end
 
-  def unprocessable_entity
+  def unprocessable_content
     respond_with_error(422)
   end
 
@@ -172,6 +174,25 @@ class ApplicationController < ActionController::Base
     return @current_session if defined?(@current_session)
 
     @current_session = SessionActivation.find_by(session_id: cookies.signed['_session_id']) if cookies.signed['_session_id'].present?
+  end
+
+  def color_scheme
+    current = current_user&.setting_color_scheme
+    return current if current && current != 'auto'
+
+    return 'dark' if current_skin.include?('default') || current_skin.include?('contrast')
+    return 'light' if current_skin.include?('light')
+
+    'auto'
+  end
+
+  def contrast
+    current = current_user&.setting_contrast
+    return current if current && current != 'auto'
+
+    return 'high' if current_skin.include?('contrast')
+
+    'auto'
   end
 
   def respond_with_error(code)

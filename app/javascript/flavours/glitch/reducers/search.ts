@@ -65,6 +65,9 @@ export const searchReducer = createReducer(initialState, (builder) => {
     (state, action) => {
       state.type = action.meta.arg.type;
       state.loading = true;
+      if (action.type === submitSearch.pending.type) {
+        state.results = undefined;
+      }
     },
   );
 

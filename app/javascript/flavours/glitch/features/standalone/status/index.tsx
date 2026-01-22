@@ -14,7 +14,7 @@ import { hydrateStore } from 'flavours/glitch/actions/store';
 import { Router } from 'flavours/glitch/components/router';
 import { DetailedStatus } from 'flavours/glitch/features/status/components/detailed_status';
 import { useRenderSignal } from 'flavours/glitch/hooks/useRenderSignal';
-import initialState from 'flavours/glitch/initial_state';
+import { initialState } from 'flavours/glitch/initial_state';
 import { IntlProvider } from 'flavours/glitch/locales';
 import {
   makeGetStatus,
@@ -38,7 +38,7 @@ const Embed: React.FC<{ id: string }> = ({ id }) => {
   const dispatchRenderSignal = useRenderSignal();
 
   useEffect(() => {
-    dispatch(fetchStatus(id, false, false));
+    dispatch(fetchStatus(id, { alsoFetchContext: false }));
   }, [dispatch, id]);
 
   const handleToggleHidden = useCallback(() => {

@@ -19,6 +19,20 @@ export function GlitchThemes(): Plugin {
   return {
     name: 'glitch-themes',
     async config(userConfig) {
+      const existingInputs = userConfig.build?.rollupOptions?.input;
+
+      if (typeof existingInputs === 'string') {
+        entrypoints[path.basename(existingInputs)] = existingInputs;
+      } else if (Array.isArray(existingInputs)) {
+        for (const input of existingInputs) {
+          if (typeof input === 'string') {
+            entrypoints[path.basename(input)] = input;
+          }
+        }
+      } else if (typeof existingInputs === 'object') {
+        Object.assign(entrypoints, existingInputs);
+      }
+
       if (!userConfig.root || !userConfig.envDir) {
         throw new Error('Unknown project directory');
       }

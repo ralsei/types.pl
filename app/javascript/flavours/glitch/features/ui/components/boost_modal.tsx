@@ -53,7 +53,10 @@ export const BoostModal: React.FC<{
   }, [onClose]);
 
   const findContainer = useCallback(
-    () => document.getElementsByClassName('modal-root__container')[0],
+    () =>
+      document.getElementsByClassName(
+        'modal-root__container',
+      )[0] as HTMLDivElement,
     [],
   );
 
@@ -121,7 +124,7 @@ export const BoostModal: React.FC<{
 
           <div className='spacer' />
 
-          <button onClick={handleCancel} className='link-button'>
+          <button onClick={handleCancel} className='link-button' type='button'>
             <FormattedMessage
               id='confirmation_modal.cancel'
               defaultMessage='Cancel'

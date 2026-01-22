@@ -7,6 +7,8 @@ sv:
     hosted_on: Mastodon-värd på %{domain}
     title: Om
   accounts:
+    errors:
+      cannot_be_added_to_collections: Detta konto kan inte läggas till i samlingar.
     followers:
       one: Följare
       other: Följare
@@ -190,6 +192,7 @@ sv:
         create_relay: Skapa ombud
         create_unavailable_domain: Skapa otillgänglig domän
         create_user_role: Skapa roll
+        create_username_block: Skapa användarnamnsregel
         demote_user: Degradera användare
         destroy_announcement: Radera notis
         destroy_canonical_email_block: Ta bort e-post block
@@ -203,6 +206,7 @@ sv:
         destroy_status: Radera inlägg
         destroy_unavailable_domain: Ta bort otillgänglig domän
         destroy_user_role: Förstör roll
+        destroy_username_block: Ta bort användarnamnsregel
         disable_2fa_user: Inaktivera 2FA
         disable_custom_emoji: Inaktivera egna emojis
         disable_relay: Inaktivera ombud
@@ -237,6 +241,7 @@ sv:
         update_report: Uppdatera rapport
         update_status: Uppdatera inlägg
         update_user_role: Uppdatera roll
+        update_username_block: Uppdatera användarnamnsregel
       actions:
         approve_appeal_html: "%{name} godkände överklagande av modereringsbeslut från %{target}"
         approve_user_html: "%{name} godkände registrering från %{target}"
@@ -255,6 +260,7 @@ sv:
         create_relay_html: "%{name} skapade ombudet %{target}"
         create_unavailable_domain_html: "%{name} stoppade leverans till domänen %{target}"
         create_user_role_html: "%{name} skapade rollen %{target}"
+        create_username_block_html: "%{name} lade till regel för användarnamn som innehåller %{target}"
         demote_user_html: "%{name} nedgraderade användare %{target}"
         destroy_announcement_html: "%{name} raderade kungörelsen %{target}"
         destroy_canonical_email_block_html: "%{name} avblockerade e-post med hash%{target}"
@@ -268,6 +274,7 @@ sv:
         destroy_status_html: "%{name} tog bort inlägget av %{target}"
         destroy_unavailable_domain_html: "%{name} återupptog leverans till domänen %{target}"
         destroy_user_role_html: "%{name} raderade rollen %{target}"
+        destroy_username_block_html: "%{name} borttagna regler för användarnamn som innehåller %{target}"
         disable_2fa_user_html: "%{name} inaktiverade tvåfaktorsautentiseringskrav för användaren %{target}"
         disable_custom_emoji_html: "%{name} inaktiverade emoji %{target}"
         disable_relay_html: "%{name} inaktiverade ombudet %{target}"
@@ -302,6 +309,7 @@ sv:
         update_report_html: "%{name} uppdaterade rapporten %{target}"
         update_status_html: "%{name} uppdaterade inlägget av %{target}"
         update_user_role_html: "%{name} ändrade rollen %{target}"
+        update_username_block_html: "%{name} uppdaterade regel för användarnamn som innehåller %{target}"
       deleted_account: raderat konto
       empty: Inga loggar hittades.
       filter_by_action: Filtrera efter åtgärd
@@ -790,6 +798,8 @@ sv:
         view_dashboard_description: Ger användare tillgång till instrumentpanelen och olika mätvärden
         view_devops: DevOps
         view_devops_description: Ger användare tillgång till instrumentpanelerna Sidekiq och pgHero
+        view_feeds: Visa live- och ämnesflöden
+        view_feeds_description: Ger användare tillgång till live-och ämnesflöden oavsett serverinställningar
       title: Roller
     rules:
       add_new: Lägg till regel
@@ -831,17 +841,28 @@ sv:
         title: Undantag användare från sökmotorindexering som standard
       discovery:
         follow_recommendations: Följrekommendationer
-        preamble: Att visa intressant innehåll är avgörande i onboarding av nya användare som kanske inte känner någon på Mastodon. Styr hur olika upptäcktsfunktioner fungerar på din server.
+        preamble: Att visa intressant innehåll är avgörande för nya användare som kanske inte känner någon på Mastodon. Styr hur olika upptäcktsfunktioner fungerar på din Server.
         privacy: Integritet
         profile_directory: Profilkatalog
         public_timelines: Offentliga tidslinjer
         publish_statistics: Publicera statistik
         title: Upptäck
         trends: Trender
+        wrapstodon: Wrapstodon
       domain_blocks:
         all: Till alla
         disabled: För ingen
         users: För inloggade lokala användare
+      feed_access:
+        modes:
+          authenticated: Endast autentiserade användare
+          disabled: Kräv specifik användarroll
+          public: Alla
+      landing_page:
+        values:
+          about: Om
+          local_feed: Lokalt flöde
+          trends: Trender
       registrations:
         moderation_recommandation: Se till att du har ett tillräckligt och reaktivt modereringsteam innan du öppnar registreringar till alla!
         preamble: Kontrollera vem som kan skapa ett konto på din server.
@@ -895,6 +916,7 @@ sv:
       no_status_selected: Inga inlägg ändrades eftersom inga valdes
       open: Öppna inlägg
       original_status: Ursprungligt inlägg
+      quotes: Citat
       reblogs: Ombloggningar
       replied_to_html: Svarade på %{acct_link}
       status_changed: Inlägg ändrat
@@ -902,6 +924,7 @@ sv:
       title: Kontoinlägg - @%{name}
       trending: Trendande
       view_publicly: Visa offentligt
+      view_quoted_post: Visa citerat inlägg
       visibility: Synlighet
       with_media: Med media
     strikes:
@@ -1085,6 +1108,25 @@ sv:
           other: Använd av %{count} personer under den senaste veckan
       title: Rekommendationer & Trender
       trending: Trendande
+    username_blocks:
+      add_new: Lägg till ny
+      block_registrations: Registrerade blockeringar
+      comparison:
+        contains: Innehåller
+        equals: Lika
+      contains_html: Innehåller %{string}
+      created_msg: Användarnamnsregel har skapats
+      delete: Ta bort
+      edit:
+        title: Redigera användarnamnsregel
+      matches_exactly_html: Lika med %{string}
+      new:
+        create: Skapa regel
+        title: Skapa ny användarnamnsregel
+      no_username_block_selected: Inga användarnamn regler ändrades eftersom ingen valdes
+      not_permitted: Ej tillåtet
+      title: Regler för användarnamn
+      updated_msg: Uppdaterade användarnamnsregel
     warning_presets:
       add_new: Lägg till ny
       delete: Radera
@@ -1157,10 +1199,10 @@ sv:
     hint_html: Om du vill flytta från ett annat konto till detta kan du skapa ett alias här, detta krävs innan du kan fortsätta med att flytta följare från det gamla kontot till detta. Denna åtgärd är <strong>ofarlig och kan ångras</strong>. <strong>Kontomigreringen initieras från det gamla kontot.</strong>.
     remove: Avlänka alias
   appearance:
-    advanced_web_interface: Avancerat webbgränssnitt
-    advanced_web_interface_hint: 'Om du vill utnyttja hela skärmens bredd så kan du i det avancerade webbgränssnittet ställa in många olika kolumner för att se så mycket information samtidigt som du vill: Hem, notiser, federerad tidslinje, valfritt antal listor och hashtaggar.'
+    advanced_settings: Avancerade inställningar
     animations_and_accessibility: Animationer och tillgänglighet
-    confirmation_dialogs: Bekräftelsedialoger
+    boosting_preferences: Boostinställningar
+    boosting_preferences_info_html: "<strong>Tips:</strong> Oavsett inställningar kommer <kbd>Skifttangenten</kbd> + <kbd>Klick</kbd> på %{icon} boostikonen att boosta omedelbart."
     discovery: Upptäck
     localization:
       body: Mastodon översätts av volontärer.
@@ -1277,6 +1319,13 @@ sv:
     hint_html: "<strong>Tips:</strong> Vi frågar dig inte efter ditt lösenord igen under nästkommande timme."
     invalid_password: Ogiltigt lösenord
     prompt: Bekräfta lösenord för att fortsätta
+  color_scheme:
+    auto: Auto
+    dark: Mörkt
+    light: Ljust
+  contrast:
+    auto: Auto
+    high: Hög
   crypto:
     errors:
       invalid_key: är inte en giltig Ed25519 eller Curve25519 nyckel
@@ -1349,6 +1398,10 @@ sv:
     basic_information: Allmän information
     hint_html: "<strong>Anpassa vad folk ser på din offentliga profil och bredvid dina inlägg.</strong> Andra personer är mer benägna att följa dig och interagera med dig när du har en ifylld profil och en profilbild."
     other: Övrigt
+  emoji_styles:
+    auto: Automatiskt
+    native: Ursprunglig
+    twemoji: Twemoji
   errors:
     '400': Förfrågningen som du skickade in var ogiltig eller felaktigt utformad.
     '403': Du har inte behörighet att visa den här sidan.
@@ -1558,6 +1611,13 @@ sv:
       expires_at: Utgår
       uses: Användningar
     title: Bjud in andra
+  link_preview:
+    author_html: Av %{name}
+    potentially_sensitive_content:
+      action: Klicka för att visa
+      confirm_visit: Är du säker på att du vill öppna den här länken?
+      hide_button: Dölj
+      label: Potentiellt känsligt innehåll
   lists:
     errors:
       limit: Du har nått det maximala antalet listor
@@ -1622,7 +1682,7 @@ sv:
       disabled_account: Ditt nuvarande konto kommer inte att kunna användas fullt ut efteråt. Du kommer dock att ha tillgång till dataexport samt återaktivering.
       followers: Den här åtgärden kommer att flytta alla följare från det nuvarande kontot till det nya kontot
       only_redirect_html: Alternativt kan du <a href="%{path}">bara sätta upp en omdirigering på din profil</a>.
-      other_data: Ingen annan data kommer att flyttas automatiskt
+      other_data: Inga andra data kommer att flyttas automatiskt (inklusive dina inlägg och listan över konton du följer)
       redirect: Ditt nuvarande kontos profil kommer att uppdateras med ett meddelande om omdirigering och uteslutas från sökningar
   moderation:
     title: Moderera
@@ -1656,12 +1716,22 @@ sv:
       body: 'Du nämndes av %{name} i:'
       subject: Du nämndes av %{name}
       title: Ny omnämning
+    moderation_warning:
+      subject: Du har mottagit en modereringsvarning
     poll:
       subject: En undersökning av %{name} har avslutats
+    quote:
+      body: 'Ditt inlägg citerades av %{name}:'
+      subject: "%{name} citerade ditt inlägg"
+      title: Nytt citat
+    quoted_update:
+      subject: "%{name} redigerade ett inlägg du har citerat"
     reblog:
       body: 'Ditt inlägg boostades av %{name}:'
       subject: "%{name} boostade ditt inlägg"
       title: Ny boost
+    severed_relationships:
+      subject: Du har förlorat kontakter på grund av ett moderationsbeslut
     status:
       subject: "%{name} publicerade just ett inlägg"
     update:
@@ -1706,6 +1776,9 @@ sv:
       self_vote: Du kan inte rösta i dina egna omröstningar
       too_few_options: måste ha mer än ett objekt
       too_many_options: kan inte innehålla mer än %{max} objekt
+    vote: Rösta
+  posting_defaults:
+    explanation: Dessa inställningar kommer att användas som standard när du skapar nya inlägg, men du kan redigera dem per inlägg i kompositören.
   preferences:
     other: Annat
     posting_defaults: Standardinställningar för inlägg
@@ -1861,6 +1934,9 @@ sv:
         other: "%{count} videor"
     boosted_from_html: Boostad från %{acct_link}
     content_warning: 'Innehållsvarning: %{warning}'
+    content_warnings:
+      hide: Dölj inlägg
+      show: Visa mer
     default_language: Samma som användargränssnittet
     disallowed_hashtags:
       one: 'innehöll en otillåten hashtag: %{tags}'
@@ -1868,34 +1944,40 @@ sv:
     edited_at_html: 'Ändrad: %{date}'
     errors:
       in_reply_not_found: Inlägget du försöker svara på verkar inte existera.
+      quoted_status_not_found: Inlägget du försöker svara på verkar inte existera.
+      quoted_user_not_mentioned: Kan inte citera en icke-omnämnt användare i ett privat omnämnandeinlägg.
     over_character_limit: teckengräns på %{max} har överskridits
     pin_errors:
       direct: Inlägg som endast är synliga för nämnda användare kan inte fästas
       limit: Du har redan fäst det maximala antalet inlägg
       ownership: Någon annans inlägg kan inte fästas
       reblog: En boost kan inte fästas
+    quote_error:
+      not_available: Inlägg ej tillgängligt
+      pending_approval: Väntande inlägg
+      revoked: Inlägg borttaget av författaren
     quote_policies:
-      followers: Följare och omnämnda användare
-      nobody: Endast nämnda användare
+      followers: Endast följare
+      nobody: Bara jag
       public: Alla
+    quote_post_author: Citerade ett inlägg av %{acct}
     title: '%{name}: "%{quote}"'
     visibilities:
-      direct: Direkt
+      direct: Privat omnämnande
       private: Endast följare
-      private_long: Visa endast till följare
       public: Offentlig
-      public_long: Alla kan se
-      unlisted: Olistade
-      unlisted_long: Alla kan se, men listas inte på offentliga tidslinjer
+      public_long: Alla på och utanför Mastodon
+      unlisted: Offentlig (begränsad)
+      unlisted_long: Dold från Mastodon-sökresultat, trendar och offentliga tidslinjer
   statuses_cleanup:
     enabled: Ta automatiskt bort gamla inlägg
     enabled_hint: Raderar dina inlägg automatiskt när de når en specifik ålder, såvida de inte matchar något av undantagen nedan
     exceptions: Undantag
-    explanation: Eftersom inläggsradering är resursintensivt görs detta stegvis när servern inte är högbelastad. Därför kan det dröja innan dina inlägg raderas efter att de uppnått ålderströskeln.
+    explanation: Automatisk radering utförs med låg prioritet. Det kan finnas en fördröjning mellan att nå åldersgränsen och att tas bort.
     ignore_favs: Bortse från favoriter
     ignore_reblogs: Ignorera boostar
     interaction_exceptions: Undantag baserat på interaktioner
-    interaction_exceptions_explanation: Observera att det inte finns någon garanti att inlägg blir raderade om de går under favorit- eller boost-tröskeln efter att en gång ha gått över dem.
+    interaction_exceptions_explanation: Inlägg som tillfälligt överskrider favorit- eller höjningströskeln kan behållas även om de senare minskas.
     keep_direct: Behåll direktmeddelanden
     keep_direct_hint: Tar inte bort någon av dina direktmeddelanden
     keep_media: Behåll inlägg med mediebilagor
@@ -2108,8 +2190,12 @@ sv:
       error: Det gick inte att ta bort din säkerhetsnyckel. Försök igen.
       success: Din säkerhetsnyckel har raderats.
     invalid_credential: Ogiltig säkerhetsnyckel
+    nickname: Smeknamn
     nickname_hint: Ange smeknamnet på din nya säkerhetsnyckel
     not_enabled: Du har inte aktiverat WebAuthn än
     not_supported: Denna webbläsare stöder inte säkerhetsnycklar
     otp_required: För att använda säkerhetsnycklar måste du först aktivera tvåfaktorsautentisering.
     registered_on: Registrerad den %{date}
+  wrapstodon:
+    description: Se hur %{name} använde Mastodon i år!
+    title: Wrapstodon %{year} för %{name}

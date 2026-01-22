@@ -12,7 +12,7 @@ Differences from glitch-soc:
 - LaTeX support is provided via MathJax, with `\\( this for inline math \\)`, and either `$$ this $$` or `\\[ this \\]` for display math.
   - Additionally supports rendering MathML. This is in place for future work.
 - Cherry-picks the [favourite federation fix](https://git.kescher.at/CatCatNya/catstodon/commit/16be9e975b495c43035cda4e82ead2cb5374f700) from [catstodon](https://git.kescher.at/CatCatNya/catstodon).
-- "Post" changed to "toot", despite being on version 4.1.3.
+- "Post" changed to "toot", despite being on version 4.5.5.
 - Oatstodon theme, provided by [oat](https://hellsite.site/@oat).
 - Various branding assets changed.
 
