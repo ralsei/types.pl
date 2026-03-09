@@ -96,7 +96,6 @@
   font-family: inherit;
   font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0;
   line-height: 22px;
   overflow: hidden;
   padding: 7px 18px;
@@ -426,7 +425,6 @@ body > [data-popper-placement] {
       cursor: pointer;
       font-size: 14px;
       line-height: 20px;
-      letter-spacing: 0.25px;
       color: var(--color-text-primary);
 
       &:last-child {
@@ -919,7 +917,6 @@ body > [data-popper-placement] {
         font-size: 11px;
         font-weight: 500;
         line-height: 16px;
-        letter-spacing: 0.5px;
         color: var(--color-text-secondary);
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -935,7 +932,6 @@ body > [data-popper-placement] {
         font-size: 14px;
         font-weight: 500;
         line-height: 20px;
-        letter-spacing: 0.1px;
         color: var(--color-text-brand);
         background-color: var(--color-bg-secondary-solid);
         white-space: nowrap;
@@ -1242,7 +1238,6 @@ body > [data-popper-placement] {
   &__content {
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: 0.25px;
     display: -webkit-box;
     line-clamp: 4;
     -webkit-line-clamp: 4;
@@ -1320,7 +1315,6 @@ body > [data-popper-placement] {
     color: var(--color-text-primary);
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: 0.25px;
     padding-top: 0 !important;
     display: -webkit-box;
     line-clamp: 4;
@@ -1971,13 +1965,11 @@ body > [data-popper-placement] {
   padding: 12px;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0.25px;
   min-height: 56px;
 
   .link-button {
     font-size: inherit;
     line-height: inherit;
-    letter-spacing: inherit;
   }
 }
 
@@ -1992,7 +1984,6 @@ body > [data-popper-placement] {
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  letter-spacing: 0.25px;
   color: var(--color-text-secondary);
   background: var(--color-bg-brand-softer);
   border-radius: 8px;
@@ -2011,19 +2002,16 @@ body > [data-popper-placement] {
   .status__relative-time {
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: 0.1px;
   }
 
   .display-name__account {
     font-size: 12px;
     line-height: 16px;
-    letter-spacing: 0.5px;
   }
 
   .status__content {
     display: -webkit-box;
     font-size: 14px;
-    letter-spacing: 0.25px;
     line-height: 20px;
     -webkit-line-clamp: 4;
     line-clamp: 4;
@@ -2281,7 +2269,6 @@ body > [data-popper-placement] {
     font-size: inherit;
     font-weight: 500;
     line-height: inherit;
-    letter-spacing: 0.1px;
   }
 
   .link-button {
@@ -5202,7 +5189,6 @@ a.status-card {
   h3 {
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: 0.5px;
     font-weight: 500;
     color: var(--color-text-primary);
     margin-bottom: 16px;
@@ -5713,7 +5699,6 @@ a.status-card {
 .visibility-dropdown__option {
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0.25px;
   padding: 8px 12px;
   cursor: pointer;
   display: flex;
@@ -5915,7 +5900,6 @@ a.status-card {
         @media screen and (width <= 600px) {
           font-size: 16px;
           line-height: 24px;
-          letter-spacing: 0.5px;
         }
       }
     }
@@ -5949,7 +5933,6 @@ a.status-card {
         color: var(--color-text-primary);
         font-size: 14px;
         line-height: 20px;
-        letter-spacing: 0.25px;
         font-weight: 500;
         padding: 8px 12px;
         border-radius: 4px;
@@ -6576,7 +6559,6 @@ a.status-card {
       text-wrap: balance;
       font-size: 14px;
       line-height: 20px;
-      letter-spacing: 0.25px;
 
       &__actions {
         margin-top: 24px;
@@ -6843,14 +6825,12 @@ a.status-card {
       font-size: 16px;
       line-height: 24px;
       font-weight: 500;
-      letter-spacing: 0.15px;
     }
   }
 
   &__content {
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: 0.25px;
     overflow-y: auto;
 
     &__description {
@@ -11113,7 +11093,6 @@ noscript {
       align-items: center;
       gap: 6px;
       font-size: 16px;
-      letter-spacing: 0.5px;
       line-height: 24px;
       color: var(--color-text-primary);
 

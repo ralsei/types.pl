@@ -20,7 +20,6 @@ class OEmbedSerializer < ActiveModel::Serializer
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Roboto, sans-serif;
       font-size: 14px;
       justify-content: center;
-      letter-spacing: 0.25px;
       line-height: 20px;
       padding: 24px;
       text-decoration: none;
