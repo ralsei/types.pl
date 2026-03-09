@@ -29,6 +29,12 @@ RSpec.describe CreateCollectionService do
         expect(collection).to be_local
       end
 
+      it 'federates an `Add` activity', feature: :collections_federation do
+        subject.call(base_params, author)
+
+        expect(ActivityPub::AccountRawDistributionWorker).to have_enqueued_sidekiq_job
+      end
+
       context 'when given account ids' do
         let(:accounts) do
           Fabricate.times(2, :account)
@@ -53,6 +59,16 @@ RSpec.describe CreateCollectionService do
             expect do
               subject.call(params, author)
             end.to raise_error(Mastodon::NotPermittedError)
+          end
+        end
+
+        context 'when some accounts are remote' do
+          let(:accounts) { Fabricate.times(2, :remote_account, feature_approval_policy: (0b10 << 16)) }
+
+          it 'federates `FeatureRequest` activities', feature: :collections_federation do
+            subject.call(params, author)
+
+            expect(ActivityPub::FeatureRequestWorker).to have_enqueued_sidekiq_job.exactly(2).times
           end
         end
       end

@@ -12,21 +12,23 @@ pt-BR:
     followers:
       one: Seguidor
       other: Seguidores
-    following: Seguindo
+    following:
+      one: Seguindo
+      other: Seguindo
     instance_actor_flash: Esta conta é um ator virtual usado para representar o próprio servidor e não um usuário individual. É utilizada para fins de federação e não deve ser suspensa.
     last_active: última atividade
-    link_verified_on: O link foi verificado em %{date}
+    link_verified_on: A propriedade do link foi verificada em %{date}
     nothing_here: Nada aqui!
     pin_errors:
-      following: Você deve estar seguindo a pessoa que você deseja sugerir
+      following: Você deve já estar seguindo a pessoa que você deseja sugerir
     posts:
       one: Publicação
       other: Publicações
     posts_tab_heading: Publicações
-    self_follow_error: Seguir sua conta não é permitido
+    self_follow_error: Não é permitido seguir sua própria conta
   admin:
     account_actions:
-      action: Tomar uma atitude
+      action: Efetuar uma ação
       already_silenced: Esta conta já foi limitada.
       already_suspended: Esta conta já foi suspensa.
       title: Moderar %{acct}
@@ -54,6 +56,7 @@ pt-BR:
         label: Alterar função
         no_role: Nenhuma função
         title: Alterar função para %{username}
+      collections: Coleções
       confirm: Confirmar
       confirmed: Confirmado
       confirming: Confirmando
@@ -264,6 +267,7 @@ pt-BR:
         demote_user_html: "%{name} rebaixou o usuário %{target}"
         destroy_announcement_html: "%{name} excluiu o anúncio %{target}"
         destroy_canonical_email_block_html: "%{name} desbloqueou o endereço e-mail com o hash %{target}"
+        destroy_collection_html: "%{name} removeu coleção de %{target}"
         destroy_custom_emoji_html: "%{name} apagou o emoji %{target}"
         destroy_domain_allow_html: "%{name} bloqueou federação com domínio %{target}"
         destroy_domain_block_html: "%{name} desbloqueou o domínio %{target}"
@@ -303,6 +307,7 @@ pt-BR:
         unsilence_account_html: "%{name} removeu a limitação da conta de %{target}"
         unsuspend_account_html: "%{name} removeu a suspenção da conta de %{target}"
         update_announcement_html: "%{name} atualizou o anúncio %{target}"
+        update_collection_html: "%{name} atualizou a coleção de %{target}"
         update_custom_emoji_html: "%{name} atualizou o emoji %{target}"
         update_domain_block_html: "%{name} atualizou o bloqueio de domínio de %{target}"
         update_ip_block_html: "%{name} alterou a regra para o IP %{target}"
@@ -338,6 +343,15 @@ pt-BR:
       unpublish: Cancelar publicação
       unpublished_msg: Anúncio desfeito!
       updated_msg: Anúncio atualizado!
+    collections:
+      accounts: Contas
+      collection_title: Coleção de %{name}
+      contents: Conteúdo
+      number_of_accounts:
+        one: 1 conta
+        other: "%{count} contas"
+      open: Abrir
+      view_publicly: Ver publicamente
     critical_update_pending: Atualização crítica pendente
     custom_emojis:
       assign_category: Atribuir categoria
@@ -677,6 +691,7 @@ pt-BR:
       cancel: Cancelar
       category: Categoria
       category_description_html: O motivo pelo qual esta conta e/ou conteúdo foi denunciado será citado na comunicação com a conta denunciada
+      collections: Coleções (%{count})
       comment:
         none: Nenhum
       comment_description_html: 'Para fornecer mais informações, %{name} escreveu:'
@@ -706,12 +721,13 @@ pt-BR:
       report: 'Denúncia #%{id}'
       reported_account: Conta denunciada
       reported_by: Denunciada por
+      reported_content: Conteúdo denunciado
       reported_with_application: Denunciado pelo aplicativo
       resolved: Resolvido
       resolved_msg: Denúncia resolvida!
       skip_to_actions: Pular para ações
       status: Estado
-      statuses: Conteúdo denunciado
+      statuses: Publicações (%{count})
       statuses_description_html: Conteúdo ofensivo será citado em comunicação com a conta denunciada
       summary:
         action_preambles:
@@ -800,6 +816,7 @@ pt-BR:
         view_devops_description: Permite aos usuários acessar os painéis da Sidekiq e pgHero
         view_feeds: Veja transmissões ao vivo e por tópico
         view_feeds_description: Permite que os usuários acessem os feeds ao vivo e por tópico, independentemente das configurações do servidor
+      requires_2fa: Requer autenticação de dois fatores
       title: Funções
     rules:
       add_new: Adicionar regra
@@ -848,6 +865,7 @@ pt-BR:
         publish_statistics: Publicar estatísticas
         title: Descobrir
         trends: Tendências
+        wrapstodon: Wrapstodon
       domain_blocks:
         all: Para todos
         disabled: Para ninguém
@@ -1200,8 +1218,8 @@ pt-BR:
   appearance:
     advanced_settings: Configurações avançadas
     animations_and_accessibility: Animações e acessibilidade
-    boosting_preferences: Adicionar preferências
-    boosting_preferences_info_html: "<strong>Dica:</strong> Independentemente das configurações, <kbd>Shift</kbd> + <kbd>Clique</kbd> no ícone %{icon} Boost irá impulsionar imediatamente."
+    boosting_preferences: Preferências de impulsionamento
+    boosting_preferences_info_html: "<strong>Dica:</strong> Independentemente das configurações, <kbd>Shift</kbd> + <kbd>Clique</kbd> no ícone %{icon} Impulsionar irá impulsionar imediatamente."
     discovery: Descobrir
     localization:
       body: Mastodon é traduzido por voluntários.
@@ -1318,6 +1336,13 @@ pt-BR:
     hint_html: "<strong>Dica:</strong> Não pediremos novamente sua senha pela próxima hora."
     invalid_password: Senha inválida
     prompt: Confirme sua senha para continuar
+  color_scheme:
+    auto: Automático
+    dark: Escuro
+    light: Claro
+  contrast:
+    auto: Automático
+    high: Alto
   crypto:
     errors:
       invalid_key: não é uma chave Ed25519 ou Curve25519 válida
@@ -1480,8 +1505,8 @@ pt-BR:
       one: "<strong>%{count}</strong> item nessa página está selecionado."
       other: Todos os <strong>%{count}</strong> itens nessa página estão selecionados.
     all_matching_items_selected_html:
-      one: "<strong>%{count}</strong> item correspondente à sua pesquisa está selecionado."
-      other: Todos os <strong>%{count}</strong> itens correspondentes à sua pesquisa estão selecionados.
+      one: "<strong>%{count}</strong> item correspondente à sua busca está selecionado."
+      other: Todos os <strong>%{count}</strong> itens correspondentes à sua busca estão selecionados.
     cancel: Cancelar
     changes_saved_msg: Alterações salvas!
     confirm: Confirmar
@@ -1492,8 +1517,8 @@ pt-BR:
     order_by: Ordenar por
     save_changes: Salvar alterações
     select_all_matching_items:
-      one: Selecione %{count} item correspondente à sua pesquisa.
-      other: Selecione todos os %{count} itens correspondentes à sua pesquisa.
+      one: Selecione %{count} item correspondente à sua busca.
+      other: Selecione todos os %{count} itens correspondentes à sua busca.
     today: hoje
     validation_errors:
       one: Algo não está certo! Analise o erro abaixo
@@ -1635,7 +1660,7 @@ pt-BR:
           follow: seguir emails de notificação
           follow_request: emails de seguidores pendentes
           mention: emails de notificação de menções
-          reblog: emails de notificação de boosts
+          reblog: emails de notificação de impulsos
       resubscribe_html: Se você cancelou sua inscrição por engano, você pode se inscrever novamente em suas <a href="%{settings_path}"> configurações de notificações por e-mail</a>.
       success_html: Você não mais receberá %{type} no Mastodon em %{domain} ao seu endereço de e-mail %{email}.
       title: Cancelar inscrição
@@ -1826,7 +1851,7 @@ pt-BR:
       account: Publicações públicas de @%{acct}
       tag: 'Publicações públicas marcadas com #%{hashtag}'
   scheduled_statuses:
-    over_daily_limit: Você excedeu o limite de %{limit} publicações agendadas para esse dia
+    over_daily_limit: Você excedeu o limite de %{limit} publicações agendadas para hoje
     over_total_limit: Você excedeu o limite de %{limit} publicações agendadas
     too_soon: a data deve ser no futuro
   self_destruct:
@@ -1961,14 +1986,16 @@ pt-BR:
       public: Público
       public_long: Qualquer um dentro ou fora do Mástodon
       unlisted: Publicação silenciada
-      unlisted_long: Oculto aos resultados de pesquisa em Mástodon
+      unlisted_long: Oculto aos resultados de busca, destaques e linhas do tempo públicas no Mastodon
   statuses_cleanup:
     enabled: Excluir publicações antigas automaticamente
     enabled_hint: Exclui suas publicações automaticamente assim que elas alcançam sua validade, a não ser que se enquadrem em alguma das exceções abaixo
     exceptions: Exceções
+    explanation: A eliminação automatizada é realizada com baixa prioridade. Pode haver um atraso entre atingir o limite de idade e ser removido.
     ignore_favs: Ignorar favoritos
     ignore_reblogs: Ignorar impulsos
     interaction_exceptions: Exceções baseadas nas interações
+    interaction_exceptions_explanation: Postagens que excedem temporariamente o limite de favoritos ou de impulso podem ser retidos mesmo que posteriormente diminuam.
     keep_direct: Manter mensagens diretas
     keep_direct_hint: Não exclui nenhuma de suas mensagens diretas
     keep_media: Manter publicações com mídia
@@ -2010,10 +2037,7 @@ pt-BR:
     review_link: Revisar os termos do serviço
     title: Os termos de serviço do %{domain} estão mudando
   themes:
-    contrast: Mastodon  (Alto contraste)
-    default: Mastodon (Noturno)
-    mastodon-light: Mastodon (Diurno)
-    system: Automático (usar tema do sistema)
+    default: Mastodon
   time:
     formats:
       default: "%H:%M em %d de %b de %Y"
@@ -2038,6 +2062,8 @@ pt-BR:
     recovery_codes: Códigos de recuperação de reserva
     recovery_codes_regenerated: Códigos de recuperação gerados
     recovery_instructions_html: Se você perder acesso ao seu celular, você pode usar um dos códigos de recuperação abaixo para acessar a sua conta. <strong>Mantenha os códigos de recuperação em um local seguro</strong>. Por exemplo, você pode imprimi-los e guardá-los junto a outros documentos importantes.
+    resume_app_authorization: Retomar autorização de aplicativo
+    role_requirement: "%{domain} exige que você configure a autenticação de dois fatores antes de poder utilizar o Mastodon."
     webauthn: Chaves de segurança
   user_mailer:
     announcement_published:
@@ -2181,6 +2207,7 @@ pt-BR:
       error: Houve um problema ao excluir sua chave de segurança. Tente novamente.
       success: Sua chave de segurança foi excluída.
     invalid_credential: Chave de segurança inválida
+    nickname: Nome
     nickname_hint: Digite o apelido da sua nova chave de segurança
     not_enabled: Você ainda não habilitou o WebAuthn
     not_supported: Este navegador não tem suporte a chaves de segurança

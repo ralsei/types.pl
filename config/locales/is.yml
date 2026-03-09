@@ -12,7 +12,9 @@ is:
     followers:
       one: fylgjandi
       other: fylgjendur
-    following: Fylgist með
+    following:
+      one: Fylgist með
+      other: Fylgist með
     instance_actor_flash: Þessi notandaaðgangur er sýndarnotandi sem stendur fyrir sjálfan netþjóninn en ekki neinn einstakling. Hann er notaður við skýjasambandsmiðlun og ætti ekki að setja hann í frysti eða banna.
     last_active: síðasta virkni
     link_verified_on: Eignarhald á þessum tengli var athugað þann %{date}
@@ -54,6 +56,7 @@ is:
         label: Breyta hlutverki
         no_role: Ekkert hlutverk
         title: Breyta hlutverki fyrir %{username}
+      collections: Söfn
       confirm: Staðfesta
       confirmed: Staðfest
       confirming: Staðfesti
@@ -264,6 +267,7 @@ is:
         demote_user_html: "%{name} lækkaði notandann %{target} í tign"
         destroy_announcement_html: "%{name} eyddi tilkynninguni %{target}"
         destroy_canonical_email_block_html: "%{name} tók af útilokun á tölvupósti með tætigildið %{target}"
+        destroy_collection_html: "%{name} fjarlægði safn frá %{target}"
         destroy_custom_emoji_html: "%{name} eyddi emoji-tákni %{target}"
         destroy_domain_allow_html: "%{name} bannaði skýjasamband með léninu %{target}"
         destroy_domain_block_html: "%{name} aflétti útilokun af léninu %{target}"
@@ -303,6 +307,7 @@ is:
         unsilence_account_html: "%{name} hætti að hylja notandaaðganginn %{target}"
         unsuspend_account_html: "%{name} tók notandaaðganginn %{target} úr frysti"
         update_announcement_html: "%{name} uppfærði tilkynningu %{target}"
+        update_collection_html: "%{name} uppfærði safn frá %{target}"
         update_custom_emoji_html: "%{name} uppfærði lyndistáknið %{target}"
         update_domain_block_html: "%{name} uppfærði útilokun lénsins %{target}"
         update_ip_block_html: "%{name} breytti reglu fyrir IP-vistfangið %{target}"
@@ -338,6 +343,15 @@ is:
       unpublish: Taka úr birtingu
       unpublished_msg: Það tókst að taka auglýsinguna úr birtingu!
       updated_msg: Það tókst að uppfæra auglýsinguna!
+    collections:
+      accounts: Notandaaðgangar
+      collection_title: Safn frá %{name}
+      contents: Efni
+      number_of_accounts:
+        one: 1 aðgangur
+        other: "%{count} aðgangar"
+      open: Opið
+      view_publicly: Skoða opinberlega
     critical_update_pending: Áríðandi uppfærsla í bið
     custom_emojis:
       assign_category: Úthluta flokki
@@ -677,6 +691,7 @@ is:
       cancel: Hætta við
       category: Flokkur
       category_description_html: Ástæðan fyrir því að þessi notandaaðgangur og/eða efni hans var kært mun verða tiltekin í samskiptum við kærðan notandaaðgang
+      collections: Söfn (%{count})
       comment:
         none: Ekkert
       comment_description_html: 'Til að gefa nánari upplýsingar skrifaði %{name}:'
@@ -706,12 +721,13 @@ is:
       report: 'Kæra #%{id}'
       reported_account: Kærður notandaaðgangur
       reported_by: Kært af
+      reported_content: Kært efni
       reported_with_application: Kærði með forritinu
       resolved: Leyst
       resolved_msg: Það tókst að leysa kæruna!
       skip_to_actions: Sleppa og fara í aðgerðir
       status: Staða
-      statuses: Kært efni
+      statuses: Færslur (%{count})
       statuses_description_html: Óviðeigandi efni verður tiltekið í samskiptum við kærðan notandaaðgang
       summary:
         action_preambles:
@@ -800,6 +816,7 @@ is:
         view_devops_description: Leyfir notendum að skoða Sidekiq og pgHero stjórnborð
         view_feeds: Skoða bein streymi og efnistengd
         view_feeds_description: Gefur notendum aðgang að beinum streymum og efnistengdum, burtséð frá stillingum netþjóns
+      requires_2fa: Krefst tveggja-þátta auðkenningar
       title: Hlutverk
     rules:
       add_new: Skrá reglu
@@ -2023,10 +2040,7 @@ is:
     review_link: Yfirfara þjónustuskilmála
     title: Þjónustuskilmálar eru að breytast á %{domain}
   themes:
-    contrast: Mastodon (mikil birtuskil)
-    default: Mastodon (dökkt)
-    mastodon-light: Mastodon (ljóst)
-    system: Sjálfvirkt (nota þema kerfis)
+    default: Mastodon
   time:
     formats:
       default: "%d. %b, %Y, %H:%M"
@@ -2051,6 +2065,8 @@ is:
     recovery_codes: Kóðar fyrir endurheimtingu öryggisafrits
     recovery_codes_regenerated: Það tókst að endurgera endurheimtukóða
     recovery_instructions_html: Ef þú tapar símanum þínum geturðu notað einn af endurheimtukóðunum hér fyrir neðan til að fá aftur samband við notandaaðganginn þinn. <strong>Geymdu endurheimtukóðana á öruggum stað</strong>. Sem dæmi gætirðu prentað þá út og geymt með öðrum mikilvægum skjölum.
+    resume_app_authorization: Halda áfram með auðkenningu forrits
+    role_requirement: "%{domain} krefst þess að þú setjir upp tveggja-þátta auðkenningu áður en þú getur notað Mastodon."
     webauthn: Öryggislyklar
   user_mailer:
     announcement_published:

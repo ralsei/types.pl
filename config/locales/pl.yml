@@ -12,7 +12,6 @@ pl:
       many: śledzących
       one: śledzący
       other: obserwujących
-    following: Obserwowanych
     instance_actor_flash: To konto jest wirtualnym profilem używanym do reprezentowania samego serwera, a nie żadnego indywidualnego użytkownika. Jest ono stosowane do celów federacji i nie powinien być zawieszany.
     last_active: ostatnio aktywny(-a)
     link_verified_on: Własność tego odnośnika została sprawdzona %{date}
@@ -729,7 +728,6 @@ pl:
       resolved_msg: Pomyślnie rozwiązano zgłoszenie.
       skip_to_actions: Przejdź do akcji
       status: Stan
-      statuses: Zgłoszona treść
       statuses_description_html: Obraźliwe treści będą cytowane w komunikacji ze zgłoszonym kontem
       summary:
         action_preambles:
@@ -2059,11 +2057,6 @@ pl:
     past_preamble_html: Od czasu twojej ostatniej wizyty zmieniliśmy warunki korzystania z usługi. Zachęcamy do zapoznania się z aktualnymi warunkami.
     review_link: Przeglądnij Warunki Korzystania
     title: Warunki korzystania z %{domain} zmieniają się
-  themes:
-    contrast: Mastodon (Wysoki kontrast)
-    default: Mastodon (Ciemny)
-    mastodon-light: Mastodon (Jasny)
-    system: Automatyczny (odpowiadający motywowi systemu)
   time:
     formats:
       default: "%d. %b %Y, %H:%M"

@@ -1,5 +1,12 @@
-import { isClientFeatureEnabled } from '@/mastodon/utils/environment';
+import type { AccountFieldShape } from '@/mastodon/models/account';
+import { isServerFeatureEnabled } from '@/mastodon/utils/environment';
 
 export function isRedesignEnabled() {
-  return isClientFeatureEnabled('profile_redesign');
+  return isServerFeatureEnabled('profile_redesign');
+}
+
+export interface AccountField extends AccountFieldShape {
+  nameHasEmojis: boolean;
+  value_plain: string;
+  valueHasEmojis: boolean;
 }

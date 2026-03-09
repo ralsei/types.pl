@@ -25,6 +25,19 @@ RSpec.describe '/api/v1/statuses' do
           hash_including(id: other_status.id.to_s)
         )
       end
+
+      context 'with too many IDs' do
+        before { stub_const 'Api::BaseController::DEFAULT_STATUSES_LIMIT', 2 }
+
+        it 'returns error response' do
+          get '/api/v1/statuses', headers: headers, params: { id: [123, 456, 789] }
+
+          expect(response)
+            .to have_http_status(422)
+          expect(response.content_type)
+            .to start_with('application/json')
+        end
+      end
     end
 
     describe 'GET /api/v1/statuses/:id' do
@@ -437,6 +450,63 @@ RSpec.describe '/api/v1/statuses' do
           end
         end
       end
+
+      context 'with local_only param set to true' do
+        let(:params) { { status: 'Hello world', local_only: true } }
+
+        it 'returns a local-only post' do
+          subject
+
+          expect(response).to have_http_status(200)
+          expect(response.content_type)
+            .to start_with('application/json')
+          expect(response.parsed_body[:content]).to match(/Hello world/)
+          expect(response.parsed_body[:local_only]).to be true
+        end
+      end
+
+      context 'with local_only param set to false' do
+        let(:params) { { status: 'Hello world', local_only: false } }
+
+        it 'returns a non-local-only post' do
+          subject
+
+          expect(response).to have_http_status(200)
+          expect(response.content_type)
+            .to start_with('application/json')
+          expect(response.parsed_body[:content]).to match(/Hello world/)
+          expect(response.parsed_body[:local_only]).to be false
+        end
+      end
+
+      context 'with local_only param omitted' do
+        let(:params) { { status: 'Hello world' } }
+
+        it 'returns a non-local-only post' do
+          subject
+
+          expect(response).to have_http_status(200)
+          expect(response.content_type)
+            .to start_with('application/json')
+          expect(response.parsed_body[:content]).to match(/Hello world/)
+          expect(response.parsed_body[:local_only]).to be false
+        end
+      end
+
+      context 'with local_only param omitted in reply to a local-only post' do
+        let(:local_only_post) { Fabricate(:status, local_only: true) }
+        let(:params) { { status: 'Hello world', in_reply_to_id: local_only_post.id } }
+
+        it 'returns a non-local-only post' do
+          subject
+
+          expect(response).to have_http_status(200)
+          expect(response.content_type)
+            .to start_with('application/json')
+          expect(response.parsed_body[:content]).to match(/Hello world/)
+          expect(response.parsed_body[:local_only]).to be true
+        end
+      end
     end
 
     describe 'DELETE /api/v1/statuses/:id' do
@@ -446,6 +516,7 @@ RSpec.describe '/api/v1/statuses' do
 
       let(:scopes) { 'write:statuses' }
       let(:status) { Fabricate(:status, account: user.account) }
+      let!(:media) { Fabricate(:media_attachment, status: status) }
 
       it_behaves_like 'forbidden for wrong scope', 'read read:statuses'
 
@@ -455,6 +526,15 @@ RSpec.describe '/api/v1/statuses' do
         expect(response).to have_http_status(200)
         expect(response.content_type)
           .to start_with('application/json')
+        expect(response.parsed_body).to include(
+          id: status.id.to_s,
+          media_attachments: contain_exactly(
+            a_hash_including(
+              id: media.id.to_s,
+              url: %r{/system/media_attachments/files/}
+            )
+          )
+        )
         expect(Status.find_by(id: status.id)).to be_nil
         expect(RemovalWorker).to have_enqueued_sidekiq_job(status.id, { 'redraft' => true })
       end

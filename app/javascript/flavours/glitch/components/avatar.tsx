@@ -7,6 +7,8 @@ import { useHovering } from 'flavours/glitch/hooks/useHovering';
 import { autoPlayGif } from 'flavours/glitch/initial_state';
 import type { Account } from 'flavours/glitch/models/account';
 
+import { useAccount } from '../hooks/useAccount';
+
 interface Props {
   account:
     | Pick<Account, 'id' | 'acct' | 'avatar' | 'avatar_static'>
@@ -53,7 +55,7 @@ export const Avatar: React.FC<Props> = ({
   }, [setError]);
 
   const avatar = (
-    <div
+    <span
       className={classNames(className, 'account__avatar', {
         'account__avatar--inline': inline,
         'account__avatar--loading': loading,
@@ -68,14 +70,14 @@ export const Avatar: React.FC<Props> = ({
       )}
 
       {counter && (
-        <div
+        <span
           className='account__avatar__counter'
           style={{ borderColor: counterBorderColor }}
         >
           {counter}
-        </div>
+        </span>
       )}
-    </div>
+    </span>
   );
 
   if (withLink) {
@@ -91,4 +93,11 @@ export const Avatar: React.FC<Props> = ({
   }
 
   return avatar;
+};
+
+export const AvatarById: React.FC<
+  { accountId: string } & Omit<Props, 'account'>
+> = ({ accountId, ...otherProps }) => {
+  const account = useAccount(accountId);
+  return <Avatar account={account} {...otherProps} />;
 };

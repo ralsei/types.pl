@@ -136,6 +136,48 @@ RSpec.describe ActivityPub::ProcessStatusUpdateService do
       end
     end
 
+    context 'with an implicit update of a poll that has already expired' do
+      let(:account) { Fabricate(:account, domain: 'example.com') }
+      let!(:expiration) { 10.days.ago.utc }
+      let!(:status) do
+        Fabricate(:status,
+                  text: 'Hello world',
+                  account: account,
+                  poll_attributes: {
+                    options: %w(Foo Bar),
+                    account: account,
+                    multiple: false,
+                    hide_totals: false,
+                    expires_at: expiration,
+                  })
+      end
+
+      let(:payload) do
+        {
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          id: 'https://example.com/foo',
+          type: 'Question',
+          content: 'Hello world',
+          endTime: expiration.iso8601,
+          oneOf: [
+            poll_option_json('Foo', 4),
+            poll_option_json('Bar', 3),
+          ],
+        }
+      end
+
+      before do
+        travel_to(expiration - 1.day) do
+          Fabricate(:poll_vote, poll: status.poll)
+        end
+      end
+
+      it 'does not re-trigger notifications' do
+        expect { subject.call(status, json, json) }
+          .to_not enqueue_sidekiq_job(PollExpirationNotifyWorker)
+      end
+    end
+
     context 'when the status changes a poll despite being not explicitly marked as updated' do
       let(:account) { Fabricate(:account, domain: 'example.com') }
       let!(:expiration) { 10.days.from_now.utc }
@@ -258,6 +300,9 @@ RSpec.describe ActivityPub::ProcessStatusUpdateService do
           tag: [
             { type: 'Hashtag', name: 'foo' },
             { type: 'Hashtag', name: 'bar' },
+            { type: 'Hashtag', name: '#2024' },
+            { type: 'Hashtag', name: 'Foo Bar' },
+            { type: 'Hashtag', name: 'FooBar' },
           ],
         }
       end
@@ -269,7 +314,7 @@ RSpec.describe ActivityPub::ProcessStatusUpdateService do
 
       it 'updates tags and featured tags' do
         expect { subject.call(status, json, json) }
-          .to change { status.tags.reload.pluck(:name) }.from(contain_exactly('test', 'foo')).to(contain_exactly('foo', 'bar'))
+          .to change { status.tags.reload.pluck(:name) }.from(contain_exactly('test', 'foo')).to(contain_exactly('foo', 'bar', 'foobar'))
           .and change { status.account.featured_tags.find_by(name: 'test').statuses_count }.by(-1)
           .and change { status.account.featured_tags.find_by(name: 'bar').statuses_count }.by(1)
           .and change { status.account.featured_tags.find_by(name: 'bar').last_status_at }.from(nil).to(be_present)

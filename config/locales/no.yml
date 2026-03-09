@@ -10,7 +10,6 @@
     followers:
       one: Følger
       other: Følgere
-    following: Følger
     instance_actor_flash: Denne kontoen er en virtuell figur som brukes til å representere selve serveren og ikke noen individuell bruker. Den brukes til forbundsformål og bør ikke oppheves.
     last_active: sist aktiv
     link_verified_on: Eierskap av denne lenken ble sjekket %{date}
@@ -614,7 +613,6 @@
       resolved_msg: Rapport løst!
       skip_to_actions: Hopp over til handlinger
       status: Status
-      statuses: Rapportert innhold
       statuses_description_html: Innholdet som tilbys, vil bli nevnt i forbindelse med den rapporterte kontoen
       summary:
         action_preambles:
@@ -1438,7 +1436,7 @@
           billion: Mrd
           million: Mln
           quadrillion: Kvd
-          thousand: T
+          thousand: k
           trillion: Trl
   otp_authentication:
     code_hint: Skriv inn koden generert av autentiseringsappen din for å bekrefte
@@ -1667,10 +1665,6 @@
     does_not_match_previous_name: samsvarer ikke med det forrige navnet
   terms_of_service:
     title: Bruksvilkår
-  themes:
-    contrast: Mastodon (Høykontrast)
-    default: Mastodon
-    mastodon-light: Mastodon (Lyst)
   time:
     formats:
       default: "%-d. %b %Y, %H:%M"

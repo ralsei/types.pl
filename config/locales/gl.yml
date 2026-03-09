@@ -12,7 +12,9 @@ gl:
     followers:
       one: Seguidora
       other: Seguidoras
-    following: A Seguir
+    following:
+      one: Seguimento
+      other: Seguimentos
     instance_actor_flash: Esta conta é un actor virtual utilizado para representar ó servidor mesmo e non a unha usuaria individual. Utilízase por motivos de federación e non debería estar suspendida.
     last_active: última actividade
     link_verified_on: A propiedade desta ligazón foi verificada en %{date}
@@ -54,6 +56,7 @@ gl:
         label: Cambiar rol
         no_role: Sen rol
         title: Cambiar o rol de %{username}
+      collections: Coleccións
       confirm: Confirmar
       confirmed: Confirmado
       confirming: Estase a confirmar
@@ -264,6 +267,7 @@ gl:
         demote_user_html: "%{name} degradou a usuaria %{target}"
         destroy_announcement_html: "%{name} eliminou o anuncio %{target}"
         destroy_canonical_email_block_html: "%{name} desbloqueou o correo con suma de comprobación %{target}"
+        destroy_collection_html: "%{name} eliminou a colección de %{target}"
         destroy_custom_emoji_html: "%{name} eliminou o emoji %{target}"
         destroy_domain_allow_html: "%{name} retirou a federación co dominio %{target}"
         destroy_domain_block_html: "%{name} desbloqueou o dominio %{target}"
@@ -303,6 +307,7 @@ gl:
         unsilence_account_html: "%{name} reactivou a conta de %{target}"
         unsuspend_account_html: "%{name} retiroulle a suspensión á conta de %{target}"
         update_announcement_html: "%{name} actualizou o anuncio %{target}"
+        update_collection_html: "%{name} actualizou a colección de %{target}"
         update_custom_emoji_html: "%{name} actualizou o emoji %{target}"
         update_domain_block_html: "%{name} actualizou o bloqueo do dominio para %{target}"
         update_ip_block_html: "%{name} cambiou a regra para IP %{target}"
@@ -338,6 +343,15 @@ gl:
       unpublish: Retirar publicación
       unpublished_msg: Anuncio desbotado de xeito correcto!
       updated_msg: Anuncio actualizado de xeito correcto!
+    collections:
+      accounts: Contas
+      collection_title: Colección de %{name}
+      contents: Contido
+      number_of_accounts:
+        one: 1 conta
+        other: "%{count} contas"
+      open: Abrir
+      view_publicly: Ver publicamente
     critical_update_pending: Actualización crítica pendente
     custom_emojis:
       assign_category: Atribuír categoría
@@ -677,6 +691,7 @@ gl:
       cancel: Cancelar
       category: Categoría
       category_description_html: A razón para denunciar esta conta ou contido será citada na comunicación coa conta denunciada
+      collections: Coleccións (%{count})
       comment:
         none: Ningún
       comment_description_html: 'Como información engadida, %{name} escribiu:'
@@ -706,12 +721,13 @@ gl:
       report: 'Denuncia #%{id}'
       reported_account: Conta denunciada
       reported_by: Denunciado por
+      reported_content: Contido denunciado
       reported_with_application: Denunciado coa aplicación
       resolved: Resolto
       resolved_msg: Resolveuse con éxito a denuncia!
       skip_to_actions: Ir a accións
       status: Estado
-      statuses: Contido denunciado
+      statuses: Publicacións (%{count})
       statuses_description_html: O contido ofensivo será citado na comunicación coa conta denunciada
       summary:
         action_preambles:
@@ -800,6 +816,7 @@ gl:
         view_devops_description: Permite acceder aos taboleiros Sidekiq e phHero
         view_feeds: Ver as canles do directo e temas
         view_feeds_description: Permite ás usuarias acceder ás canles de directo e temas independentemento dos axustes do servidor.
+      requires_2fa: Require un segundo factor de autenticación
       title: Roles
     rules:
       add_new: Engadir regra
@@ -2019,10 +2036,7 @@ gl:
     review_link: Revisar as condicións do sevizo
     title: Cambios nas condicións do servizo de %{domain}
   themes:
-    contrast: Mastodon (Alto contraste)
-    default: Mastodon (Escuro)
-    mastodon-light: Mastodon (Claro)
-    system: Automático (seguir ao sistema)
+    default: Mastodon
   time:
     formats:
       default: "%d %b, %Y, %H:%M"
@@ -2047,6 +2061,8 @@ gl:
     recovery_codes: Códigos de recuperación do respaldo
     recovery_codes_regenerated: Códigos de recuperación xerados correctamente
     recovery_instructions_html: Se perdeses o acceso ao teu teléfono, podes utilizar un dos códigos de recuperación inferiores para recuperar o acceso á conta. <strong>Garda os códigos nun lugar seguro</strong>. Por exemplo, podes imprimilos e gardalos xunto con outros documentos importantes.
+    resume_app_authorization: Retomar autorización da aplicación
+    role_requirement: "%{domain} require que configures un Segundo Factor de Autenticación para poder usar Mastodon"
     webauthn: Chaves de seguridade
   user_mailer:
     announcement_published:

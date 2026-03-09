@@ -12,7 +12,9 @@ es-AR:
     followers:
       one: Seguidor
       other: Seguidores
-    following: Siguiendo
+    following:
+      one: Siguiendo
+      other: Siguiendo
     instance_actor_flash: Esta cuenta es un actor virtual usado para representar al servidor en sí mismo y no a ningún usuario individual. Se usa para propósitos de la federación y no debe ser suspendido.
     last_active: última actividad
     link_verified_on: La propiedad de este enlace fue verificada el %{date}
@@ -54,6 +56,7 @@ es-AR:
         label: Cambiar rol
         no_role: Sin rol
         title: Cambiar rol para %{username}
+      collections: Colecciones
       confirm: Confirmar
       confirmed: Confirmado
       confirming: Confirmación
@@ -264,6 +267,7 @@ es-AR:
         demote_user_html: "%{name} bajó de nivel al usuario %{target}"
         destroy_announcement_html: "%{name} eliminó el anuncio %{target}"
         destroy_canonical_email_block_html: "%{name} desbloqueó el correo electrónico con el hash %{target}"
+        destroy_collection_html: "%{name} eliminó la colección de %{target}"
         destroy_custom_emoji_html: "%{name} eliminó el emoji %{target}"
         destroy_domain_allow_html: "%{name} no permitió la federación con el dominio %{target}"
         destroy_domain_block_html: "%{name} desbloqueó el dominio %{target}"
@@ -303,6 +307,7 @@ es-AR:
         unsilence_account_html: "%{name} quitó el límite de la cuenta de %{target}"
         unsuspend_account_html: "%{name} quitó la suspensión de la cuenta de %{target}"
         update_announcement_html: "%{name} actualizó el anuncio %{target}"
+        update_collection_html: "%{name} actualizó la colección de %{target}"
         update_custom_emoji_html: "%{name} actualizó el emoji %{target}"
         update_domain_block_html: "%{name} actualizó el bloqueo de dominio para %{target}"
         update_ip_block_html: "%{name} cambió la regla para la dirección IP %{target}"
@@ -338,6 +343,15 @@ es-AR:
       unpublish: Eliminar publicación
       unpublished_msg: "¡Se dejó de publicar el anuncio exitosamente!"
       updated_msg: "¡Anuncio actualizado exitosamente!"
+    collections:
+      accounts: Cuentas
+      collection_title: Colección de %{name}
+      contents: Contenidos
+      number_of_accounts:
+        one: 1 cuenta
+        other: "%{count} cuentas"
+      open: Abrir
+      view_publicly: Ver públicamente
     critical_update_pending: Actualización crítica pendiente
     custom_emojis:
       assign_category: Asignar categoría
@@ -677,6 +691,7 @@ es-AR:
       cancel: Cancelar
       category: Categoría
       category_description_html: El motivo por el que se denunció esta cuenta o contenido será citado en las comunicaciones con la cuenta denunciada
+      collections: Colecciones (%{count})
       comment:
         none: Ninguno
       comment_description_html: 'Para proporcionar más información, %{name} escribió:'
@@ -706,12 +721,13 @@ es-AR:
       report: 'Denuncia #%{id}'
       reported_account: Cuenta denunciada
       reported_by: Denunciada por
+      reported_content: Contenido denunciado
       reported_with_application: Denunciado con aplicación
       resolved: Resueltas
       resolved_msg: "¡Denuncia exitosamente resuelta!"
       skip_to_actions: Ir directamente a las acciones
       status: Estado
-      statuses: Contenido denunciado
+      statuses: Mensajes (%{count})
       statuses_description_html: El contenido ofensivo se citará en la comunicación con la cuenta denunciada
       summary:
         action_preambles:
@@ -800,6 +816,7 @@ es-AR:
         view_devops_description: Permite a los usuarios acceder a los paneles de Sidekiq y pgHero
         view_feeds: Ver líneas temporales y por temas
         view_feeds_description: Permite a los usuarios acceder a las líneas temporales en vivo y por temas, sin importar la configuración del servidor
+      requires_2fa: Requiere autenticación de dos factores
       title: Roles
     rules:
       add_new: Agregar regla
@@ -2019,10 +2036,7 @@ es-AR:
     review_link: Revisar los términos del servicio
     title: Los términos del servicio de %{domain} están cambiando
   themes:
-    contrast: Alto contraste
-    default: Oscuro
-    mastodon-light: Claro
-    system: Automático (usar tema del sistema)
+    default: Mastodon
   time:
     formats:
       default: "%Y.%b.%d, %H:%M"
@@ -2047,6 +2061,8 @@ es-AR:
     recovery_codes: Resguardar códigos de recuperación
     recovery_codes_regenerated: Los códigos de recuperación se regeneraron exitosamente
     recovery_instructions_html: Si alguna vez perdés el acceso a tu aplicación de 2FA, podés usar uno de los siguientes códigos de recuperación para recuperar el acceso a tu cuenta. <strong>Mantenelos a salvo</strong>. Por ejemplo, podés imprimirlos y guardarlos con otros documentos importantes.
+    resume_app_authorization: Reanudar autorización de aplicación
+    role_requirement: "%{domain} requiere que configurés la autenticación de dos factores antes de poder usar Mastodon."
     webauthn: Llaves de seguridad
   user_mailer:
     announcement_published:

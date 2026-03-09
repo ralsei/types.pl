@@ -220,7 +220,7 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
 
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- this is not a feature but a visual easter egg */}
             <div
-              className='drawer__inner__mastodon'
+              className='drawer__inner__mastodon with-zig-zag-decoration'
               onClick={handleCycleElefriend}
             >
               <img alt='' draggable='false' src={mascot ?? elephant} />

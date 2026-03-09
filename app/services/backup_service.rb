@@ -34,7 +34,8 @@ class BackupService < BaseService
       add_comma = true
 
       file.write(statuses.map do |status|
-        item = serialize_payload(ActivityPub::ActivityPresenter.from_status(status), ActivityPub::ActivitySerializer, allow_local_only: true)
+        serializer = status.reblog? ? ActivityPub::AnnounceNoteSerializer : ActivityPub::CreateNoteSerializer
+        item = serialize_payload(status, serializer, allow_local_only: true)
         item.delete(:@context)
 
         unless item[:type] == 'Announce' || item[:object][:attachment].blank?

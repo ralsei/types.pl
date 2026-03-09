@@ -9,6 +9,7 @@
 #  also_known_as                 :string           is an Array
 #  attribution_domains           :string           default([]), is an Array
 #  avatar_content_type           :string
+#  avatar_description            :string           default(""), not null
 #  avatar_file_name              :string
 #  avatar_file_size              :integer
 #  avatar_remote_url             :string
@@ -23,6 +24,7 @@
 #  followers_url                 :string           default(""), not null
 #  following_url                 :string           default(""), not null
 #  header_content_type           :string
+#  header_description            :string           default(""), not null
 #  header_file_name              :string
 #  header_file_size              :integer
 #  header_remote_url             :string           default(""), not null
@@ -44,6 +46,9 @@
 #  reviewed_at                   :datetime
 #  sensitized_at                 :datetime
 #  shared_inbox_url              :string           default(""), not null
+#  show_featured                 :boolean          default(TRUE), not null
+#  show_media                    :boolean          default(TRUE), not null
+#  show_media_replies            :boolean          default(TRUE), not null
 #  silenced_at                   :datetime
 #  suspended_at                  :datetime
 #  suspension_origin             :integer
@@ -318,16 +323,16 @@ class Account < ApplicationRecord
     old_fields = self[:fields] || []
     old_fields = [] if old_fields.is_a?(Hash)
 
-    if attributes.is_a?(Hash)
-      attributes.each_value do |attr|
-        next if attr[:name].blank? && attr[:value].blank?
+    attributes = attributes.values if attributes.is_a?(Hash)
 
-        previous = old_fields.find { |item| item['value'] == attr[:value] }
+    attributes.each do |attr|
+      next if attr[:name].blank? && attr[:value].blank?
 
-        attr[:verified_at] = previous['verified_at'] if previous && previous['verified_at'].present?
+      previous = old_fields.find { |item| item['value'] == attr[:value] }
 
-        fields << attr
-      end
+      attr[:verified_at] = previous['verified_at'] if previous && previous['verified_at'].present?
+
+      fields << attr
     end
 
     self[:fields] = fields
@@ -460,8 +465,11 @@ class Account < ApplicationRecord
     save!
   end
 
-  def featureable?
-    local? && discoverable?
+  def featureable_by?(other_account)
+    return discoverable? if local?
+    return false unless Mastodon::Feature.collections_federation_enabled?
+
+    feature_policy_for_account(other_account).in?(%i(automatic manual))
   end
 
   private

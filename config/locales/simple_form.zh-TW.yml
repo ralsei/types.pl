@@ -60,7 +60,7 @@ zh-TW:
         setting_boost_modal: 當啟用時，轉嘟前將先開啟確認對話框，您能於其變更轉嘟之可見性。
         setting_default_quote_policy_private: Mastodon 上發佈之僅限跟隨者嘟文無法被其他使用者引用。
         setting_default_quote_policy_unlisted: 當其他人引用您時，他們的嘟文也會自熱門時間軸隱藏。
-        setting_default_sensitive: 敏感內容媒體預設隱藏，且按一下即可重新顯示
+        setting_default_sensitive: 敏感內容媒體為預設隱藏，且按一下即可重新顯示
         setting_display_media_default: 隱藏標為敏感內容的媒體
         setting_display_media_hide_all: 總是隱藏所有媒體
         setting_display_media_show_all: 總是顯示標為敏感內容的媒體
@@ -163,6 +163,7 @@ zh-TW:
         name: 角色的公開名稱，如果角色設定為顯示為徽章
         permissions_as_keys: 有此角色的使用者將有權存取...
         position: 某些情況下，衝突的解決方式由更高階的角色決定。某些動作只能由優先程度較低的角色執行
+        require_2fa: 此角色之使用者將被要求設定兩階段驗證以使用 Mastodon
       username_block:
         allow_with_approval: 不直接禁止註冊，符合規則之註冊將需要您的審核
         comparison: 當您封鎖部分匹配時，請留心 Scunthorpe 問題
@@ -222,6 +223,7 @@ zh-TW:
         email: 電子郵件地址
         expires_in: 失效時間
         fields: 額外欄位
+        filter_action: 過濾器動作
         header: 封面圖片
         honeypot: "%{label} (請勿填寫)"
         inbox_url: 中繼收件匣 URL
@@ -238,7 +240,7 @@ zh-TW:
         setting_always_send_emails: 總是發送電子郵件通知
         setting_auto_play_gif: 自動播放 GIF 動畫
         setting_boost_modal: 控制轉嘟可見性
-        setting_color_scheme: 模式
+        setting_color_scheme: 佈景主題
         setting_contrast: 對比度
         setting_default_language: 嘟文語言
         setting_default_privacy: 嘟文可見性
@@ -270,7 +272,7 @@ zh-TW:
         type: 匯入類型
         username: 使用者名稱
         username_or_email: 使用者名稱或電子郵件地址
-        whole_word: 整個詞彙
+        whole_word: 完整詞彙
       email_domain_block:
         with_dns_records: 包括網域的 MX 記錄與 IP 位址
       featured_tag:
@@ -386,6 +388,7 @@ zh-TW:
         name: 名稱
         permissions_as_keys: 權限
         position: 優先權
+        require_2fa: 要求兩階段驗證
       username_block:
         allow_with_approval: 經審核後可註冊
         comparison: 比較方式

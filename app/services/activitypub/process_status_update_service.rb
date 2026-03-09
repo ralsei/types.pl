@@ -204,7 +204,11 @@ class ActivityPub::ProcessStatusUpdateService < BaseService
 
   def update_tags!
     previous_tags = @status.tags.to_a
-    current_tags = @status.tags = Tag.find_or_create_by_names(@raw_tags)
+    current_tags = @status.tags = @raw_tags.flat_map do |tag|
+      Tag.find_or_create_by_names([tag])
+    rescue ActiveRecord::RecordInvalid
+      []
+    end.uniq
 
     return unless @status.distributable?
 
@@ -405,6 +409,11 @@ class ActivityPub::ProcessStatusUpdateService < BaseService
     # expiration date, and people have voted, schedule a notification
 
     return unless poll.present? && poll.expires_at.present? && poll.votes.exists?
+
+    # If the poll had previously expired, notifications should have already been sent out (or scheduled),
+    # and re-scheduling them would cause duplicate notifications for people who had already dismissed them
+    # (see #37948)
+    return if @previous_expires_at&.past?
 
     PollExpirationNotifyWorker.remove_from_scheduled(poll.id) if @previous_expires_at.present? && @previous_expires_at > poll.expires_at
     PollExpirationNotifyWorker.perform_at(poll.expires_at + 5.minutes, poll.id)

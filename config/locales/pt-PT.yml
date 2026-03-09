@@ -12,7 +12,9 @@ pt-PT:
     followers:
       one: Seguidor
       other: Seguidores
-    following: Seguindo
+    following:
+      one: A seguir
+      other: A seguir
     instance_actor_flash: Esta conta é um ator virtual utilizado para representar o servidor em si e não um utilizador individual. É utilizada para efeitos de federação e não deve ser suspensa.
     last_active: última atividade
     link_verified_on: A posse desta hiperligação foi verificada em %{date}
@@ -54,6 +56,7 @@ pt-PT:
         label: Alterar função
         no_role: Nenhuma função
         title: Alterar a função de %{username}
+      collections: Coleções
       confirm: Confirmar
       confirmed: Confirmado
       confirming: A confirmar
@@ -264,6 +267,7 @@ pt-PT:
         demote_user_html: "%{name} despromoveu o utilizador %{target}"
         destroy_announcement_html: "%{name} eliminou a mensagem de manutenção %{target}"
         destroy_canonical_email_block_html: "%{name} desbloqueou o e-mail com a hash %{target}"
+        destroy_collection_html: "%{name} removeu a coleção de %{target}"
         destroy_custom_emoji_html: "%{name} eliminou o emoji %{target}"
         destroy_domain_allow_html: "%{name} bloqueou a federação com o domínio %{target}"
         destroy_domain_block_html: "%{name} desbloqueou o domínio %{target}"
@@ -303,6 +307,7 @@ pt-PT:
         unsilence_account_html: "%{name} deixou de limitar a conta de %{target}"
         unsuspend_account_html: "%{name} desativou a suspensão de %{target}"
         update_announcement_html: "%{name} atualizou a mensagem de manutenção %{target}"
+        update_collection_html: "%{name} atualizou a coleção de %{target}"
         update_custom_emoji_html: "%{name} atualizou o emoji %{target}"
         update_domain_block_html: "%{name} atualizou o bloqueio de domínio para %{target}"
         update_ip_block_html: "%{name} alterou regra para o IP %{target}"
@@ -338,6 +343,15 @@ pt-PT:
       unpublish: Anular publicação
       unpublished_msg: Mensagem de manutenção corretamente retirada de publicação!
       updated_msg: Mensagem de manutenção atualizada com sucesso!
+    collections:
+      accounts: Contas
+      collection_title: Colecionado por %{name}
+      contents: Conteúdo
+      number_of_accounts:
+        one: 1 conta
+        other: "%{count} contas"
+      open: Abrir
+      view_publicly: Ver publicamente
     critical_update_pending: Atualização crítica pendente
     custom_emojis:
       assign_category: Atribuir categoria
@@ -677,6 +691,7 @@ pt-PT:
       cancel: Cancelar
       category: Categoria
       category_description_html: A razão pela qual esta conta e/ou conteúdo foi denunciado será citada na comunicação com a conta denunciada
+      collections: Coleções (%{count})
       comment:
         none: Nenhum
       comment_description_html: 'Para fornecer mais informações, %{name} escreveu:'
@@ -706,12 +721,13 @@ pt-PT:
       report: 'Denúncia #%{id}'
       reported_account: Conta denunciada
       reported_by: Denunciado por
+      reported_content: Conteúdo denunciado
       reported_with_application: Denunciado com a aplicação
       resolved: Resolvido
       resolved_msg: Denúncia resolvida com sucesso!
       skip_to_actions: Passar para as ações
       status: Estado
-      statuses: Conteúdo denunciado
+      statuses: Publicações (%{count})
       statuses_description_html: O conteúdo ofensivo será citado na comunicação com a conta denunciada
       summary:
         action_preambles:
@@ -800,6 +816,7 @@ pt-PT:
         view_devops_description: Permite aos utilizadores aceder aos painéis de controlo do Sidekiq e pgHero
         view_feeds: Ver cronologia em tempo real e de etiquetas
         view_feeds_description: Permitir aos utilizadores aceder às cronologias em tempo real e de etiquetas independentemente das definições do servidor
+      requires_2fa: Requer autenticação de dois fatores
       title: Funções
     rules:
       add_new: Adicionar regra
@@ -2019,10 +2036,7 @@ pt-PT:
     review_link: Rever termos de serviço
     title: Os termos de serviço de %{domain} estão a ser alterados
   themes:
-    contrast: Mastodon (alto contraste)
-    default: Mastodon (escuro)
-    mastodon-light: Mastodon (claro)
-    system: Automático (usar tema do sistema)
+    default: Mastodon
   time:
     formats:
       default: "%H:%M em %d de %b de %Y"
@@ -2047,6 +2061,8 @@ pt-PT:
     recovery_codes: Cópia de segurança dos códigos de recuperação
     recovery_codes_regenerated: Os códigos de recuperação foram corretamente gerados
     recovery_instructions_html: Se perderes o seu telemóvel, poderás usar um dos códigos de recuperação para voltares a ter acesso à tua conta. <strong>Guarda os códigos de recuperação em lugar seguro</strong>. Por exemplo, podes imprimi-los e guardá-los junto a outros documentos importantes.
+    resume_app_authorization: Retomar autorização de aplicação
+    role_requirement: "%{domain} requer que configure a Autenticação de Dois Fatores antes de poder utilizar o Mastodon."
     webauthn: Chaves de segurança
   user_mailer:
     announcement_published:
