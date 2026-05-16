@@ -169,6 +169,12 @@ class Sanitize
         'blockquote' => { 'cite' => LINK_PROTOCOLS },
       },
 
+      # allow math tags anyway
+      # https://github.com/rgrove/sanitize/security/advisories/GHSA-p4x4-rw2p-8j8m
+      remove_contents: %w[
+        iframe noembed noframes noscript plaintext script style svg xmp
+      ],
+
       transformers: [
         ALLOWED_CLASS_TRANSFORMER,
         IMG_TAG_TRANSFORMER,
