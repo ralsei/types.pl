@@ -4,6 +4,8 @@ import { defineMessages, useIntl } from 'react-intl';
 
 import { useHistory } from 'react-router';
 
+import { useAccount } from '@/flavours/glitch/hooks/useAccount';
+import { me } from '@/flavours/glitch/initial_state';
 import { deleteCollection } from 'flavours/glitch/reducers/slices/collections';
 import { useAppDispatch } from 'flavours/glitch/store';
 
@@ -34,11 +36,12 @@ export const ConfirmDeleteCollectionModal: React.FC<
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { acct: currentUserName } = useAccount(me) ?? {};
 
-  const onConfirm = useCallback(() => {
-    void dispatch(deleteCollection({ collectionId: id }));
-    history.push('/collections');
-  }, [dispatch, history, id]);
+  const onConfirm = useCallback(async () => {
+    await dispatch(deleteCollection({ collectionId: id }));
+    history.push(`/@${currentUserName}/collections`);
+  }, [dispatch, history, id, currentUserName]);
 
   return (
     <ConfirmationModal

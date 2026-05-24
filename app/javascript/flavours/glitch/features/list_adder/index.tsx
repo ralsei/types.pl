@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useId } from 'react';
 
 import { FormattedMessage, useIntl, defineMessages } from 'react-intl';
 
 import { isFulfilled } from '@reduxjs/toolkit';
 
+import { Toggle } from '@/flavours/glitch/components/form_fields';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import { fetchLists } from 'flavours/glitch/actions/lists';
@@ -15,7 +16,6 @@ import {
 } from 'flavours/glitch/api/lists';
 import type { ApiListJSON } from 'flavours/glitch/api_types/lists';
 import { Button } from 'flavours/glitch/components/button';
-import { CheckBox } from 'flavours/glitch/components/check_box';
 import { Icon } from 'flavours/glitch/components/icon';
 import { IconButton } from 'flavours/glitch/components/icon_button';
 import { getOrderedLists } from 'flavours/glitch/selectors/lists';
@@ -42,6 +42,8 @@ const ListItem: React.FC<{
   checked: boolean;
   onChange: (id: string, checked: boolean) => void;
 }> = ({ id, title, checked, onChange }) => {
+  const uniqueId = useId();
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange(id, e.target.checked);
@@ -50,14 +52,13 @@ const ListItem: React.FC<{
   );
 
   return (
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    <label className='lists__item'>
+    <label className='lists__item' htmlFor={uniqueId}>
       <div className='lists__item__title'>
         <Icon id='list-ul' icon={ListAltIcon} />
         <span>{title}</span>
       </div>
 
-      <CheckBox value={id} checked={checked} onChange={handleChange} />
+      <Toggle id={uniqueId} checked={checked} onChange={handleChange} />
     </label>
   );
 };

@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-import { Helmet } from 'react-helmet';
+import { Helmet } from '@unhead/react/helmet';
 import { Link } from 'react-router-dom';
 
 import { Button } from 'flavours/glitch/components/button';
 import Column from 'flavours/glitch/components/column';
+import { injectIntl } from '@/flavours/glitch/components/intl';
 import { GIF } from 'flavours/glitch/components/gif';
 
 class CopyButton extends PureComponent {

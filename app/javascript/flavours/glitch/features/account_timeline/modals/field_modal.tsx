@@ -2,6 +2,7 @@ import type { FC } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
+import type { AccountField } from '@/flavours/glitch/components/account_header/fields';
 import { Button } from '@/flavours/glitch/components/button';
 import { EmojiHTML } from '@/flavours/glitch/components/emoji/html';
 import {
@@ -10,10 +11,9 @@ import {
   ModalShellBody,
 } from '@/flavours/glitch/components/modal_shell';
 
-import type { AccountField } from '../common';
 import { useFieldHtml } from '../hooks/useFieldHtml';
 
-import classes from './styles.module.css';
+import classes from './styles.module.scss';
 
 export const AccountFieldModal: FC<{
   onClose: () => void;
@@ -28,6 +28,7 @@ export const AccountFieldModal: FC<{
           as='h2'
           htmlString={field.name_emojified}
           onElement={handleLabelElement}
+          className={classes.fieldName}
         />
         <EmojiHTML
           as='p'

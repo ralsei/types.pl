@@ -3,8 +3,11 @@ import { useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import { showAlert } from 'flavours/glitch/actions/alerts';
+import { openModal } from 'flavours/glitch/actions/modal';
+import type { ApiCollectionJSON } from 'flavours/glitch/api_types/collections';
 import type { BaseConfirmationModalProps } from 'flavours/glitch/features/ui/components/confirmation_modals/confirmation_modal';
 import { ConfirmationModal } from 'flavours/glitch/features/ui/components/confirmation_modals/confirmation_modal';
+import { me } from 'flavours/glitch/initial_state';
 import { revokeCollectionInclusion } from 'flavours/glitch/reducers/slices/collections';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
@@ -23,6 +26,24 @@ const messages = defineMessages({
     defaultMessage: 'Remove me',
   },
 });
+
+export function useConfirmRevoke(collection?: ApiCollectionJSON | null) {
+  const dispatch = useAppDispatch();
+  const { id, items = [] } = collection ?? {};
+  const ownCollectionItemId = items.find((item) => item.account_id === me)?.id;
+
+  return useCallback(() => {
+    void dispatch(
+      openModal({
+        modalType: 'REVOKE_COLLECTION_INCLUSION',
+        modalProps: {
+          collectionId: id,
+          collectionItemId: ownCollectionItemId,
+        },
+      }),
+    );
+  }, [dispatch, id, ownCollectionItemId]);
+}
 
 export const RevokeCollectionInclusionModal: React.FC<
   {

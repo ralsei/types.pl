@@ -1,4 +1,9 @@
-import type { MouseEventHandler, PropsWithChildren } from 'react';
+import type {
+  FC,
+  MouseEventHandler,
+  PropsWithChildren,
+  ReactNode,
+} from 'react';
 import {
   createContext,
   useCallback,
@@ -8,6 +13,7 @@ import {
 } from 'react';
 
 import { cleanExtraEmojis } from '@/flavours/glitch/features/emoji/normalize';
+import { useCustomEmojis } from '@/flavours/glitch/hooks/useCustomEmojis';
 import { autoPlayGif } from '@/flavours/glitch/initial_state';
 import { polymorphicForwardRef } from '@/types/polymorphic';
 import type {
@@ -102,4 +108,11 @@ export const CustomEmojiProvider = ({
       {children}
     </CustomEmojiContext.Provider>
   );
+};
+
+export const LocalCustomEmojiProvider: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const emojis = useCustomEmojis();
+  return <CustomEmojiProvider emojis={emojis}>{children}</CustomEmojiProvider>;
 };

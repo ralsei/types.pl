@@ -7,8 +7,7 @@ module.exports = {
     'coverage/**/*',
     'node_modules/**/*',
     'public/assets/**/*',
-    'public/packs/**/*',
-    'public/packs-test/**/*',
+    'public/packs*/**/*',
     'vendor/**/*',
   ],
   reportDescriptionlessDisables: true,
@@ -27,6 +26,13 @@ module.exports = {
     'selector-id-pattern': null,
     'value-keyword-case': null,
     'value-no-vendor-prefix': null,
+    'custom-property-pattern': [
+      '^_?[a-z]([a-z0-9])*(-[a-z0-9]+)*$',
+      {
+        message: (name) =>
+          `Expected custom property name "${name}" to be kebab-case (optional leading underscore allowed)`,
+      },
+    ],
 
     'scss/dollar-variable-empty-line-before': null,
     'scss/no-global-function-names': null,
@@ -52,6 +58,13 @@ module.exports = {
         'selector-pseudo-class-no-unknown': [
           true,
           { ignorePseudoClasses: ['global'] },
+        ],
+
+        'property-no-unknown': [
+          true,
+          {
+            ignoreProperties: ['composes'],
+          },
         ],
       },
     },

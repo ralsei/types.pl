@@ -2,8 +2,9 @@ import { useCallback, useState, useEffect } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
-import { Helmet } from 'react-helmet';
 import { useParams, Link } from 'react-router-dom';
+
+import { Helmet } from '@unhead/react/helmet';
 
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import SquigglyArrow from '@/svg-icons/squiggly_arrow.svg?react';
@@ -19,6 +20,7 @@ import {
   apiRemoveAccountFromList,
 } from 'flavours/glitch/api/lists';
 import { Avatar } from 'flavours/glitch/components/avatar';
+import { VerifiedBadge } from 'flavours/glitch/components/badge';
 import { Button } from 'flavours/glitch/components/button';
 import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
@@ -27,11 +29,9 @@ import { FollowersCounter } from 'flavours/glitch/components/counters';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
 import { ShortNumber } from 'flavours/glitch/components/short_number';
-import { VerifiedBadge } from 'flavours/glitch/components/verified_badge';
+import { useSearchAccounts } from 'flavours/glitch/hooks/useSearchAccounts';
 import { me } from 'flavours/glitch/initial_state';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
-
-import { useSearchAccounts } from './use_search_accounts';
 
 export const messages = defineMessages({
   manageMembers: {
@@ -165,7 +165,7 @@ const ListMembers: React.FC<{
   const [mode, setMode] = useState<Mode>('remove');
 
   const {
-    accountIds: searchAccountIds,
+    accounts: accountsFromSearch,
     isLoading: loadingSearchResults,
     searchAccounts: handleSearch,
   } = useSearchAccounts({
@@ -178,6 +178,7 @@ const ListMembers: React.FC<{
       }
     },
   });
+  const accountIdsFromSearch = accountsFromSearch.map((item) => item.id);
 
   useEffect(() => {
     if (id) {
@@ -221,7 +222,7 @@ const ListMembers: React.FC<{
   let displayedAccountIds: string[];
 
   if (mode === 'add' && searching) {
-    displayedAccountIds = searchAccountIds;
+    displayedAccountIds = accountIdsFromSearch;
   } else {
     displayedAccountIds = accountIds;
   }
@@ -286,6 +287,7 @@ const ListMembers: React.FC<{
             <FormattedMessage
               id='lists.no_results_found'
               defaultMessage='No results found.'
+              tagName='span'
             />
           )
         }

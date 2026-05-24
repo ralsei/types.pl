@@ -15,6 +15,7 @@
 #  avatar_remote_url             :string
 #  avatar_storage_schema_version :integer
 #  avatar_updated_at             :datetime
+#  collections_url               :string
 #  discoverable                  :boolean
 #  display_name                  :string           default(""), not null
 #  domain                        :string
@@ -192,8 +193,10 @@ class Account < ApplicationRecord
            :role,
            :locale,
            :shows_application?,
+           :email_subscriptions_enabled?,
            :prefers_noindex?,
            :time_zone,
+           :can?,
            to: :user,
            prefix: true,
            allow_nil: true
@@ -262,8 +265,26 @@ class Account < ApplicationRecord
     last_webfingered_at.nil? || last_webfingered_at <= STALE_THRESHOLD.ago
   end
 
+  def needs_background_refresh?
+    return false if local?
+
+    return true if last_webfingered_at.blank? || last_webfingered_at <= BACKGROUND_REFRESH_INTERVAL.ago
+
+    # TODO: Remove some time after 4.6
+    # This is temporary workaround to speed up account refreshs after
+    # collections have been enabled / deployed.
+    # Accounts will be refreshed when they lack a feature_approval_policy
+    # but we know from other account's on the same server that they should
+    # have.
+    return false unless feature_approval_policy.zero?
+
+    Rails.cache.fetch("feature_approval_policy_availability:#{domain}", expires_in: 30.minutes) do
+      Account.where(domain:).where.not(feature_approval_policy: 0).exists?
+    end
+  end
+
   def schedule_refresh_if_stale!
-    return unless last_webfingered_at.present? && last_webfingered_at <= BACKGROUND_REFRESH_INTERVAL.ago
+    return unless needs_background_refresh?
 
     AccountRefreshWorker.perform_in(rand(REFRESH_DEADLINE), id)
   end
@@ -466,8 +487,7 @@ class Account < ApplicationRecord
   end
 
   def featureable_by?(other_account)
-    return discoverable? if local?
-    return false unless Mastodon::Feature.collections_federation_enabled?
+    return discoverable? && (!locked? || followed_by?(other_account) || other_account.id == id) if local?
 
     feature_policy_for_account(other_account).in?(%i(automatic manual))
   end

@@ -2,12 +2,11 @@ import { useCallback, useState, useEffect } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
-import { Helmet } from 'react-helmet';
 import { useParams, useHistory, Link } from 'react-router-dom';
 
 import { isFulfilled } from '@reduxjs/toolkit';
 
-import Toggle from 'react-toggle';
+import { Helmet } from '@unhead/react/helmet';
 
 import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
@@ -23,6 +22,7 @@ import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import {
   SelectField,
   TextInputField,
+  Toggle,
 } from 'flavours/glitch/components/form_fields';
 import { Icon } from 'flavours/glitch/components/icon';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';

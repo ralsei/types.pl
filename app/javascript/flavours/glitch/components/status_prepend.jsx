@@ -161,7 +161,9 @@ export default class StatusPrepend extends PureComponent {
             icon={iconComponent}
           />
         </div>
-        <Message />
+        <span>
+          <Message />
+        </span>
         {children}
       </aside>
     );

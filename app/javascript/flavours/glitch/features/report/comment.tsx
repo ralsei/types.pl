@@ -6,8 +6,7 @@ import type { Map } from 'immutable';
 import { OrderedSet } from 'immutable';
 import { shallowEqual } from 'react-redux';
 
-import Toggle from 'react-toggle';
-
+import { Toggle } from '@/flavours/glitch/components/form_fields/toggle_field';
 import { fetchAccount } from 'flavours/glitch/actions/accounts';
 import { Button } from 'flavours/glitch/components/button';
 import type { Status } from 'flavours/glitch/models/status';
@@ -194,6 +193,7 @@ const Comment: React.FC<Props> = ({
                 id='report.forward'
                 defaultMessage='Forward to {target}'
                 values={{ target: domain }}
+                tagName='span'
               />
             </label>
           ))}
