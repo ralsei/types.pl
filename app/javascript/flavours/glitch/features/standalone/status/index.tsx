@@ -11,6 +11,7 @@ import {
   toggleStatusSpoilers,
 } from 'flavours/glitch/actions/statuses';
 import { hydrateStore } from 'flavours/glitch/actions/store';
+import { FocusTargetProvider } from 'flavours/glitch/components/navigation_focus_target';
 import { Router } from 'flavours/glitch/components/router';
 import { DetailedStatus } from 'flavours/glitch/features/status/components/detailed_status';
 import { useRenderSignal } from 'flavours/glitch/hooks/useRenderSignal';
@@ -86,7 +87,9 @@ export const Status: React.FC<{ id: string }> = ({ id }) => {
     <IntlProvider>
       <Provider store={store}>
         <Router>
-          <Embed id={id} />
+          <FocusTargetProvider>
+            <Embed id={id} />
+          </FocusTargetProvider>
         </Router>
       </Provider>
     </IntlProvider>

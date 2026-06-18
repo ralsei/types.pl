@@ -66,6 +66,7 @@ import ActionBar from './components/action_bar';
 import { DetailedStatus } from './components/detailed_status';
 import { RefreshController } from './components/refresh_controller';
 import { quoteComposeById } from '@/flavours/glitch/actions/compose_typed';
+import { FOCUS_TARGET, NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 
 const messages = defineMessages({
   revealAll: { id: 'status.show_more_all', defaultMessage: 'Show more for all' },
@@ -630,7 +631,13 @@ class Status extends ImmutablePureComponent {
             {ancestors}
 
             <Hotkeys handlers={handlers}>
-              <div className={classNames('focusable', 'detailed-status__wrapper', `detailed-status__wrapper-${status.get('visibility')}`)} tabIndex={0} aria-label={textForScreenReader({intl, status, expanded: isExpanded})} ref={this.setStatusRef}>
+              <NavigationFocusTarget
+                as='div'
+                focusTargetName={FOCUS_TARGET.POST}
+                className={classNames('focusable', 'detailed-status__wrapper', `detailed-status__wrapper-${status.get('visibility')}`)}
+                tabIndex={0}
+                aria-label={textForScreenReader({intl, status, expanded: isExpanded})} ref={this.setStatusRef}
+              >
                 <DetailedStatus
                   key={`details-${status.get('id')}`}
                   status={status}
@@ -669,7 +676,7 @@ class Status extends ImmutablePureComponent {
                   onPin={this.handlePin}
                   onEmbed={this.handleEmbed}
                 />
-              </div>
+              </NavigationFocusTarget>
             </Hotkeys>
 
             {descendants}

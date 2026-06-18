@@ -64,10 +64,6 @@ export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
 
 export const COMPOSE_EMOJI_INSERT = 'COMPOSE_EMOJI_INSERT';
 
-export const COMPOSE_UPLOAD_CHANGE_REQUEST     = 'COMPOSE_UPLOAD_UPDATE_REQUEST';
-export const COMPOSE_UPLOAD_CHANGE_SUCCESS     = 'COMPOSE_UPLOAD_UPDATE_SUCCESS';
-export const COMPOSE_UPLOAD_CHANGE_FAIL        = 'COMPOSE_UPLOAD_UPDATE_FAIL';
-
 export const COMPOSE_DOODLE_SET        = 'COMPOSE_DOODLE_SET';
 
 export const COMPOSE_POLL_ADD             = 'COMPOSE_POLL_ADD';
@@ -98,13 +94,13 @@ const messages = defineMessages({
 
 export const ensureComposeIsVisible = (getState) => {
   if (!getState().getIn(['compose', 'mounted'])) {
-    browserHistory.push('/publish');
+    browserHistory.push('/publish', { focusTarget: false });
   }
 };
 
 export function setComposeToStatus(status, text, spoiler_text, content_type) {
   return (dispatch, getState) => {
-    const maxOptions = getState().server.getIn(['server', 'configuration', 'polls', 'max_options']);
+    const maxOptions = getState().server.server.item?.configuration.polls.max_options;
 
     dispatch({
       type: COMPOSE_SET_STATUS,
@@ -318,7 +314,10 @@ export function submitCompose(overridePrivacy = null, successCallback = undefine
           message: statusId === null ? messages.published : messages.saved,
           action: messages.open,
           dismissAfter: 10000,
-          onClick: () => browserHistory.push(`/@${response.data.account.username}/${response.data.id}`),
+          onClick: () => browserHistory.push(
+            `/@${response.data.account.username}/${response.data.id}`,
+            { focusTarget: 'detailed-status' }
+          ),
         }));
       }
     }).catch(function (error) {
@@ -361,7 +360,7 @@ export function uploadCompose(files) {
       dispatch(showAlert({ message: messages.uploadQuote }));
       return;
     }
-    const uploadLimit = getState().getIn(['server', 'server', 'configuration', 'statuses', 'max_media_attachments']);
+    const uploadLimit = getState().getIn(['server', 'server', 'item', 'configuration', 'statuses', 'max_media_attachments']);
     const media = getState().getIn(['compose', 'media_attachments']);
     const pending = getState().getIn(['compose', 'pending_media_attachments']);
     const progress = new Array(files.length).fill(0);
@@ -370,11 +369,6 @@ export function uploadCompose(files) {
 
     if (files.length + media.size + pending > uploadLimit) {
       dispatch(showAlert({ message: messages.uploadErrorLimit }));
-      return;
-    }
-
-    if (getState().getIn(['compose', 'poll'])) {
-      dispatch(showAlert({ message: messages.uploadErrorPoll }));
       return;
     }
 
@@ -494,58 +488,6 @@ export function onChangeMediaFocus(focusX, focusY) {
     type: COMPOSE_CHANGE_MEDIA_FOCUS,
     focusX,
     focusY,
-  };
-}
-
-export function changeUploadCompose(id, params) {
-  return (dispatch, getState) => {
-    dispatch(changeUploadComposeRequest());
-
-    let media = getState().getIn(['compose', 'media_attachments']).find((item) => item.get('id') === id);
-
-    // Editing already-attached media is deferred to editing the post itself.
-    // For simplicity's sake, fake an API reply.
-    if (media && !media.get('unattached')) {
-      const { focus, ...other } = params;
-      const data = { ...media.toJS(), ...other };
-
-      if (focus) {
-        const [x, y] = focus.split(',');
-        data.meta = { focus: { x: parseFloat(x), y: parseFloat(y) } };
-      }
-
-      dispatch(changeUploadComposeSuccess(data, true));
-    } else {
-      api().put(`/api/v1/media/${id}`, params).then(response => {
-        dispatch(changeUploadComposeSuccess(response.data, false));
-      }).catch(error => {
-        dispatch(changeUploadComposeFail(id, error));
-      });
-    }
-  };
-}
-
-export function changeUploadComposeRequest() {
-  return {
-    type: COMPOSE_UPLOAD_CHANGE_REQUEST,
-    skipLoading: true,
-  };
-}
-
-export function changeUploadComposeSuccess(media, attached) {
-  return {
-    type: COMPOSE_UPLOAD_CHANGE_SUCCESS,
-    media: media,
-    attached: attached,
-    skipLoading: true,
-  };
-}
-
-export function changeUploadComposeFail(error) {
-  return {
-    type: COMPOSE_UPLOAD_CHANGE_FAIL,
-    error: error,
-    skipLoading: true,
   };
 }
 

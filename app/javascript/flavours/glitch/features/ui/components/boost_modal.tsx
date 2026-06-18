@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import RepeatIcon from '@/material-icons/400-24px/repeat.svg?react';
 import { Button } from 'flavours/glitch/components/button';
 import { Icon } from 'flavours/glitch/components/icon';
+import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import PrivacyDropdown from 'flavours/glitch/features/compose/components/privacy_dropdown';
 import { EmbeddedStatus } from 'flavours/glitch/features/notifications_v2/components/embedded_status';
 import type { Status, StatusVisibility } from 'flavours/glitch/models/status';
@@ -69,7 +70,7 @@ export const BoostModal: React.FC<{
           </div>
 
           <div>
-            <h1>
+            <NavigationFocusTarget as='h1'>
               {status.get('reblogged') ? (
                 <FormattedMessage
                   id='boost_modal.undo_reblog'
@@ -81,7 +82,7 @@ export const BoostModal: React.FC<{
                   defaultMessage='Boost post?'
                 />
               )}
-            </h1>
+            </NavigationFocusTarget>
             <div>
               {missingMediaDescription ? (
                 <FormattedMessage

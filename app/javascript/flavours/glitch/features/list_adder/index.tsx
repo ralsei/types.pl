@@ -18,6 +18,7 @@ import type { ApiListJSON } from 'flavours/glitch/api_types/lists';
 import { Button } from 'flavours/glitch/components/button';
 import { Icon } from 'flavours/glitch/components/icon';
 import { IconButton } from 'flavours/glitch/components/icon_button';
+import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import { getOrderedLists } from 'flavours/glitch/selectors/lists';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
@@ -182,13 +183,13 @@ const ListAdder: React.FC<{
           onClick={onClose}
         />
 
-        <span className='dialog-modal__header__title'>
+        <NavigationFocusTarget as='h1' className='dialog-modal__header__title'>
           <FormattedMessage
             id='lists.add_to_lists'
             defaultMessage='Add {name} to lists'
             values={{ name: <strong>@{account?.acct}</strong> }}
           />
-        </span>
+        </NavigationFocusTarget>
       </div>
 
       <div className='dialog-modal__content'>

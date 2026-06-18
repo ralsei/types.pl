@@ -1,7 +1,6 @@
 {
   "about.blocks": "Մոդերացուող սպասարկիչներ",
   "about.contact": "Կապ՝",
-  "about.disclaimer": "Մաստոդոնը ազատ, բաց ելակոդով ծրագրակազմ է, յայտնի Mastodon gGmbH ապրանքանշանով։",
   "about.domain_blocks.silenced.title": "Սահմանափակ",
   "about.domain_blocks.suspended.title": "Սպասող",
   "about.not_available": "Այս տեղեկութիւնը տեսանելի չի այս սերուերում։",
@@ -340,8 +339,6 @@
   "report.block": "Արգելափակել",
   "report.categories.other": "Այլ",
   "report.categories.spam": "Սպամ",
-  "report.category.title_account": "հաշիւ",
-  "report.category.title_status": "գրառում",
   "report.close": "Աւարտել",
   "report.forward": "Փոխանցել {target}֊ին",
   "report.forward_hint": "Այս հաշիւ այլ հանգոյցից է։ Ուղարկե՞մ այնտեղ էլ այս բողոքի անոնիմ պատճէնը։",

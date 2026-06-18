@@ -24,7 +24,15 @@ const getRegex = createSelector([
 
 const makeGetStatusIds = (pending = false) => createSelector([
   (state, { type }) => state.getIn(['settings', type], ImmutableMap()),
-  (state, { type }) => state.getIn(['timelines', type, pending ? 'pendingItems' : 'items'], ImmutableList()),
+  (state, { type, maxItems }) => {
+    const items = state.getIn(['timelines', type, pending ? 'pendingItems' : 'items'], ImmutableList());
+
+    if (maxItems) {
+      return items.take(maxItems);
+    }
+
+    return items;
+  },
   (state)           => state.get('statuses'),
   getRegex,
 ], (columnSettings, statusIds, statuses, regex) => {
@@ -64,8 +72,17 @@ const makeMapStateToProps = () => {
   const getStatusIds = makeGetStatusIds();
   const getPendingStatusIds = makeGetStatusIds(true);
 
-  const mapStateToProps = (state, { timelineId, regex, initialLoadingState = true }) => ({
-    statusIds: getStatusIds(state, { type: timelineId, regex }),
+  /**
+   * @param {import('flavours/glitch/store').RootState} state
+   * @param {Object} props
+   * @param {string} props.timelineId
+   * @param {boolean} [props.initialLoadingState]
+   * @param {number} [props.maxItems]
+   * @param {RegExp} [props.regex]
+   */
+  const mapStateToProps = (state, { timelineId, regex, initialLoadingState = true, maxItems }) => ({
+    statusIds: getStatusIds(state, { type: timelineId, regex, maxItems }),
+
     lastId:    state.getIn(['timelines', timelineId, 'items'])?.last(),
     isLoading: state.getIn(['timelines', timelineId, 'isLoading'], initialLoadingState),
     isPartial: state.getIn(['timelines', timelineId, 'isPartial'], false),

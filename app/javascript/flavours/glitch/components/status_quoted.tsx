@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 import { defineMessage, FormattedMessage, useIntl } from 'react-intl';
 
@@ -143,6 +144,21 @@ const FilteredQuote: React.FC<{
   );
 };
 
+// Adds a wrapper around StatusContainer as the types aren't inheriting correctly with Redux + React 19.
+// TODO: Remove this after the Status component is in TS.
+interface StatusContainerForQuotesProps {
+  id?: string | null;
+  contextType?: string;
+  isQuotedPost?: boolean;
+  avatarSize?: number;
+  headerRenderFn?: StatusHeaderRenderFn;
+  children?: ReactNode;
+  [key: string]: unknown;
+}
+
+const StatusContainerWithChildren =
+  StatusContainer as unknown as ComponentType<StatusContainerForQuotesProps>;
+
 interface QuotedStatusProps {
   quote: QuoteMap;
   contextType?: string;
@@ -226,17 +242,20 @@ export const QuotedStatus: React.FC<QuotedStatusProps> = ({
   const intl = useIntl();
   const headerRenderFn: StatusHeaderRenderFn = useCallback(
     (props) => (
-      <StatusHeader {...props}>
-        {onQuoteCancel && (
-          <IconButton
-            onClick={onQuoteCancel}
-            className='status__quote-cancel'
-            title={intl.formatMessage(quoteCancelMessage)}
-            icon='cancel-fill'
-            iconComponent={CancelFillIcon}
-          />
-        )}
-      </StatusHeader>
+      <StatusHeader
+        {...props}
+        contentAfterDate={
+          onQuoteCancel && (
+            <IconButton
+              onClick={onQuoteCancel}
+              className='status__quote-cancel'
+              title={intl.formatMessage(quoteCancelMessage)}
+              icon='cancel-fill'
+              iconComponent={CancelFillIcon}
+            />
+          )
+        }
+      />
     ),
     [intl, onQuoteCancel],
   );
@@ -336,7 +355,7 @@ export const QuotedStatus: React.FC<QuotedStatusProps> = ({
 
   return (
     <div className='status__quote'>
-      <StatusContainer
+      <StatusContainerWithChildren
         isQuotedPost
         id={quotedStatusId}
         contextType={contextType}
@@ -354,7 +373,7 @@ export const QuotedStatus: React.FC<QuotedStatusProps> = ({
             nestingLevel={nestingLevel + 1}
           />
         )}
-      </StatusContainer>
+      </StatusContainerWithChildren>
     </div>
   );
 };
@@ -381,17 +400,15 @@ export const StatusQuoteManager = (props: StatusQuoteManagerProps) => {
 
   if (quote) {
     return (
-      /* @ts-expect-error Status is not yet typed */
-      <StatusContainer {...props}>
+      <StatusContainerWithChildren {...props}>
         <QuotedStatus
           quote={quote}
           parentQuotePostId={status?.get('id') as string}
           contextType={props.contextType}
         />
-      </StatusContainer>
+      </StatusContainerWithChildren>
     );
   }
 
-  /* @ts-expect-error Status is not yet typed */
-  return <StatusContainer {...props} />;
+  return <StatusContainerWithChildren {...props} />;
 };

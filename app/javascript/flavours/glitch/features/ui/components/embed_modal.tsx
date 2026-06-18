@@ -6,6 +6,7 @@ import { showAlertForError } from 'flavours/glitch/actions/alerts';
 import api from 'flavours/glitch/api';
 import { Button } from 'flavours/glitch/components/button';
 import { CopyPasteText } from 'flavours/glitch/components/copy_paste_text';
+import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import { useAppDispatch } from 'flavours/glitch/store';
 
 interface OEmbedResponse {
@@ -76,9 +77,9 @@ const EmbedModal: React.FC<{
         <Button onClick={onClose}>
           <FormattedMessage id='report.close' defaultMessage='Done' />
         </Button>
-        <span className='dialog-modal__header__title'>
+        <NavigationFocusTarget as='h1' className='dialog-modal__header__title'>
           <FormattedMessage id='status.embed' defaultMessage='Get embed code' />
-        </span>
+        </NavigationFocusTarget>
         <Button secondary onClick={onClose}>
           <FormattedMessage
             id='confirmation_modal.cancel'

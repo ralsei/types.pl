@@ -18,6 +18,7 @@ import { closeModal } from 'flavours/glitch/actions/modal';
 import { Button } from 'flavours/glitch/components/button';
 import { CheckBox } from 'flavours/glitch/components/check_box';
 import { Icon } from 'flavours/glitch/components/icon';
+import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import { RadioButton } from 'flavours/glitch/components/radio_button';
 
 const messages = defineMessages({
@@ -84,7 +85,9 @@ export const MuteModal = ({ accountId, acct }) => {
           </div>
 
           <div>
-            <h1><FormattedMessage id='mute_modal.title' defaultMessage='Mute user?' /></h1>
+            <NavigationFocusTarget as='h1'>
+              <FormattedMessage id='mute_modal.title' defaultMessage='Mute user?' />
+            </NavigationFocusTarget>
             <p>@{acct}</p>
           </div>
         </div>

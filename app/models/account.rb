@@ -63,15 +63,7 @@
 #
 
 class Account < ApplicationRecord
-  self.ignored_columns += %w(
-    devices_url
-    hub_url
-    remote_url
-    salmon_url
-    secret
-    subscription_expires_at
-    trust_level
-  )
+  self.ignored_columns += %w(devices_url)
 
   BACKGROUND_REFRESH_INTERVAL = 1.week.freeze
   REFRESH_DEADLINE = 6.hours
@@ -84,7 +76,7 @@ class Account < ApplicationRecord
   URL_PREFIX_RE = %r{\Ahttp(s?)://[^/]+}
   USERNAME_ONLY_RE = /\A#{USERNAME_RE}\z/i
   USERNAME_LENGTH_LIMIT = 30
-  DISPLAY_NAME_LENGTH_LIMIT = (ENV['MAX_DISPLAY_NAME_CHARS'] || 30).to_i
+  DISPLAY_NAME_LENGTH_LIMIT = (ENV['MAX_DISPLAY_NAME_CHARS'] || 40).to_i
   NOTE_LENGTH_LIMIT = (ENV['MAX_BIO_CHARS'] || 500).to_i
 
   # Hard limits for federated content

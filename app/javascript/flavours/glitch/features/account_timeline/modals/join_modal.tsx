@@ -34,7 +34,7 @@ const selectServerName = createAppSelector(
   [
     (state) => state.accounts,
     (_, accountId: string) => accountId,
-    (state) => state.server.getIn(['server', 'domain']) as string | undefined,
+    (state) => state.server.server.item?.domain,
   ],
   (accounts, accountId, serverDomain) => {
     const acct = accounts.getIn([accountId, 'acct']) as string | undefined;

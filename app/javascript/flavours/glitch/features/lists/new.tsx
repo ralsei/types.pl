@@ -8,11 +8,13 @@ import { isFulfilled } from '@reduxjs/toolkit';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { NotSignedInIndicator } from '@/flavours/glitch/components/not_signed_in_indicator';
+import { useIdentity } from '@/flavours/glitch/identity_context';
 import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import { fetchList } from 'flavours/glitch/actions/lists';
 import { createList, updateList } from 'flavours/glitch/actions/lists_typed';
-import { apiGetAccounts } from 'flavours/glitch/api/lists';
+import { apiGetListAccounts } from 'flavours/glitch/api/lists';
 import type { ApiAccountJSON } from 'flavours/glitch/api_types/accounts';
 import type { RepliesPolicyType } from 'flavours/glitch/api_types/lists';
 import { Avatar } from 'flavours/glitch/components/avatar';
@@ -44,7 +46,7 @@ const MembersLink: React.FC<{
   const [avatarAccounts, setAvatarAccounts] = useState<ApiAccountJSON[]>([]);
 
   useEffect(() => {
-    void apiGetAccounts(id)
+    void apiGetListAccounts(id)
       .then((data) => {
         setAvatarCount(data.length);
         setAvatarAccounts(data.slice(0, 3));
@@ -250,16 +252,17 @@ const NewListWrapper: React.FC<{
 }> = ({ multiColumn }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
+  const { signedIn } = useIdentity();
   const { id } = useParams<{ id?: string }>();
   const list = useAppSelector((state) =>
     id ? state.lists.get(id) : undefined,
   );
 
   useEffect(() => {
-    if (id) {
+    if (signedIn && id) {
       dispatch(fetchList(id));
     }
-  }, [dispatch, id]);
+  }, [dispatch, signedIn, id]);
 
   const isLoading = id && !list;
 
@@ -277,7 +280,13 @@ const NewListWrapper: React.FC<{
       />
 
       <div className='scrollable'>
-        {isLoading ? <LoadingIndicator /> : <NewList list={list} />}
+        {!signedIn ? (
+          <NotSignedInIndicator />
+        ) : isLoading ? (
+          <LoadingIndicator />
+        ) : (
+          <NewList list={list} />
+        )}
       </div>
 
       <Helmet>

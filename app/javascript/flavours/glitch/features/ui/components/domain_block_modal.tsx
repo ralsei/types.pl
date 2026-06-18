@@ -15,6 +15,7 @@ import { apiRequest } from 'flavours/glitch/api';
 import { Button } from 'flavours/glitch/components/button';
 import { Icon } from 'flavours/glitch/components/icon';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
+import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import { ShortNumber } from 'flavours/glitch/components/short_number';
 import { useAppDispatch } from 'flavours/glitch/store';
 
@@ -77,12 +78,12 @@ export const DomainBlockModal: React.FC<{
           </div>
 
           <div>
-            <h1>
+            <NavigationFocusTarget as='h1'>
               <FormattedMessage
                 id='domain_block_modal.title'
                 defaultMessage='Block domain?'
               />
-            </h1>
+            </NavigationFocusTarget>
             <p>{domain}</p>
           </div>
         </div>

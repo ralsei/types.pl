@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
+import { fetchAccounts } from '@/flavours/glitch/actions/accounts_typed';
 import { importFetchedAccounts } from '@/flavours/glitch/actions/importer';
 import {
   apiCreateCollection,
@@ -20,11 +21,13 @@ import type {
   CollectionAccountItem,
 } from '@/flavours/glitch/api_types/collections';
 import { initialState, me } from '@/flavours/glitch/initial_state';
+import type { AppDispatch } from '@/flavours/glitch/store';
 import {
   createAppAsyncThunk,
   createAppSelector,
   createDataLoadingThunk,
 } from '@/flavours/glitch/store/typed_functions';
+import { batchArray } from '@/flavours/glitch/utils/batch_array';
 import { inputToHashtag } from '@/flavours/glitch/utils/hashtags';
 
 type QueryStatus = 'idle' | 'loading' | 'error';
@@ -117,6 +120,15 @@ const collectionSlice = createSlice({
     ) {
       const { field, value } = action.payload;
       state.editor[field] = value;
+    },
+    importFetchedCollections(
+      state,
+      action: PayloadAction<ApiCollectionJSON[]>,
+    ) {
+      const collections = action.payload;
+      collections.forEach((collection) => {
+        state.collections[collection.id] = collection;
+      });
     },
   },
   extraReducers(builder) {
@@ -322,16 +334,48 @@ const collectionSlice = createSlice({
   },
 });
 
+/**
+ * Prefetch accounts whose avatars will be displayed in the collection list
+ */
+export async function fetchAccountsForCollectionPreview(
+  collections: ApiCollectionJSON[],
+  dispatch: AppDispatch,
+) {
+  const previewAccountIds = collections
+    .flatMap((collection) =>
+      collection.items.slice(0, 3).map((item) => item.account_id),
+    )
+    .filter((id): id is string => !!id);
+
+  if (previewAccountIds.length > 0) {
+    // fetchAccounts can only process up to 40 item ids, so we'll
+    // batch the list of ids
+    const batchedAccountIdLists = batchArray(previewAccountIds, 40);
+
+    await Promise.allSettled(
+      batchedAccountIdLists.map((accountIds) =>
+        dispatch(fetchAccounts({ accountIds })),
+      ),
+    );
+  }
+}
+
 export const fetchCollectionsCreatedByAccount = createDataLoadingThunk(
   `${collectionSlice.name}/fetchCollectionsCreatedByAccount`,
   ({ accountId }: { accountId: string }) =>
     apiGetCollectionsCreatedByAccount(accountId),
+  async ({ collections }, { dispatch }) => {
+    await fetchAccountsForCollectionPreview(collections, dispatch);
+  },
 );
 
 export const fetchCollectionsFeaturingAccount = createDataLoadingThunk(
   `${collectionSlice.name}/fetchCollectionsFeaturingAccount`,
   ({ accountId }: { accountId: string }) =>
     apiGetCollectionsFeaturingAccount(accountId),
+  async ({ collections }, { dispatch }) => {
+    await fetchAccountsForCollectionPreview(collections, dispatch);
+  },
 );
 
 export const fetchCollection = createDataLoadingThunk(
@@ -386,6 +430,8 @@ export const collections = collectionSlice.reducer;
 export const collectionEditorActions = collectionSlice.actions;
 export const updateCollectionEditorField =
   collectionSlice.actions.updateEditorField;
+export const importFetchedCollections =
+  collectionSlice.actions.importFetchedCollections;
 
 /**
  * Selectors

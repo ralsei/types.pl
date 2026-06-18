@@ -13,6 +13,7 @@ import { Button } from '@/flavours/glitch/components/button';
 import { Dropdown } from '@/flavours/glitch/components/dropdown';
 import type { SelectItem } from '@/flavours/glitch/components/dropdown_selector';
 import { IconButton } from '@/flavours/glitch/components/icon_button';
+import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 import { messages as privacyMessages } from '@/flavours/glitch/features/compose/components/privacy_dropdown';
 import { createAppSelector, useAppSelector } from '@/flavours/glitch/store';
 import AlternateEmailIcon from '@/material-icons/400-24px/alternate_email.svg?react';
@@ -217,14 +218,15 @@ export const VisibilityModal: FC<VisibilityModalProps> = forwardRef(
             iconComponent={CloseIcon}
             onClick={onClose}
           />
-          <FormattedMessage
-            id='visibility_modal.header'
-            defaultMessage='Visibility and interaction'
+          <NavigationFocusTarget
+            as='h1'
+            className='dialog-modal__header__title'
           >
-            {(chunks) => (
-              <span className='dialog-modal__header__title'>{chunks}</span>
-            )}
-          </FormattedMessage>
+            <FormattedMessage
+              id='visibility_modal.header'
+              defaultMessage='Visibility and interaction'
+            />
+          </NavigationFocusTarget>
         </div>
         <div className='dialog-modal__content'>
           <div className='dialog-modal__content__description'>

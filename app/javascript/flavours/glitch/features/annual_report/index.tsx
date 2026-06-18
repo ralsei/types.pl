@@ -10,6 +10,7 @@ import classNames from 'classnames/bind';
 import { closeModal } from '@/flavours/glitch/actions/modal';
 import { IconButton } from '@/flavours/glitch/components/icon_button';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
+import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 import { getReport } from '@/flavours/glitch/reducers/slices/annual_report';
 import {
   createAppSelector,
@@ -83,7 +84,9 @@ export const AnnualReport: FC<{ context?: 'modal' | 'standalone' }> = ({
   return (
     <div className={styles.wrapper} data-color-scheme='dark'>
       <div className={styles.header}>
-        <h1>Wrapstodon {report.year}</h1>
+        <NavigationFocusTarget as='h1'>
+          Wrapstodon {report.year}
+        </NavigationFocusTarget>
         {account && <p>@{account.acct}</p>}
         {context === 'modal' && (
           <IconButton

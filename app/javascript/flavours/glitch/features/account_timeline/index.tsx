@@ -19,7 +19,7 @@ import { LimitedAccountHint } from '@/flavours/glitch/components/limited_account
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import { RemoteHint } from '@/flavours/glitch/components/remote_hint';
 import StatusList from '@/flavours/glitch/components/status_list';
-import BundleColumnError from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
 import {
   useAccountId,
   useCurrentAccountId,

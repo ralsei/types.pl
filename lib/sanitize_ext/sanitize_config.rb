@@ -36,7 +36,6 @@ class Sanitize
       'maction' => %w(),
       'math' => %w(display alttext),
       'merror' => %w(),
-      # See below
       'mfrac' => %w(linethickness),
       'mi' => %w(),
       'mmultiscripts' => %w(),
@@ -118,36 +117,52 @@ class Sanitize
       current_node.replace(current_node.document.create_text_node(current_node.text)) unless LINK_PROTOCOLS.include?(scheme)
     end
 
-    # We need some special logic for some math tags.
-    # In particular, <mathfrac> contains a (usually stylistic) attribute
-    # `linethickness`, which denotes the thickness of the horizontal bar.
-    # However, `linethickness="0"`, erases the horizontal bar completely. This
-    # looks more like a two-element table, and could denote a two-element
-    # vector, or (in the MathML Core spec) the binomial coefficient!
-    # For example:
-    #   <mo>(</mo><mfrac linethickness="0"><mi>x</mi><mi>y</mi></mfrac><mo>)</mo>
-    # denotes xCy, while
-    #   <mo>(</mo><mfrac><mi>x</mi><mi>y</mi></mfrac><mo>)</mo>
-    # denotes (x/y). These two constructions are very different and the
-    # distinction needs to be mantained.
+    # We assume that incomming <math> nodes are of the form
+    # <math><semantics>...<annotation>...</annotation></semantics></math>
+    # according to the [FEP]. We try to grab the most relevant plain-text
+    # annotation from the semantics node, and use it to display a representation
+    # of the mathematics.
     #
     # FEP: https://codeberg.org/fediverse/fep/src/branch/main/fep/dc88/fep-dc88.md
     MATH_TRANSFORMER = lambda do |env|
-      node = env[:node]
-      return if env[:is_allowlisted] || !node.element?
-      return unless env[:node_name] == 'mfrac'
+      math = env[:node]
+      return if env[:is_allowlisted]
+      return unless math.element? && env[:node_name] == 'math'
 
-      node.attribute_nodes.each do |attr|
-        attr.unlink if attr.name == 'linethickness' && attr.value != '0'
+      semantics = math.element_children[0]
+      return if semantics.nil? || semantics.name != 'semantics'
+
+      # next, we find the plain-text description
+      is_annotation_with_encoding = lambda do |encoding, node|
+        return false unless node.name == 'annotation'
+
+        encoding_attr = node.attributes['encoding']
+        return false if encoding_attr.nil?
+
+        encoding_attr.value == encoding
       end
-      # we don't allowlist the node. instead we let the CleanElement transformer
-      # take care of the rest of the attributes.
+
+      annotation = semantics.children.find(&is_annotation_with_encoding.curry['application/x-tex'])
+      if annotation
+        text = if math.attributes['display']&.value == 'block'
+                 "$$#{annotation.text}$$"
+               else
+                 "$#{annotation.text}$"
+               end
+        math.replace(math.document.create_text_node(text))
+        return
+      end
+      # Don't bother surrounding 'text/plain' annotations with dollar signs,
+      # since it isn't LaTeX
+      annotation = semantics.children.find(&is_annotation_with_encoding.curry['text/plain'])
+      math.replace(math.document.create_text_node(annotation.text)) unless annotation.nil?
     end
 
     MASTODON_STRICT = freeze_config(
       elements: %w(p br span a abbr del s pre blockquote code b strong u sub sup i em h1 h2 h3 h4 h5 ul ol li ruby rt rp) + MATH_TAG_ATTRS.keys,
 
       attributes: {
+        :all => %w(lang),
         'a' => %w(href rel class title translate),
         'abbr' => %w(title),
         'span' => %w(class translate),
@@ -171,9 +186,9 @@ class Sanitize
 
       # allow math tags anyway
       # https://github.com/rgrove/sanitize/security/advisories/GHSA-p4x4-rw2p-8j8m
-      remove_contents: %w[
+      remove_contents: %w(
         iframe noembed noframes noscript plaintext script style svg xmp
-      ],
+      ),
 
       transformers: [
         ALLOWED_CLASS_TRANSFORMER,

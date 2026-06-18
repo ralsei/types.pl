@@ -10,7 +10,7 @@ import { AccountHeader } from '@/flavours/glitch/components/account_header';
 import { LimitedAccountHint } from '@/flavours/glitch/components/limited_account_hint';
 import { RemoteHint } from '@/flavours/glitch/components/remote_hint';
 import ScrollableList from '@/flavours/glitch/components/scrollable_list';
-import BundleColumnError from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
 import Column from '@/flavours/glitch/features/ui/components/column';
 import { useAccountId } from '@/flavours/glitch/hooks/useAccountId';
 import { useAccountVisibility } from '@/flavours/glitch/hooks/useAccountVisibility';

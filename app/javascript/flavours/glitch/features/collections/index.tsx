@@ -4,18 +4,19 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
-import { TabLink, TabList } from '@/flavours/glitch/components/tab_list';
+import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 import { Column } from 'flavours/glitch/components/column';
 import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { DisplayNameSimple } from 'flavours/glitch/components/display_name/simple';
 import { Scrollable } from 'flavours/glitch/components/scrollable_list/components';
+import { TabLink, TabList } from 'flavours/glitch/components/tab_list';
 import { useAccount } from 'flavours/glitch/hooks/useAccount';
 import {
   useAccountId,
   useCurrentAccountId,
 } from 'flavours/glitch/hooks/useAccountId';
 
-import { CollectionsCreatedByYou } from './overview/created_by_you';
+import { CollectionsCreatedByAccount } from './overview/created_by_account';
 import { CollectionsFeaturingYou } from './overview/featuring_you';
 import classes from './styles.module.scss';
 
@@ -74,7 +75,9 @@ export const Collections: React.FC<{
 
       <Scrollable>
         <header className={classes.header}>
-          <h1 className={classes.heading}>{pageTitleHtml}</h1>
+          <NavigationFocusTarget as='h1' className={classes.heading}>
+            {pageTitleHtml}
+          </NavigationFocusTarget>
           <TabList plain>
             <TabLink exact to={`/@${account?.acct}/collections`}>
               {intl.formatMessage(createdByTabMessage, {
@@ -92,7 +95,7 @@ export const Collections: React.FC<{
           </TabList>
         </header>
         <Switch>
-          <Route exact path={path} component={CollectionsCreatedByYou} />
+          <Route exact path={path} component={CollectionsCreatedByAccount} />
           <Route
             exact
             path={`${path}/featuring-you`}

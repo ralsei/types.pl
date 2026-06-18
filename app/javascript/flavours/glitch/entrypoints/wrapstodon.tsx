@@ -5,6 +5,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { importFetchedStatuses } from '@/flavours/glitch/actions/importer';
 import { hydrateStore } from '@/flavours/glitch/actions/store';
 import type { ApiAnnualReportResponse } from '@/flavours/glitch/api/annual_report';
+import { FocusTargetProvider } from '@/flavours/glitch/components/navigation_focus_target';
 import { Router } from '@/flavours/glitch/components/router';
 import { WrapstodonSharedPage } from '@/flavours/glitch/features/annual_report/shared_page';
 import { IntlProvider, loadLocale } from '@/flavours/glitch/locales';
@@ -52,7 +53,9 @@ function loaded() {
     <IntlProvider>
       <ReduxProvider store={store}>
         <Router>
-          <WrapstodonSharedPage />
+          <FocusTargetProvider>
+            <WrapstodonSharedPage />
+          </FocusTargetProvider>
         </Router>
       </ReduxProvider>
     </IntlProvider>,

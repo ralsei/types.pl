@@ -6,7 +6,7 @@ import type { ColumnRef } from '@/flavours/glitch/components/column';
 import { Column } from '@/flavours/glitch/components/column';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import ScrollableList from '@/flavours/glitch/components/scrollable_list';
-import BundleColumnError from '@/flavours/glitch/features/ui/components/bundle_column_error';
+import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useAccountVisibility } from '@/flavours/glitch/hooks/useAccountVisibility';
 import { useLayout } from '@/flavours/glitch/hooks/useLayout';
