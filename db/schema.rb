@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_03_172525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -192,6 +192,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
     t.text "private_key"
     t.integer "protocol", default: 0, null: false
     t.text "public_key", default: "", null: false
+    t.datetime "requested_deletion_at"
     t.datetime "requested_review_at", precision: nil
     t.datetime "reviewed_at", precision: nil
     t.datetime "sensitized_at", precision: nil
@@ -204,14 +205,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
     t.integer "suspension_origin"
     t.boolean "trendable"
     t.datetime "updated_at", precision: nil, null: false
-    t.string "uri", default: "", null: false
+    t.string "uri"
     t.string "url"
     t.string "username", default: "", null: false
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), COALESCE(lower((domain)::text), ''::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["domain", "id"], name: "index_accounts_on_domain_and_id"
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id", where: "(moved_to_account_id IS NOT NULL)"
-    t.index ["uri"], name: "index_accounts_on_uri"
+    t.index ["uri"], name: "index_accounts_on_uri", unique: true
     t.index ["url"], name: "index_accounts_on_url", opclass: :text_pattern_ops, where: "(url IS NOT NULL)"
   end
 
@@ -631,6 +632,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "uri"
     t.index ["account_id", "target_account_id"], name: "index_follow_requests_on_account_id_and_target_account_id", unique: true
+    t.index ["target_account_id", "account_id"], name: "index_follow_requests_on_target_account_id_and_account_id"
   end
 
   create_table "follows", force: :cascade do |t|
@@ -705,12 +707,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
     t.datetime "expires_at"
+    t.string "local_fragment"
     t.string "private_key"
     t.string "public_key", null: false
     t.boolean "revoked", default: false, null: false
     t.integer "type", null: false
     t.datetime "updated_at", null: false
-    t.string "uri", null: false
+    t.string "uri"
+    t.index ["account_id", "local_fragment"], name: "index_keypairs_on_account_id_and_local_fragment", unique: true
     t.index ["account_id"], name: "index_keypairs_on_account_id"
     t.index ["uri"], name: "index_keypairs_on_uri", unique: true
   end
@@ -1155,8 +1159,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
     t.index ["var"], name: "index_site_uploads_on_var", unique: true
   end
 
+  create_table "software_deprecations", force: :cascade do |t|
+    t.string "branch", null: false
+    t.datetime "created_at", null: false
+    t.date "end_of_support", null: false
+    t.datetime "updated_at", null: false
+    t.integer "warning_issued", null: false
+    t.index ["branch"], name: "index_software_deprecations_on_branch", unique: true
+  end
+
   create_table "software_updates", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.date "end_of_support"
     t.string "release_notes", default: "", null: false
     t.integer "type", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -1623,7 +1637,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_114230) do
             WHERE ((statuses.account_id = accounts.id) AND (statuses.deleted_at IS NULL) AND (statuses.reblog_of_id IS NULL))
             ORDER BY statuses.id DESC
            LIMIT 20) t0)
-    WHERE ((accounts.suspended_at IS NULL) AND (accounts.silenced_at IS NULL) AND (accounts.moved_to_account_id IS NULL) AND (accounts.discoverable = true) AND (accounts.locked = false))
+    WHERE ((accounts.suspended_at IS NULL) AND (accounts.requested_deletion_at IS NULL) AND (accounts.silenced_at IS NULL) AND (accounts.moved_to_account_id IS NULL) AND (accounts.discoverable = true) AND (accounts.locked = false))
     GROUP BY accounts.id;
   SQL
   add_index "account_summaries", ["account_id", "language", "sensitive"], name: "idx_on_account_id_language_sensitive_250461e1eb"

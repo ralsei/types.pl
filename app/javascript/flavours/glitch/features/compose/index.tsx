@@ -65,10 +65,7 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const columns = useAppSelector(
-    (state) =>
-      (state.settings as ImmutableMap<string, unknown>).get(
-        'columns',
-      ) as ImmutableList<ColumnMap>,
+    (state) => state.settings.get('columns') as ImmutableList<ColumnMap>,
   );
   const unreadNotifications = useAppSelector(
     (state) => state.notifications.get('unread', 0) as number,

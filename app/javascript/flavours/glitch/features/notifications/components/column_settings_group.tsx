@@ -18,9 +18,10 @@ import PillBarButton from './pill_bar_button';
 const selectNotificationSettings = createAppSelector(
   [
     (state) =>
-      (state.settings as Immutable.Map<string, unknown>).get(
-        'notifications',
-      ) as Immutable.Map<string, Immutable.Map<string, unknown> | boolean>,
+      state.settings.get('notifications') as Immutable.Map<
+        string,
+        Immutable.Map<string, unknown> | boolean
+      >,
     (state) => state.notifications.get('browserPermission') as string,
     (state) => state.push_notifications,
   ],
@@ -101,7 +102,7 @@ export const ColumnSettingsGroup: FC<{ label: ReactNode; type: string }> = ({
     <section role='group' aria-labelledby={`notifications-${type}`}>
       <h3 id={`notifications-${type}`}>{label}</h3>
 
-      <div className='column-settings__row'>
+      <div className='column-settings__pillbar'>
         <PillBarButton
           disabled={!browserPermission}
           prefix='notifications_desktop'
