@@ -7,7 +7,7 @@ import { TranslateIcon } from '@phosphor-icons/react';
 
 import { changeComposeLanguage } from '@/flavours/glitch/actions/compose';
 import { IconButton } from '@/flavours/glitch/components/button/redesign';
-import { DropdownPopover } from '@/flavours/glitch/components/dropdown/redesign';
+import { PopoverMenuCard } from '@/flavours/glitch/components/menu/card';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 
 import { LanguageDropdownMenu } from '../components/language_dropdown';
@@ -55,7 +55,7 @@ export const LanguageButton: React.FC = () => {
         />
       </IconButton>
 
-      <DropdownPopover
+      <PopoverMenuCard
         isOpen={open}
         onClose={handleClose}
         offset={4}
@@ -65,7 +65,7 @@ export const LanguageButton: React.FC = () => {
         maxWidth={280}
       >
         <LanguageDropdown onClose={handleClose} />
-      </DropdownPopover>
+      </PopoverMenuCard>
     </>
   );
 };
