@@ -170,3 +170,15 @@
     border-radius: 0;
   }
 }
+
+/**
+ * Utilities
+ */
+
+@mixin line-clamp($lines) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+}
