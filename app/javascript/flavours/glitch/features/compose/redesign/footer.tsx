@@ -121,7 +121,7 @@ const selectUpload = createAppSelector(
     (state) => state.compose.get('resetFileKey') as number,
   ],
   (
-    fileTypes,
+    fileTypesList,
     isUploading,
     attachments,
     pendingAttachments,
@@ -132,8 +132,14 @@ const selectUpload = createAppSelector(
       (attachment) =>
         attachment.type === 'audio' || attachment.type === 'video',
     );
+    const hasImages = attachments.some(
+      (attachment) => attachment.type === 'image' || attachment.type === 'gifv',
+    );
+    const fileTypes = (fileTypesList?.toArray() ?? []).filter(
+      (fileType) => !hasImages || fileType.startsWith('image/'),
+    );
     return {
-      accepted: (fileTypes?.toArray() ?? []).join(','),
+      accepted: fileTypes.join(','),
       loading: isUploading || pendingAttachments > 0,
       disabled:
         attachments.length + pendingAttachments >= maxAttachments ||
