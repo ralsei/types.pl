@@ -9,6 +9,7 @@ import type { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+import { selectAccountAvatarUrl } from '@/flavours/glitch/selectors/accounts';
 import CloseIcon from '@/material-icons/400-20px/close.svg?react';
 import EditIcon from '@/material-icons/400-24px/edit.svg?react';
 import SoundIcon from '@/material-icons/400-24px/graphic_eq.svg?react';
@@ -18,18 +19,9 @@ import { openModal } from 'flavours/glitch/actions/modal';
 import { Blurhash } from 'flavours/glitch/components/blurhash';
 import { Icon } from 'flavours/glitch/components/icon';
 import type { MediaAttachment } from 'flavours/glitch/models/media_attachment';
-import {
-  createAppSelector,
-  useAppDispatch,
-  useAppSelector,
-} from 'flavours/glitch/store';
+import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 import { AudioVisualizer } from '../../audio/visualizer';
-
-const selectUserAvatar = createAppSelector(
-  [(state) => state.accounts, (state) => state.meta.get('me') as string],
-  (accounts, myId) => accounts.get(myId)?.avatar_static,
-);
 
 export const Upload: React.FC<{
   id: string;
@@ -50,7 +42,7 @@ export const Upload: React.FC<{
   const sensitive = useAppSelector(
     (state) => state.compose.get('sensitive') as boolean,
   );
-  const userAvatar = useAppSelector(selectUserAvatar);
+  const userAvatar = useAppSelector(selectAccountAvatarUrl);
 
   const handleUndoClick = useCallback(() => {
     dispatch(undoUploadCompose(id));

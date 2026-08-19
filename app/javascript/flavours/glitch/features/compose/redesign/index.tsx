@@ -31,6 +31,7 @@ import type { OnEmojiPick } from './emoji';
 import { ComposeFooter } from './footer';
 import { ComposeFormHeader } from './header';
 import { LanguageButton } from './language';
+import { ComposeReply } from './reply';
 import {
   selectComposeCanSubmit,
   selectComposeSensitive,
@@ -87,6 +88,8 @@ export const RedesignComposeForm: React.FC<RedesignComposeFormProps> = ({
     >
       <ComposeFormHeader id={titleId} noMinimize={noMinimize} />
 
+      <ComposeReply />
+
       <div className={classes.toolbar}>
         <div className={classes.flexGrowWrap}>
           {type !== 'message' && <ComposeVisibility />}
@@ -97,6 +100,7 @@ export const RedesignComposeForm: React.FC<RedesignComposeFormProps> = ({
               <FormattedMessage
                 id='compose.message.notice'
                 defaultMessage='Messages are not end-to-end encrypted'
+                description='Message refers to a direct message. For languages where this is confusing, "chat" or "direct message" can be used.'
               />
             </p>
           )}
