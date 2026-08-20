@@ -5,13 +5,16 @@ import { FormattedMessage } from 'react-intl';
 import { closeModal } from '@/flavours/glitch/actions/modal';
 import { Button } from '@/flavours/glitch/components/button/redesign';
 import {
+  ModalActions,
+  ModalShell,
+  ModalTitle,
+} from '@/flavours/glitch/components/modal_shell/redesign';
+import {
   focusComposerTextarea,
   openNewComposer,
   resetComposer,
 } from '@/flavours/glitch/reducers/slices/composer';
 import { useAppDispatch } from '@/flavours/glitch/store';
-
-import classes from './modals.module.scss';
 
 const ComposerModalCancelConfirm: React.FC<{ openNew?: boolean }> = ({
   openNew,
@@ -31,26 +34,24 @@ const ComposerModalCancelConfirm: React.FC<{ openNew?: boolean }> = ({
     dispatch(
       closeModal({ modalType: 'COMPOSER_DRAFT_DELETE', ignoreFocus: false }),
     );
-    requestAnimationFrame(() => {
-      focusComposerTextarea();
-    });
+    focusComposerTextarea(true);
   }, [dispatch]);
 
   return (
-    <div className={classes.root}>
-      <h2 className={classes.title}>
+    <ModalShell>
+      <ModalTitle>
         <FormattedMessage
           id='compose.cancel_modal.title'
           defaultMessage='Discard draft'
         />
-      </h2>
+      </ModalTitle>
 
       <FormattedMessage
         id='compose.cancel_modal.body'
         defaultMessage='You have a draft already in progress. What would you like to do?'
       />
 
-      <div className={classes.footer}>
+      <ModalActions>
         <Button color='destructive' onClick={handleDelete}>
           <FormattedMessage
             id='compose.cancel_modal.delete'
@@ -63,8 +64,8 @@ const ComposerModalCancelConfirm: React.FC<{ openNew?: boolean }> = ({
             defaultMessage='Continue draft'
           />
         </Button>
-      </div>
-    </div>
+      </ModalActions>
+    </ModalShell>
   );
 };
 

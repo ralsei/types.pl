@@ -14,6 +14,11 @@ import {
   IconButton,
 } from '@/flavours/glitch/components/button/redesign';
 import {
+  ModalActions,
+  ModalShell,
+  ModalTitle,
+} from '@/flavours/glitch/components/modal_shell/redesign';
+import {
   SortableList,
   SortableListItem,
 } from '@/flavours/glitch/components/sortable_list';
@@ -31,26 +36,26 @@ const messages = defineMessages({
   },
   onDragStart: {
     id: 'compose.rearrange_modal.drag_start',
-    defaultMessage: 'Picked up attachment at index {index, number}.',
+    defaultMessage: 'Picked up attachment at index {item, number}.',
   },
   onDragMove: {
     id: 'compose.rearrange_modal.drag_move',
-    defaultMessage: 'Attachment index {index, number} was moved.',
+    defaultMessage: 'Attachment index {item, number} was moved.',
   },
   onDragMoveOver: {
     id: 'compose.rearrange_modal.drag_over',
     defaultMessage:
-      'Attachment index {index, number} was moved over index {over, number}.',
+      'Attachment index {item, number} was moved over index {over, number}.',
   },
   onDragEnd: {
     id: 'compose.rearrange_modal.drag_end',
     defaultMessage:
-      'Attachment index {index, number} was moved to index {newIndex, number}.',
+      'Attachment index {item, number} was moved to index {over, number}.',
   },
   onDragCancel: {
     id: 'compose.rearrange_modal.drag_cancel',
     defaultMessage:
-      'Dragging was cancelled. Attachment index {index, number} was dropped.',
+      'Dragging was cancelled. Attachment index {item, number} was dropped.',
   },
 });
 
@@ -83,16 +88,13 @@ const ComposerModalRearrange: React.FC<{ onClose: () => void }> = ({
   );
 
   return (
-    <div
-      className={classNames(classes.root, classes.attachmentRoot)}
-      onKeyUpCapture={onModalExit}
-    >
-      <h2 className={classes.title}>
+    <ModalShell className={classes.attachmentRoot} onKeyUpCapture={onModalExit}>
+      <ModalTitle className={classes.title}>
         <FormattedMessage
           id='compose.rearrange_modal.title'
           defaultMessage='Rearrange media'
         />
-      </h2>
+      </ModalTitle>
 
       <SortableList
         ids={attachmentIds}
@@ -120,7 +122,7 @@ const ComposerModalRearrange: React.FC<{ onClose: () => void }> = ({
         ))}
       </SortableList>
 
-      <div className={classes.footer}>
+      <ModalActions className={classes.footer}>
         <Button onClick={onClose}>
           <FormattedMessage
             id='compose.rearrange_modal.cancel'
@@ -134,8 +136,8 @@ const ComposerModalRearrange: React.FC<{ onClose: () => void }> = ({
             defaultMessage='Save'
           />
         </Button>
-      </div>
-    </div>
+      </ModalActions>
+    </ModalShell>
   );
 };
 

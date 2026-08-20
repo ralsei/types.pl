@@ -116,6 +116,7 @@ export const MODAL_COMPONENTS = {
   'ACCOUNT_HIDE_FEATURED_TAB': () => import('@/flavours/glitch/features/ui/components/confirmation_modals/hide_featured_tab').then(module => ({ default: module.ConfirmHideFeaturedTabModal })),
   'COMPOSER_DRAFT_DELETE': () => import('@/flavours/glitch/features/compose/redesign/modal_cancel'),
   'COMPOSER_REARRANGE': () => import('@/flavours/glitch/features/compose/redesign/modal_rearrange'),
+  'COMPOSER_SWITCH_TO_POST': () => import('@/flavours/glitch/features/compose/redesign/modal_switch'),
 };
 
 /** @arg {keyof import('@/flavours/glitch/features/account_edit/modals')} type */
