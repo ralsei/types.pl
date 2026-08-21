@@ -21,7 +21,7 @@ import { DisplayNameSimple } from '@/flavours/glitch/components/display_name/sim
 import {
   Menu,
   MenuList,
-  MenuButton,
+  MenuTrigger,
   MenuItemDivider,
   MenuItemGroup,
   MenuItem,
@@ -47,9 +47,9 @@ export const ComposeVisibility: React.FC<{ className?: string }> = ({
         description='Before button that indicates who a post is for (Public, Followers, mentioned people)'
       />
       <Menu>
-        <MenuButton size='sm'>
+        <MenuTrigger size='sm'>
           <ComposeVisibilityButtonText privacy={privacy} />
-        </MenuButton>
+        </MenuTrigger>
 
         {privacy !== 'direct' ? (
           <ComposeVisibilityMenu />
