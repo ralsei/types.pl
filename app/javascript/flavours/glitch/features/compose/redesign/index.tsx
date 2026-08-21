@@ -25,7 +25,6 @@ import {
   submitComposer,
 } from '@/flavours/glitch/reducers/slices/composer';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
-import messageBackground from '@/images/composer_message.svg?url';
 
 import { ComposeAttachments } from './attachments';
 import type { OnEmojiPick } from './emoji';
@@ -70,11 +69,6 @@ export const RedesignComposeForm: React.FC<RedesignComposeFormProps> = ({
   const type = useAppSelector(selectComposeType);
   const { sensitive, sensitiveText } = useAppSelector(selectComposeSensitive);
 
-  let background: string | null = null;
-  if (type === 'message') {
-    background = messageBackground;
-  }
-
   const {
     onSensitiveChange,
     onSensitiveTextChange,
@@ -94,12 +88,7 @@ export const RedesignComposeForm: React.FC<RedesignComposeFormProps> = ({
       aria-labelledby={titleId}
       className={classNames(className, classes.root)}
     >
-      {background && (
-        <div
-          className={classes.background}
-          style={{ maskImage: `url(${background})` }}
-        />
-      )}
+      {type === 'message' && <div className={classes.background} />}
 
       <ComposeFormHeader id={titleId} noMinimize={noMinimize} />
 
