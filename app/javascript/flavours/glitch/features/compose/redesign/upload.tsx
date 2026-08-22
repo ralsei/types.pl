@@ -14,11 +14,10 @@ import { Blurhash } from '@/flavours/glitch/components/blurhash';
 import { IconButton } from '@/flavours/glitch/components/button/redesign';
 import {
   Menu,
-  MenuButton,
+  MenuTrigger,
   MenuItem,
   MenuItemDivider,
   MenuList,
-  useMenuContext,
 } from '@/flavours/glitch/components/menu';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 
@@ -73,7 +72,7 @@ export const ComposeUpload: React.FC<{
       )}
 
       <Menu>
-        <MenuButton
+        <MenuTrigger
           as={IconButton}
           icon={DotsThreeIcon}
           size='sm'
@@ -84,7 +83,7 @@ export const ComposeUpload: React.FC<{
             id='compose.upload.menu'
             defaultMessage='Add alt text or remove the image'
           />
-        </MenuButton>
+        </MenuTrigger>
 
         <ComposeUploadMenu attachment={attachment} single={single} />
       </Menu>
@@ -105,22 +104,17 @@ const ComposeUploadMenu: React.FC<{
   const dispatch = useAppDispatch();
   const id = attachment.id;
 
-  const { popover } = useMenuContext();
-
   const handleEdit = useCallback(() => {
-    popover.closeMenu();
     dispatch(
       openModal({ modalType: 'FOCAL_POINT', modalProps: { mediaId: id } }),
     );
-  }, [dispatch, id, popover]);
+  }, [dispatch, id]);
   const handleRearrange = useCallback(() => {
-    popover.closeMenu();
     dispatch(openModal({ modalType: 'COMPOSER_REARRANGE', modalProps: {} }));
-  }, [dispatch, popover]);
+  }, [dispatch]);
   const handleDelete = useCallback(() => {
-    popover.closeMenu();
     dispatch(undoUploadCompose(id));
-  }, [dispatch, id, popover]);
+  }, [dispatch, id]);
 
   return (
     <MenuList placement='bottom-end' offset={4} maxWidth={170}>

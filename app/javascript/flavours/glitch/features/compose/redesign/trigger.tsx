@@ -14,7 +14,7 @@ import { IconButton } from '@/flavours/glitch/components/button/redesign';
 import { CircularProgress } from '@/flavours/glitch/components/circular_progress';
 import {
   Menu,
-  MenuButton,
+  MenuTrigger,
   MenuList,
   MenuItem,
 } from '@/flavours/glitch/components/menu';
@@ -71,7 +71,7 @@ export const ComposeRedesignButton: React.FC = () => {
 
   return (
     <Menu>
-      <MenuButton
+      <MenuTrigger
         as={IconButton}
         icon={PenNibIcon}
         color='neutral'
@@ -82,7 +82,7 @@ export const ComposeRedesignButton: React.FC = () => {
           id='compose.new'
           defaultMessage='Write a new post or messsage'
         />
-      </MenuButton>
+      </MenuTrigger>
 
       <MenuList maxWidth={180} placement='top-end'>
         <MenuItem name='post' onClick={handleComposerOpen} icon={NewspaperIcon}>
