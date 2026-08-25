@@ -14,6 +14,7 @@ import {
 
 import { fetchLists } from '@/flavours/glitch/actions/lists';
 import { fetchFollowedHashtags } from '@/flavours/glitch/actions/tags_typed';
+import { FOCUS_TARGET } from '@/flavours/glitch/components/navigation_focus_target';
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import { openNewComposer } from '@/flavours/glitch/reducers/slices/composer';
 import { getOrderedLists } from '@/flavours/glitch/selectors/lists';
@@ -104,7 +105,10 @@ export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
               <FormattedMessage id='tabs_bar.home' defaultMessage='Home' />
             </NavigationLink>
             <NavigationLink
-              to={{ pathname: '/explore', state: { focusTarget: 'search' } }}
+              to={{
+                pathname: '/explore',
+                state: { focusTarget: FOCUS_TARGET.SEARCH },
+              }}
               iconComponent={MagnifyingGlassIcon}
             >
               <FormattedMessage
