@@ -187,8 +187,8 @@ export const ComposePoll: React.FC = () => {
             className={classNames(
               classes.pollDurationSelect,
               buttonClasses.base,
-              buttonClasses.solid,
               buttonClasses.tonal,
+              buttonClasses.neutral,
               buttonClasses.xs,
             )}
           >
