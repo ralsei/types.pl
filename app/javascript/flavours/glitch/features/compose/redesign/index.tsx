@@ -5,17 +5,15 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
 import classNames from 'classnames';
 
-import { LockSimpleOpenIcon } from '@phosphor-icons/react';
+import { LockSimpleOpenIcon, PepperIcon } from '@phosphor-icons/react';
 
 import {
   changeComposeSpoilerness,
   changeComposeSpoilerText,
   insertEmojiCompose,
 } from '@/flavours/glitch/actions/compose';
-import {
-  ToggleField,
-  TextInputField,
-} from '@/flavours/glitch/components/form_fields/redesign';
+import { ToggleButton } from '@/flavours/glitch/components/button/redesign';
+import { TextInputField } from '@/flavours/glitch/components/form_fields/redesign';
 import { Icon } from '@/flavours/glitch/components/icon';
 import { useScrollSensor } from '@/flavours/glitch/hooks/useScrollSensor';
 import {
@@ -42,10 +40,6 @@ import { ComposeTextarea } from './textarea';
 import { ComposeVisibility } from './visibility';
 
 const messages = defineMessages({
-  sensitive: {
-    id: 'compose.sensitive',
-    defaultMessage: 'Sensitive',
-  },
   sensitiveText: {
     id: 'compose.sensitive.text',
     defaultMessage: 'Sensitive content description',
@@ -95,14 +89,16 @@ export const RedesignComposeForm: React.FC<RedesignComposeFormProps> = ({
       <div className={classes.toolbar}>
         <ComposeVisibility className={classes.flexGrowWrap} />
 
-        <ToggleField
-          label={intl.formatMessage(messages.sensitive)}
-          checked={sensitive}
-          onChange={onSensitiveChange}
-          size='sm'
-        />
-
         <LanguageButton />
+
+        <ToggleButton
+          size='sm'
+          active={sensitive}
+          onClick={onSensitiveChange}
+          leadingIcon={PepperIcon}
+        >
+          <FormattedMessage id='compose.sensitive' defaultMessage='Sensitive' />
+        </ToggleButton>
       </div>
 
       {type === 'message' && (

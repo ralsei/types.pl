@@ -1,99 +1,101 @@
 import type React from 'react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback } from 'react';
 
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import { TranslateIcon } from '@phosphor-icons/react';
+import { CaretDownIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 
 import { changeComposeLanguage } from '@/flavours/glitch/actions/compose';
-import { IconButton } from '@/flavours/glitch/components/button/redesign';
-import { PopoverMenuCard } from '@/flavours/glitch/components/menu/card';
+import { TextInput } from '@/flavours/glitch/components/form_fields/redesign';
+import {
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuTrigger,
+} from '@/flavours/glitch/components/menu';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 
-import { LanguageDropdownMenu } from '../components/language_dropdown';
-
-import { useLanguageGuess } from './hooks';
+import { useLanguageList } from './hooks';
 import classes from './styles.module.scss';
 
+const messages = defineMessages({
+  searchPlaceholder: {
+    id: 'compose.language.search',
+    defaultMessage: 'Search languages...',
+  },
+});
+
 export const LanguageButton: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const [trigger, setTrigger] = useState<HTMLElement | null>(null);
-  const activeElementRef = useRef<HTMLElement | null>(null);
-
-  const handleMouseDown = useCallback(() => {
-    if (!open && document.activeElement instanceof HTMLElement) {
-      activeElementRef.current = document.activeElement;
-    }
-  }, [open]);
-
-  const handleToggle = useCallback(() => {
-    if (open && activeElementRef.current)
-      activeElementRef.current.focus({ preventScroll: true });
-
-    setOpen(!open);
-  }, [open]);
-
-  const handleClose = useCallback(() => {
-    if (open && activeElementRef.current)
-      activeElementRef.current.focus({ preventScroll: true });
-
-    setOpen(false);
-  }, [open]);
+  const langCode = useAppSelector(
+    (state) => state.compose.get('language') as string,
+  );
 
   return (
-    <>
-      <IconButton
-        icon={TranslateIcon}
-        size='sm'
-        ref={setTrigger}
-        aria-expanded={open}
-        onClick={handleToggle}
-        onMouseDown={handleMouseDown}
-      >
-        <FormattedMessage
-          id='compose.language.change'
-          defaultMessage='Change language'
-        />
-      </IconButton>
+    <Menu>
+      <MenuTrigger size='sm' trailingIcon={CaretDownIcon}>
+        {langCode.toLocaleUpperCase()}
+      </MenuTrigger>
 
-      <PopoverMenuCard
-        isOpen={open}
-        onClose={handleClose}
-        offset={4}
+      <MenuList
         placement='bottom-end'
-        reference={trigger}
         className={classes.languageMenu}
         maxWidth={280}
       >
-        <LanguageDropdown onClose={handleClose} />
-      </PopoverMenuCard>
-    </>
+        <LanguageDropdown />
+      </MenuList>
+    </Menu>
   );
 };
 
-export const LanguageDropdown: React.FC<{ onClose: () => void }> = ({
-  onClose,
-}) => {
-  const language = useAppSelector(
-    (state) => state.compose.get('language') as string,
-  );
-  const guess = useLanguageGuess();
+export const LanguageDropdown = () => {
+  const { languages, onSearch } = useLanguageList();
 
   const dispatch = useAppDispatch();
-  const handleChange = useCallback(
-    (newLanguage: string) => {
-      dispatch(changeComposeLanguage(newLanguage));
-      onClose();
+  const handleChange: React.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      const newLanguage = event.currentTarget.dataset.language;
+      if (newLanguage) {
+        dispatch(changeComposeLanguage(newLanguage));
+      }
     },
-    [dispatch, onClose],
+    [dispatch],
+  );
+
+  const intl = useIntl();
+  const handleSearch: React.ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      onSearch(event.target.value);
+    },
+    [onSearch],
   );
 
   return (
-    <LanguageDropdownMenu
-      value={language}
-      guess={guess}
-      onChange={handleChange}
-      onClose={onClose}
-    />
+    <>
+      <TextInput
+        type='search'
+        onChange={handleSearch}
+        placeholder={intl.formatMessage(messages.searchPlaceholder)}
+        icon={MagnifyingGlassIcon}
+      />
+      <div className={classes.languageList}>
+        {languages.map((lang) => (
+          <MenuItem
+            key={lang[0]}
+            onClick={handleChange}
+            data-language={lang[0]}
+            className={classes.languageItem}
+          >
+            <strong>{lang[2]}</strong>&nbsp;<span>({lang[1]})</span>
+          </MenuItem>
+        ))}
+
+        {languages.length === 0 && (
+          <FormattedMessage
+            id='compose.language.not-found'
+            defaultMessage='No language found'
+          />
+        )}
+      </div>
+    </>
   );
 };
