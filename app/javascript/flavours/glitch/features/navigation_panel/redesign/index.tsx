@@ -15,6 +15,7 @@ import {
 import { fetchLists } from '@/flavours/glitch/actions/lists';
 import { fetchFollowedHashtags } from '@/flavours/glitch/actions/tags_typed';
 import { FOCUS_TARGET } from '@/flavours/glitch/components/navigation_focus_target';
+import { useScrollSensor } from '@/flavours/glitch/hooks/useScrollSensor';
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import { openNewComposer } from '@/flavours/glitch/reducers/slices/composer';
 import { getOrderedLists } from '@/flavours/glitch/selectors/lists';
@@ -26,6 +27,7 @@ import { NavigationAccountCardAndMenu } from './account_card_and_menu';
 import { NavigationFooterLinks } from './footer_links';
 import { NavigationHeader } from './header';
 import { ListSection } from './list_section';
+import { LoggedOutInfo } from './logged_out_info';
 import { NavigationLink } from './navigation_link';
 import classes from './styles.module.scss';
 
@@ -40,11 +42,14 @@ const messages = defineMessages({
 
 function useCustomFeeds() {
   const dispatch = useAppDispatch();
+  const { signedIn } = useIdentity();
   const customFeeds = useAppSelector((state) => getOrderedLists(state));
 
   useEffect(() => {
-    void dispatch(fetchLists());
-  }, [dispatch]);
+    if (signedIn) {
+      void dispatch(fetchLists());
+    }
+  }, [dispatch, signedIn]);
 
   return {
     customFeeds,
@@ -53,13 +58,14 @@ function useCustomFeeds() {
 
 function useFollowedHashtags() {
   const dispatch = useAppDispatch();
+  const { signedIn } = useIdentity();
   const { tags, stale } = useAppSelector((state) => state.followedTags);
 
   useEffect(() => {
-    if (stale) {
+    if (stale && signedIn) {
       void dispatch(fetchFollowedHashtags());
     }
-  }, [dispatch, stale]);
+  }, [dispatch, stale, signedIn]);
 
   return { followedHashtags: tags };
 }
@@ -81,12 +87,24 @@ export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
   const { customFeeds } = useCustomFeeds();
   const { followedHashtags } = useFollowedHashtags();
 
+  const { sensor: topSensor, isInViewport: isScrolledToTop } = useScrollSensor({
+    placement: 'top',
+    // Only show overlay fade after a bit of scrolling, as the nav header has
+    // a bit of bottom spacing where the fade isn't needed yet
+    tolerance: 36,
+  });
+  const { sensor: bottomSensor, isInViewport: isScrolledToBottom } =
+    useScrollSensor({
+      placement: 'bottom',
+    });
+
   return (
     <nav
       className={classes.root}
       aria-label={intl.formatMessage(messages.main)}
     >
-      <NavigationHeader siteName={siteName} />
+      {topSensor}
+      <NavigationHeader siteName={siteName} isStuck={!isScrolledToTop} />
       {signedIn && (
         <>
           <ul className={classes.list}>
@@ -186,7 +204,7 @@ export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
               </ListSection>
             )}
           </ul>
-          <footer className={classes.footer}>
+          <footer className={classes.footer} data-stuck={!isScrolledToBottom}>
             <ul className={classes.footerNav}>
               <NavigationLink
                 stacked
@@ -223,6 +241,13 @@ export const RedesignNavigationPanel: React.FC<{ siteName?: string }> = ({
           </footer>
         </>
       )}
+      {!signedIn && (
+        <footer className={classes.footer} data-stuck={!isScrolledToBottom}>
+          <LoggedOutInfo />
+          <NavigationFooterLinks siteName={siteName} />
+        </footer>
+      )}
+      {bottomSensor}
     </nav>
   );
 };

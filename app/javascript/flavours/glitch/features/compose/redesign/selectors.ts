@@ -1,6 +1,7 @@
 import { length } from 'stringz';
 
 import type { ApiMediaAttachmentJSON } from '@/flavours/glitch/api_types/media_attachments';
+import { immutableListToSuggestions } from '@/flavours/glitch/components/autosuggest/utils';
 import type { StatusVisibility } from '@/flavours/glitch/models/status';
 import type { ComposeType } from '@/flavours/glitch/reducers/slices/composer';
 import { createAppSelector } from '@/flavours/glitch/store';
@@ -238,4 +239,12 @@ export const selectComposePoll = createAppSelector(
       ...config,
     };
   },
+);
+
+export const selectSuggestions = createAppSelector(
+  [
+    (state) =>
+      state.compose.get('suggestions') as unknown as Immutable.List<unknown>,
+  ],
+  (list) => immutableListToSuggestions(list),
 );
