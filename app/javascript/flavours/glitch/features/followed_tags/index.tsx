@@ -20,7 +20,7 @@ import ScrollableList from 'flavours/glitch/components/scrollable_list';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 const messages = defineMessages({
-  heading: { id: 'followed_tags', defaultMessage: 'Followed hashtags' },
+  heading: { id: 'followed_tags', defaultMessage: 'Followed Hashtags' },
 });
 
 const FollowedTag: React.FC<{
