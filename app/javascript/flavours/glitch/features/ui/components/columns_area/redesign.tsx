@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import classNames from 'classnames';
 
 import { ComposeRedesignButton } from '@/flavours/glitch/features/compose/redesign/trigger';
-import { CollapsibleNavigationPanel } from '@/flavours/glitch/features/navigation_panel';
 import { RedesignNavigationPanel } from '@/flavours/glitch/features/navigation_panel/redesign';
 import { RedesignMobileNavigation } from '@/flavours/glitch/features/navigation_panel/redesign/mobile_nav';
 import { useAppSelector } from '@/flavours/glitch/store';
@@ -74,11 +73,6 @@ export const ColumnsAreaRedesign: React.FC<{
           </div>
 
           <div className='columns-area columns-area--mobile'>{children}</div>
-
-          {isMobile && (
-            // Legacy mobile navigation, to be removed
-            <CollapsibleNavigationPanel />
-          )}
         </main>
       </div>
     );
