@@ -280,11 +280,6 @@ class SwitchingColumnsArea extends PureComponent {
   }
 }
 
-const LazyRedesignComposeButton = lazy(
-  () => import('@/flavours/glitch/features/compose/redesign/trigger')
-    .then(({ ComposeRedesignButton }) => ({ default: ComposeRedesignButton }))
-);
-
 class UI extends PureComponent {
   static propTypes = {
     identity: identityContextPropShape,
@@ -727,7 +722,7 @@ class UI extends PureComponent {
             {children}
           </SwitchingColumnsArea>
 
-          {!minimalShell && <NavigationBar />}
+          {!minimalShell && !isRedesignEnabled() && <NavigationBar />}
           {layout !== 'mobile' && <PictureInPicture />}
           <AlertsController />
           {!disableHoverCards && <HoverCardController />}
@@ -735,12 +730,6 @@ class UI extends PureComponent {
           <LoadingBarContainer className='loading-bar' />
           <ModalContainer />
           <UploadArea active={draggingOver} onClose={this.closeUploadModal} />
-
-          {isRedesignEnabled() && (
-            <Suspense>
-              <LazyRedesignComposeButton />
-            </Suspense>
-          )}
         </div>
       </Hotkeys>
     );

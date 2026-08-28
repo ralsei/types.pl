@@ -2,8 +2,10 @@ import { useCallback } from 'react';
 
 import classNames from 'classnames';
 
+import { ComposeRedesignButton } from '@/flavours/glitch/features/compose/redesign/trigger';
 import { CollapsibleNavigationPanel } from '@/flavours/glitch/features/navigation_panel';
 import { RedesignNavigationPanel } from '@/flavours/glitch/features/navigation_panel/redesign';
+import { RedesignMobileNavigation } from '@/flavours/glitch/features/navigation_panel/redesign/mobile_nav';
 import { useAppSelector } from '@/flavours/glitch/store';
 import { Footer } from 'flavours/glitch/features/custom_homepage/components/footer';
 import { Header } from 'flavours/glitch/features/custom_homepage/components/header';
@@ -38,7 +40,7 @@ export const ColumnsAreaRedesign: React.FC<{
   const isModalOpen = useAppSelector(
     (state) => !state.modal.get('stack').isEmpty(),
   );
-  const renderLegacyNavForMobile = useBreakpoint('openable');
+  const isMobile = useBreakpoint('openable');
 
   if (minimalShell) {
     return (
@@ -64,6 +66,7 @@ export const ColumnsAreaRedesign: React.FC<{
         <div className={classes.navigationWrapper}>
           <RedesignNavigationPanel />
         </div>
+        {isMobile ? <RedesignMobileNavigation /> : <ComposeRedesignButton />}
 
         <main className={classes.main}>
           <div className='tabs-bar__wrapper'>
@@ -72,7 +75,10 @@ export const ColumnsAreaRedesign: React.FC<{
 
           <div className='columns-area columns-area--mobile'>{children}</div>
 
-          {renderLegacyNavForMobile && <CollapsibleNavigationPanel />}
+          {isMobile && (
+            // Legacy mobile navigation, to be removed
+            <CollapsibleNavigationPanel />
+          )}
         </main>
       </div>
     );
