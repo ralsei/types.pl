@@ -94,7 +94,7 @@ class Favourites extends ImmutablePureComponent {
           bindToDocument={!multiColumn}
         >
           {accountIds.map(id =>
-            <Account key={id} id={id} />,
+            <Account key={id} id={id} reference='status' />,
           )}
         </ScrollableList>
 
