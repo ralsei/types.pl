@@ -119,12 +119,10 @@ export const HandledLink: FC<HandledLinkProps & ComponentProps<'a'>> = ({
   ...props
 }) => {
   const rewriteMentions = useAppSelector(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     (state) => state.local_settings.get('rewrite_mentions', 'no') as string,
   );
   const tagLinks = useAppSelector(
     (state) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       state.local_settings.get('tag_misleading_links', false) as string,
   );
 
