@@ -9,6 +9,7 @@ import { ArrowLeftIcon, ListIcon } from '@phosphor-icons/react';
 import { openNavigation } from '@/flavours/glitch/actions/navigation';
 import { getColumnSkipLinkId } from '@/flavours/glitch/features/ui/components/skip_links';
 import { useBreakpoint } from '@/flavours/glitch/features/ui/hooks/useBreakpoint';
+import { RenderIntoTabsBarPortal } from '@/flavours/glitch/features/ui/util/columns_context';
 import { useAppDispatch } from '@/flavours/glitch/store';
 import { hasReactChildren } from '@/flavours/glitch/utils/has_react_children';
 
@@ -38,21 +39,23 @@ export const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   const columnIndex = useColumnIndexContext();
 
   return (
-    <header {...props} className={classNames(className, classes.root)}>
-      {withBackButton ? <BackButton /> : <MobileMenuButton />}
-      <NavigationFocusTarget className={classes.title}>
-        <button
-          type='button'
-          onClick={scrollTop}
-          id={getColumnSkipLinkId(columnIndex)}
-        >
-          {title}
-        </button>
-      </NavigationFocusTarget>
-      {hasReactChildren(extraButtons) && (
-        <div className={classes.rightButtons}>{extraButtons}</div>
-      )}
-    </header>
+    <RenderIntoTabsBarPortal>
+      <header {...props} className={classNames(className, classes.root)}>
+        {withBackButton ? <BackButton /> : <MobileMenuButton />}
+        <NavigationFocusTarget className={classes.title}>
+          <button
+            type='button'
+            onClick={scrollTop}
+            id={getColumnSkipLinkId(columnIndex)}
+          >
+            {title}
+          </button>
+        </NavigationFocusTarget>
+        {hasReactChildren(extraButtons) && (
+          <div className={classes.rightButtons}>{extraButtons}</div>
+        )}
+      </header>
+    </RenderIntoTabsBarPortal>
   );
 };
 
