@@ -5,8 +5,14 @@ import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import {
+  ColumnHeader,
+  ColumnSettingsMenu,
+} from '@/flavours/glitch/components/column_header';
+import { MultiColumnMenuItems } from '@/flavours/glitch/components/column_header/multicolumn_settings';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import MailIcon from '@/material-icons/400-24px/mail.svg?react';
 import {
   addColumn,
@@ -27,6 +33,7 @@ import ColumnSettingsContainer from './containers/column_settings_container';
 
 const messages = defineMessages({
   title: { id: 'column.direct', defaultMessage: 'Private mentions' },
+  title_redesign: { id: 'tab_bar.messages', defaultMessage: 'Messages' },
 });
 
 interface ColumnBase {
@@ -91,19 +98,39 @@ const DirectTimeline: React.FC<ColumnBase> = ({ columnId, multiColumn }) => {
       bindToDocument={!multiColumn}
       label={intl.formatMessage(messages.title)}
     >
-      <ColumnHeader
-        icon='envelope'
-        iconComponent={MailIcon}
-        active={hasUnread}
-        title={intl.formatMessage(messages.title)}
-        onPin={handlePin}
-        onMove={handleMove}
-        pinned={pinned}
-        multiColumn={multiColumn}
-        scrollTopOnClick
-      >
-        <ColumnSettingsContainer />
-      </ColumnHeader>
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          title={intl.formatMessage(messages.title_redesign)}
+          withBackButton={multiColumn && !pinned && 'auto'}
+          extraButtons={
+            multiColumn && (
+              <ColumnSettingsMenu
+                labelPrefix={intl.formatMessage(messages.title_redesign)}
+              >
+                <MultiColumnMenuItems
+                  onPin={handlePin}
+                  onMove={handleMove}
+                  pinned={pinned}
+                />
+              </ColumnSettingsMenu>
+            )
+          }
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='envelope'
+          iconComponent={MailIcon}
+          active={hasUnread}
+          title={intl.formatMessage(messages.title)}
+          onPin={handlePin}
+          onMove={handleMove}
+          pinned={pinned}
+          multiColumn={multiColumn}
+          scrollTopOnClick
+        >
+          <ColumnSettingsContainer />
+        </LegacyColumnHeader>
+      )}
       {conversationsMode ? (
         <ConversationsList
           trackScroll={!pinned}
@@ -171,7 +198,11 @@ const DirectTimeline: React.FC<ColumnBase> = ({ columnId, multiColumn }) => {
       )}
 
       <Helmet>
-        <title>{intl.formatMessage(messages.title)}</title>
+        <title>
+          {intl.formatMessage(
+            isRedesignEnabled() ? messages.title_redesign : messages.title,
+          )}
+        </title>
         <meta name='robots' content='noindex' />
       </Helmet>
     </Column>
