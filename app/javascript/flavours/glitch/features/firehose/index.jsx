@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
@@ -12,16 +12,19 @@ import { addColumn } from 'flavours/glitch/actions/columns';
 import { changeSetting } from 'flavours/glitch/actions/settings';
 import { connectPublicStream, connectCommunityStream } from 'flavours/glitch/actions/streaming';
 import { expandPublicTimeline, expandCommunityTimeline } from 'flavours/glitch/actions/timelines';
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
 import { DismissableBanner } from 'flavours/glitch/components/dismissable_banner';
 import SettingText from 'flavours/glitch/components/setting_text';
 import { localLiveFeedAccess, remoteLiveFeedAccess, domain } from 'flavours/glitch/initial_state';
 import { canViewFeed } from 'flavours/glitch/permissions';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
-import Column from '../../components/column';
-import ColumnHeader from '../../components/column_header';
 import SettingToggle from '../notifications/components/setting_toggle';
 import StatusListContainer from '../ui/containers/status_list_container';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
+import { ColumnHeader, ColumnSettingsMenu } from '@/flavours/glitch/components/column_header';
+import { MultiColumnMenuItems } from '@/flavours/glitch/components/column_header/multicolumn_settings';
 
 const messages = defineMessages({
   title: { id: 'column.firehose', defaultMessage: 'Live feeds' },
@@ -33,6 +36,7 @@ const messages = defineMessages({
     id: 'column.firehose_singular',
     defaultMessage: 'Live feed',
   },
+  title_redesign: { id: 'tabs_bar.fediverse_feeds', defaultMessage: 'Fediverse Feeds' },
   filter_regex: { id: 'home.column_settings.filter_regex', defaultMessage: 'Filter out by regular expressions' },
 });
 
@@ -85,7 +89,6 @@ const Firehose = ({ feedType, multiColumn }) => {
   const dispatch = useAppDispatch();
   const intl = useIntl();
   const { signedIn, permissions } = useIdentity();
-  const columnRef = useRef(null);
 
   const allowLocalOnly = useAppSelector((state) => state.getIn(['settings', 'firehose', 'allowLocalOnly']));
   const regex = useAppSelector((state) => state.getIn(['settings', 'firehose', 'regex', 'body']));
@@ -126,8 +129,6 @@ const Firehose = ({ feedType, multiColumn }) => {
     },
     [dispatch, onlyMedia, allowLocalOnly, feedType],
   );
-
-  const handleHeaderClick = useCallback(() => columnRef.current?.scrollTop(), []);
 
   useEffect(() => {
     let disconnect;
@@ -206,18 +207,31 @@ const Firehose = ({ feedType, multiColumn }) => {
   }
 
   return (
-    <Column bindToDocument={!multiColumn} ref={columnRef} label={intl.formatMessage(messages.title)}>
-      <ColumnHeader
-        icon='globe'
-        iconComponent={PublicIcon}
-        active={hasUnread}
-        title={intl.formatMessage(title)}
-        onPin={handlePin}
-        onClick={handleHeaderClick}
-        multiColumn={multiColumn}
-      >
-        <ColumnSettings />
-      </ColumnHeader>
+    <Column bindToDocument={!multiColumn} label={intl.formatMessage(messages.title)}>
+      {isRedesignEnabled ? (
+        <ColumnHeader
+          title={intl.formatMessage(messages.title_redesign)}
+          withBackButton={multiColumn && 'auto'}
+          withUnreadMarker={hasUnread}
+          extraButtons={multiColumn &&
+            <ColumnSettingsMenu labelPrefix={intl.formatMessage(messages.title_redesign)}>
+              <MultiColumnMenuItems onPin={handlePin} />
+            </ColumnSettingsMenu>
+          }
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='globe'
+          iconComponent={PublicIcon}
+          active={hasUnread}
+          title={intl.formatMessage(title)}
+          onPin={handlePin}
+          multiColumn={multiColumn}
+          scrollTopOnClick
+        >
+          <ColumnSettings />
+        </LegacyColumnHeader>
+      )}
 
       {(canViewFeed(signedIn, permissions, localLiveFeedAccess) && canViewFeed(signedIn, permissions, remoteLiveFeedAccess)) && (
         <div className='account__section-headline'>

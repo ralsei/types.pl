@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
 

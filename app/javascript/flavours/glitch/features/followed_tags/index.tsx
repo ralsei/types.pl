@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
@@ -6,6 +6,8 @@ import { isFulfilled } from '@reduxjs/toolkit';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import TagIcon from '@/material-icons/400-24px/tag.svg?react';
 import {
   fetchFollowedHashtags,
@@ -13,15 +15,12 @@ import {
 } from 'flavours/glitch/actions/tags_typed';
 import type { ApiHashtagJSON } from 'flavours/glitch/api_types/tags';
 import { Button } from 'flavours/glitch/components/button';
-import { Column } from 'flavours/glitch/components/column';
-import type { ColumnRef } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { Hashtag } from 'flavours/glitch/components/hashtag';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 const messages = defineMessages({
-  heading: { id: 'followed_tags', defaultMessage: 'Followed hashtags' },
+  heading: { id: 'followed_tags', defaultMessage: 'Followed Hashtags' },
 });
 
 const FollowedTag: React.FC<{
@@ -86,11 +85,6 @@ const FollowedTags: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
     [dispatch],
   );
 
-  const columnRef = useRef<ColumnRef>(null);
-  const handleHeaderClick = useCallback(() => {
-    columnRef.current?.scrollTop();
-  }, []);
-
   const emptyMessage = (
     <FormattedMessage
       id='empty_column.followed_tags'
@@ -101,16 +95,15 @@ const FollowedTags: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
   return (
     <Column
       bindToDocument={!multiColumn}
-      ref={columnRef}
       label={intl.formatMessage(messages.heading)}
     >
       <ColumnHeader
         icon='hashtag'
         iconComponent={TagIcon}
         title={intl.formatMessage(messages.heading)}
-        onClick={handleHeaderClick}
         multiColumn={multiColumn}
         showBackButton
+        scrollTopOnClick
       />
 
       <ScrollableList

@@ -3,6 +3,8 @@ import type { FC } from 'react';
 
 import { defineMessages, useIntl } from 'react-intl';
 
+import { useLocation } from 'react-router-dom';
+
 import { followAccount } from '@/mastodon/actions/accounts';
 import { useAccount } from '@/mastodon/hooks/useAccount';
 import { getAccountHidden } from '@/mastodon/selectors/accounts';
@@ -69,6 +71,7 @@ const AccountButtonsOther: FC<
   const dispatch = useAppDispatch();
   const handleNotifyToggle = useCallback(() => {
     if (account) {
+      // @ts-expect-error this action is not typed yet
       dispatch(followAccount(account.id, { notify: !relationship?.notifying }));
     }
   }, [dispatch, account, relationship]);
@@ -80,6 +83,10 @@ const AccountButtonsOther: FC<
       });
     }
   }, [accountUrl]);
+  const { state } = useLocation<{
+    reference?: string;
+  } | null>();
+  const reference = state?.reference ?? 'profile';
 
   if (!account) {
     return null;
@@ -95,6 +102,7 @@ const AccountButtonsOther: FC<
           accountId={accountId}
           className={classes.followButton}
           labelLength='long'
+          reference={reference}
         />
       )}
       {isFollowing && (

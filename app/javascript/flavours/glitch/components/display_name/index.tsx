@@ -13,7 +13,7 @@ import { DisplayNameWithoutDomain } from './no-domain';
 import { DisplayNameSimple } from './simple';
 
 export interface DisplayNameProps {
-  account?: Account | AccountShapeFull;
+  account?: Account | AccountShapeFull | null;
   localDomain?: string;
   variant?: 'default' | 'simple' | 'noDomain';
 }
@@ -32,8 +32,9 @@ export const DisplayName: FC<
 export const LinkedDisplayName: FC<
   Omit<LinkProps, 'to'> & {
     displayProps: DisplayNameProps & ComponentPropsWithoutRef<'span'>;
+    reference?: string;
   }
-> = ({ displayProps, children, ...linkProps }) => {
+> = ({ displayProps, reference, children, ...linkProps }) => {
   const { account } = displayProps;
   if (!account) {
     return <DisplayName {...displayProps} />;
@@ -42,10 +43,11 @@ export const LinkedDisplayName: FC<
   return (
     <Permalink
       href={account.url}
-      to={`/@${account.acct}`}
+      to={{ pathname: `/@${account.acct}`, state: { reference } }}
       title={`@${account.acct}`}
       data-id={account.id}
       data-hover-card-account={account.id}
+      data-hover-card-reference={reference}
       {...linkProps}
     >
       {children}

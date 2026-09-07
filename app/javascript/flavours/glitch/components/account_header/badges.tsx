@@ -7,6 +7,7 @@ import { fetchRelationships } from '@/flavours/glitch/actions/accounts';
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import type { AccountRole } from '@/flavours/glitch/models/account';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
+import PersonIcon from '@/material-icons/400-24px/person.svg?react';
 
 import {
   AdminBadge,
@@ -57,6 +58,7 @@ export const AccountBadges: FC<{ accountId: string }> = ({ accountId }) => {
     } else {
       badges.push(
         <Badge
+          icon={<PersonIcon />}
           key={role.id}
           label={role.name}
           domain={`(${domain})`}

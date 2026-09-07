@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 
+import type { IconWeight } from '@phosphor-icons/react';
+
 import CheckBoxOutlineBlankIcon from '@/material-icons/400-24px/check_box_outline_blank.svg?react';
 import { isProduction } from 'mastodon/utils/environment';
 
@@ -11,9 +13,10 @@ export type IconProp = React.FC<SVGPropsWithTitle>;
 
 interface Props extends React.SVGProps<SVGSVGElement> {
   children?: never;
-  id: string;
+  id?: string;
   icon: IconProp;
   noFill?: boolean;
+  weight?: IconWeight;
 }
 
 export const Icon: React.FC<Props> = ({
@@ -46,7 +49,7 @@ export const Icon: React.FC<Props> = ({
     <IconComponent
       className={classNames(
         'icon',
-        `icon-${id}`,
+        id && `icon-${id}`,
         noFill && 'icon--no-fill',
         className,
       )}

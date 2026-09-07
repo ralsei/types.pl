@@ -1,9 +1,17 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import {
+  ColumnHeader,
+  ColumnSettingsMenu,
+} from '@/flavours/glitch/components/column_header';
+import { MultiColumnMenuItems } from '@/flavours/glitch/components/column_header/multicolumn_settings';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import StarIcon from '@/material-icons/400-24px/star-fill.svg?react';
 import {
   addColumn,
@@ -14,15 +22,16 @@ import {
   fetchFavouritedStatuses,
   expandFavouritedStatuses,
 } from 'flavours/glitch/actions/favourites';
-import { Column } from 'flavours/glitch/components/column';
-import type { ColumnRef } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import StatusList from 'flavours/glitch/components/status_list';
 import { getStatusList } from 'flavours/glitch/selectors';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 const messages = defineMessages({
   heading: { id: 'column.favourites', defaultMessage: 'Favorites' },
+  heading_redesign: {
+    id: 'navigation_bar.liked_posts',
+    defaultMessage: 'Liked Posts',
+  },
 });
 
 const Favourites: React.FC<{ columnId: string; multiColumn: boolean }> = ({
@@ -31,7 +40,6 @@ const Favourites: React.FC<{ columnId: string; multiColumn: boolean }> = ({
 }) => {
   const dispatch = useAppDispatch();
   const intl = useIntl();
-  const columnRef = useRef<ColumnRef>(null);
   const statusIds = useAppSelector((state) =>
     getStatusList(state, 'favourites'),
   );
@@ -62,10 +70,6 @@ const Favourites: React.FC<{ columnId: string; multiColumn: boolean }> = ({
     [dispatch, columnId],
   );
 
-  const handleHeaderClick = useCallback(() => {
-    columnRef.current?.scrollTop();
-  }, []);
-
   const handleLoadMore = useCallback(() => {
     dispatch(expandFavouritedStatuses());
   }, [dispatch]);
@@ -82,20 +86,39 @@ const Favourites: React.FC<{ columnId: string; multiColumn: boolean }> = ({
   return (
     <Column
       bindToDocument={!multiColumn}
-      ref={columnRef}
       label={intl.formatMessage(messages.heading)}
     >
-      <ColumnHeader
-        icon='star'
-        iconComponent={StarIcon}
-        title={intl.formatMessage(messages.heading)}
-        onPin={handlePin}
-        onMove={handleMove}
-        onClick={handleHeaderClick}
-        pinned={pinned}
-        multiColumn={multiColumn}
-        showBackButton
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          title={intl.formatMessage(messages.heading_redesign)}
+          withBackButton={multiColumn && !pinned && 'auto'}
+          extraButtons={
+            multiColumn && (
+              <ColumnSettingsMenu
+                labelPrefix={intl.formatMessage(messages.heading_redesign)}
+              >
+                <MultiColumnMenuItems
+                  onPin={handlePin}
+                  onMove={handleMove}
+                  pinned={pinned}
+                />
+              </ColumnSettingsMenu>
+            )
+          }
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='star'
+          iconComponent={StarIcon}
+          title={intl.formatMessage(messages.heading)}
+          onPin={handlePin}
+          onMove={handleMove}
+          pinned={pinned}
+          multiColumn={multiColumn}
+          showBackButton
+          scrollTopOnClick
+        />
+      )}
 
       <StatusList
         trackScroll={!pinned}

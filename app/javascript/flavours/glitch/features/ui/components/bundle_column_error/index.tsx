@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
 import { CopyButton } from '@/flavours/glitch/components/copy_button';
 import { EmptyState } from '@/flavours/glitch/components/empty_state';
 import { Button } from 'flavours/glitch/components/button';
-import { Column } from 'flavours/glitch/components/column';
 
 import classes from './styles.module.scss';
 

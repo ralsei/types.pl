@@ -4,10 +4,10 @@ import { FormattedMessage, useIntl, defineMessages } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
 import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 import { apiGetPrivacyPolicy } from 'flavours/glitch/api/instance';
 import type { ApiPrivacyPolicyJSON } from 'flavours/glitch/api_types/instance';
-import { Column } from 'flavours/glitch/components/column';
 import { FormattedDateWrapper } from 'flavours/glitch/components/formatted_date';
 import { Skeleton } from 'flavours/glitch/components/skeleton';
 

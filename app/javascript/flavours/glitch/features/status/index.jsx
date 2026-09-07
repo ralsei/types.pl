@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 import { Helmet } from '@unhead/react/helmet';
@@ -14,6 +14,10 @@ import { connect } from 'react-redux';
 import ChatIcon from '@/material-icons/400-24px/chat.svg?react';
 import VisibilityIcon from '@/material-icons/400-24px/visibility.svg?react';
 import VisibilityOffIcon from '@/material-icons/400-24px/visibility_off.svg?react';
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader, ColumnSettingsMenu } from '@/flavours/glitch/components/column_header';
+import { DisplayNameSimple } from '@/flavours/glitch/components/display_name/simple';
 import { Hotkeys }  from 'flavours/glitch/components/hotkeys';
 import { Icon }  from 'flavours/glitch/components/icon';
 import { injectIntl } from '@/flavours/glitch/components/intl';
@@ -53,13 +57,11 @@ import {
   undoStatusTranslation,
 } from '../../actions/statuses';
 import { setStatusQuotePolicy } from '../../actions/statuses_typed';
-import ColumnHeader from '../../components/column_header';
 import { textForScreenReader, defaultMediaVisibility } from '../../components/status';
 import { StatusQuoteManager } from '../../components/status_quoted';
 import { deleteModal } from '../../initial_state';
 import { makeGetStatus, makeGetPictureInPicture } from '../../selectors';
 import { getAncestorsIds, getDescendantsIds } from 'flavours/glitch/selectors/contexts';
-import Column from '../ui/components/column';
 import { attachFullscreenListener, detachFullscreenListener, isFullscreen } from '../ui/util/fullscreen';
 
 import ActionBar from './components/action_bar';
@@ -67,6 +69,7 @@ import { DetailedStatus } from './components/detailed_status';
 import { RefreshController } from './components/refresh_controller';
 import { quoteComposeById } from '@/flavours/glitch/actions/compose_typed';
 import { FOCUS_TARGET, NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 
 const messages = defineMessages({
   revealAll: { id: 'status.show_more_all', defaultMessage: 'Show more for all' },
@@ -483,10 +486,6 @@ class Status extends ImmutablePureComponent {
     this.handleTranslate(this.props.status);
   };
 
-  handleHeaderClick = () => {
-    this.column.scrollTop();
-  };
-
   renderChildren (list, ancestors) {
     const { params: { statusId } } = this.props;
 
@@ -510,10 +509,6 @@ class Status extends ImmutablePureComponent {
 
   setContainerRef = c => {
     this.node = c;
-  };
-
-  setColumnRef = c => {
-    this.column = c;
   };
 
   setStatusRef = c => {
@@ -595,6 +590,7 @@ class Status extends ImmutablePureComponent {
       descendants = <>{this.renderChildren(descendantsIds)}</>;
     }
 
+    const account = status.get('account');
     const isLocal = status.getIn(['account', 'acct'], '').indexOf('@') === -1;
     const isIndexable = !status.getIn(['account', 'noindex']);
 
@@ -613,18 +609,45 @@ class Status extends ImmutablePureComponent {
     };
 
     return (
-      <Column bindToDocument={!multiColumn} ref={this.setColumnRef} label={intl.formatMessage(messages.detailedStatus)}>
-        <ColumnHeader
-          icon='comment'
-          iconComponent={ChatIcon}
-          title={intl.formatMessage(messages.tootHeading)}
-          onClick={this.handleHeaderClick}
-          showBackButton
-          multiColumn={multiColumn}
-          extraButton={(
-            <button type='button' className='column-header__button' title={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} aria-label={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} onClick={this.handleToggleAll}><Icon id={!isExpanded ? 'eye' : 'eye-slash'} icon={isExpanded ? VisibilityIcon : VisibilityOffIcon} /></button>
-          )}
-        />
+      <Column bindToDocument={!multiColumn} label={intl.formatMessage(messages.detailedStatus)}>
+        {isRedesignEnabled() ? (
+          <ColumnHeader
+            withBackButton
+            title={
+              <FormattedMessage
+                id='status.title'
+                defaultMessage='Post by {name}'
+                values={{
+                  name: <DisplayNameSimple account={account} />
+                }}
+              />
+            }
+            extraButtons={
+              <ColumnSettingsMenu
+                label={
+                  <FormattedMessage
+                    id='status.options'
+                    defaultMessage='Post options'
+                  />
+                }
+              >
+                WIP: This menu will contain post actions from the new Status component
+              </ColumnSettingsMenu>
+            }
+          />
+        ) : (
+          <LegacyColumnHeader
+            icon='comment'
+            iconComponent={ChatIcon}
+            title={intl.formatMessage(messages.tootHeading)}
+            showBackButton
+            multiColumn={multiColumn}
+            scrollTopOnClick
+            extraButton={(
+              <button type='button' className='column-header__button' title={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} aria-label={intl.formatMessage(!isExpanded ? messages.revealAll : messages.hideAll)} onClick={this.handleToggleAll}><Icon id={!isExpanded ? 'eye' : 'eye-slash'} icon={isExpanded ? VisibilityIcon : VisibilityOffIcon} /></button>
+            )}
+          />
+        )}
 
         <ScrollContainer scrollKey='thread' shouldUpdateScroll={this.shouldUpdateScroll} childRef={this.setContainerRef}>
           <div className={classNames('item-list scrollable scrollable--flex', { fullscreen })} ref={this.setContainerRef}>

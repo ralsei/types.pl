@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { FC } from 'react';
 
 import { FormattedMessage } from 'react-intl';
@@ -14,7 +14,6 @@ import {
 } from '@/flavours/glitch/actions/timelines_typed';
 import { AccountHeader } from '@/flavours/glitch/components/account_header';
 import { Column } from '@/flavours/glitch/components/column';
-import type { ColumnRef } from '@/flavours/glitch/components/column';
 import { LimitedAccountHint } from '@/flavours/glitch/components/limited_account_hint';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import { RemoteHint } from '@/flavours/glitch/components/remote_hint';
@@ -110,19 +109,11 @@ const InnerTimeline: FC<{ accountId: string; multiColumn: boolean }> = ({
   const { isLoading: isPinnedLoading, statusIds: pinnedStatusIds } =
     usePinnedStatusIds({ accountId, tagged, forceEmptyState });
 
-  const columnRef = useRef<ColumnRef>(null);
-  const handleHeaderClick = useCallback(() => {
-    columnRef.current?.scrollTop();
-  }, []);
-
   const isLoading = !!timeline?.isLoading || isPinnedLoading;
 
   return (
-    <Column bindToDocument={!multiColumn} ref={columnRef}>
-      <ProfileColumnHeader
-        onClick={handleHeaderClick}
-        multiColumn={multiColumn}
-      />
+    <Column bindToDocument={!multiColumn}>
+      <ProfileColumnHeader multiColumn={multiColumn} />
 
       <StatusList
         alwaysPrepend

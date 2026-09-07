@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
+import { messages as columnHeaderMessages } from '@/flavours/glitch/components/column/header';
 import { useAppDispatch } from '@/flavours/glitch/store';
 import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import UnfoldMoreIcon from '@/material-icons/400-24px/unfold_more.svg?react';
 import { requestBrowserPermission } from 'flavours/glitch/actions/notifications';
 import { changeSetting } from 'flavours/glitch/actions/settings';
 import { Button } from 'flavours/glitch/components/button';
-import { messages as columnHeaderMessages } from 'flavours/glitch/components/column_header';
 import { Icon } from 'flavours/glitch/components/icon';
 import { IconButton } from 'flavours/glitch/components/icon_button';
 

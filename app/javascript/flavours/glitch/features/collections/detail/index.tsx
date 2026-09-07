@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import HelpIcon from '@/material-icons/400-24px/help.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import ShareIcon from '@/material-icons/400-24px/share.svg?react';
@@ -18,8 +20,6 @@ import type {
 } from 'flavours/glitch/api_types/collections';
 import { Badge } from 'flavours/glitch/components/badge';
 import { Callout } from 'flavours/glitch/components/callout';
-import { Column } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import { useAccountHandle } from 'flavours/glitch/components/display_name/default';
 import { FormattedDateWrapper } from 'flavours/glitch/components/formatted_date';

@@ -8,6 +8,8 @@ import { isFulfilled } from '@reduxjs/toolkit';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import { NotSignedInIndicator } from '@/flavours/glitch/components/not_signed_in_indicator';
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import ChevronRightIcon from '@/material-icons/400-24px/chevron_right.svg?react';
@@ -19,8 +21,6 @@ import type { ApiAccountJSON } from 'flavours/glitch/api_types/accounts';
 import type { RepliesPolicyType } from 'flavours/glitch/api_types/lists';
 import { Avatar } from 'flavours/glitch/components/avatar';
 import { AvatarGroup } from 'flavours/glitch/components/avatar_group';
-import { Column } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import {
   SelectField,
   TextInputField,

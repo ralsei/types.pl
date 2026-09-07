@@ -4,9 +4,9 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
-import { Column } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { DisplayNameSimple } from 'flavours/glitch/components/display_name/simple';
 import { Scrollable } from 'flavours/glitch/components/scrollable_list/components';
 import { TabLink, TabList } from 'flavours/glitch/components/tab_list';

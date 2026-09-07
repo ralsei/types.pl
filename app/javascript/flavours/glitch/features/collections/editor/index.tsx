@@ -13,10 +13,10 @@ import {
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import { Callout } from 'flavours/glitch/components/callout';
-import { Column } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
 import { NotSignedInIndicator } from 'flavours/glitch/components/not_signed_in_indicator';
 import { useIdentity } from 'flavours/glitch/identity_context';

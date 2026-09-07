@@ -13,7 +13,7 @@ import { domain } from 'flavours/glitch/initial_state';
 import { injectIntl } from '@/flavours/glitch/components/intl';
 import { fetchServer, fetchExtendedDescription, fetchDomainBlocks  } from 'flavours/glitch/actions/server';
 import { Account } from 'flavours/glitch/components/account';
-import Column from 'flavours/glitch/components/column';
+import { Column } from '@/flavours/glitch/components/column';
 import { NavigationFocusTarget } from 'flavours/glitch/components/navigation_focus_target';
 import { ServerHeroImage } from 'flavours/glitch/components/server_hero_image';
 import { Skeleton } from 'flavours/glitch/components/skeleton';

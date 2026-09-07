@@ -1,9 +1,17 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import {
+  ColumnHeader,
+  ColumnSettingsMenu,
+} from '@/flavours/glitch/components/column_header';
+import { MultiColumnMenuItems } from '@/flavours/glitch/components/column_header/multicolumn_settings';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import BookmarksIcon from '@/material-icons/400-24px/bookmarks-fill.svg?react';
 import {
   fetchBookmarkedStatuses,
@@ -14,15 +22,13 @@ import {
   removeColumn,
   moveColumn,
 } from 'flavours/glitch/actions/columns';
-import { Column } from 'flavours/glitch/components/column';
-import type { ColumnRef } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import StatusList from 'flavours/glitch/components/status_list';
 import { getStatusList } from 'flavours/glitch/selectors';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 const messages = defineMessages({
   heading: { id: 'column.bookmarks', defaultMessage: 'Bookmarks' },
+  heading_redesign: { id: 'column.saved_posts', defaultMessage: 'Saved Posts' },
 });
 
 const Bookmarks: React.FC<{
@@ -31,7 +37,6 @@ const Bookmarks: React.FC<{
 }> = ({ columnId, multiColumn }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
-  const columnRef = useRef<ColumnRef>(null);
   const statusIds = useAppSelector((state) =>
     getStatusList(state, 'bookmarks'),
   );
@@ -62,10 +67,6 @@ const Bookmarks: React.FC<{
     [dispatch, columnId],
   );
 
-  const handleHeaderClick = useCallback(() => {
-    columnRef.current?.scrollTop();
-  }, []);
-
   const handleLoadMore = useCallback(() => {
     dispatch(expandBookmarkedStatuses());
   }, [dispatch]);
@@ -82,20 +83,39 @@ const Bookmarks: React.FC<{
   return (
     <Column
       bindToDocument={!multiColumn}
-      ref={columnRef}
       label={intl.formatMessage(messages.heading)}
     >
-      <ColumnHeader
-        icon='bookmarks'
-        iconComponent={BookmarksIcon}
-        title={intl.formatMessage(messages.heading)}
-        onPin={handlePin}
-        onMove={handleMove}
-        onClick={handleHeaderClick}
-        pinned={pinned}
-        multiColumn={multiColumn}
-        showBackButton
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          title={intl.formatMessage(messages.heading_redesign)}
+          withBackButton={multiColumn && !pinned && 'auto'}
+          extraButtons={
+            multiColumn && (
+              <ColumnSettingsMenu
+                labelPrefix={intl.formatMessage(messages.heading_redesign)}
+              >
+                <MultiColumnMenuItems
+                  pinned={pinned}
+                  onPin={handlePin}
+                  onMove={handleMove}
+                />
+              </ColumnSettingsMenu>
+            )
+          }
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='bookmarks'
+          iconComponent={BookmarksIcon}
+          title={intl.formatMessage(messages.heading)}
+          onPin={handlePin}
+          onMove={handleMove}
+          pinned={pinned}
+          multiColumn={multiColumn}
+          showBackButton
+          scrollTopOnClick
+        />
+      )}
 
       <StatusList
         trackScroll={!pinned}
@@ -110,7 +130,11 @@ const Bookmarks: React.FC<{
       />
 
       <Helmet>
-        <title>{intl.formatMessage(messages.heading)}</title>
+        <title>
+          {isRedesignEnabled()
+            ? intl.formatMessage(messages.heading_redesign)
+            : intl.formatMessage(messages.heading)}
+        </title>
         <meta name='robots' content='noindex' />
       </Helmet>
     </Column>

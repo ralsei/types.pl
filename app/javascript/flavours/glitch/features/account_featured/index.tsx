@@ -9,7 +9,8 @@ import { List as ImmutableList } from 'immutable';
 import { fetchEndorsedAccounts } from '@/flavours/glitch/actions/accounts';
 import { AccountHeader } from '@/flavours/glitch/components/account_header';
 import { AccountListItem } from '@/flavours/glitch/components/account_list_item';
-import { ColumnBackButton } from '@/flavours/glitch/components/column_back_button';
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnBackButton } from '@/flavours/glitch/components/column/back_button';
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import { RemoteHint } from '@/flavours/glitch/components/remote_hint';
 import {
@@ -20,7 +21,6 @@ import {
 import type { TruncatedListItemInfo } from '@/flavours/glitch/components/truncated_list';
 import { TruncatedListItems } from '@/flavours/glitch/components/truncated_list';
 import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
-import Column from '@/flavours/glitch/features/ui/components/column';
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useAccountId } from '@/flavours/glitch/hooks/useAccountId';
 import { useAccountVisibility } from '@/flavours/glitch/hooks/useAccountVisibility';
@@ -151,7 +151,10 @@ const AccountFeatured: React.FC<{ multiColumn: boolean }> = ({
                   aria-posinset={index + 1}
                   aria-setsize={featuredAccountIds.size}
                 >
-                  <AccountListItem accountId={featuredAccountId} />
+                  <AccountListItem
+                    accountId={featuredAccountId}
+                    reference='featured_account'
+                  />
                 </Article>
               ))}
             </ItemList>

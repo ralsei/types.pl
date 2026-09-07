@@ -8,6 +8,7 @@ import { useSpring, animated, config } from '@react-spring/web';
 import { throttle } from 'lodash';
 
 import type { DeployPictureInPictureCallback } from '@/flavours/glitch/actions/picture_in_picture';
+import { useRevealedMedia } from '@/flavours/glitch/hooks/useRevealedMedia';
 import Forward5Icon from '@/material-icons/400-24px/forward_5-fill.svg?react';
 import FullscreenIcon from '@/material-icons/400-24px/fullscreen.svg?react';
 import FullscreenExitIcon from '@/material-icons/400-24px/fullscreen_exit.svg?react';
@@ -28,7 +29,7 @@ import {
   attachFullscreenListener,
   detachFullscreenListener,
 } from 'flavours/glitch/features/ui/util/fullscreen';
-import { displayMedia, useBlurhash } from 'flavours/glitch/initial_state';
+import { useBlurhash } from 'flavours/glitch/initial_state';
 import { playerSettings } from 'flavours/glitch/settings';
 
 import { HotkeyIndicator } from './components/hotkey_indicator';
@@ -218,7 +219,7 @@ export const Video: React.FC<{
   const [fullscreen, setFullscreen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [muted, setMuted] = useState(false);
-  const [revealed, setRevealed] = useState(false);
+  const [revealed, setRevealed] = useRevealedMedia({ visible, sensitive });
   const [hotkeyEvents, setHotkeyEvents] = useState<HotkeyEvent[]>([]);
 
   const playerRef = useRef<HTMLDivElement>(null);
@@ -365,17 +366,6 @@ export const Video: React.FC<{
     videoRef.current.volume = volume;
     videoRef.current.muted = muted;
   }, [volume, muted]);
-
-  useEffect(() => {
-    if (typeof visible !== 'undefined') {
-      setRevealed(visible);
-    } else {
-      setRevealed(
-        displayMedia === 'show_all' ||
-          (displayMedia !== 'hide_all' && !sensitive),
-      );
-    }
-  }, [visible, sensitive]);
 
   useEffect(() => {
     if (!revealed && videoRef.current) {
@@ -827,7 +817,7 @@ export const Video: React.FC<{
         )}
 
         {(revealed || editable) && (
-          <video /* eslint-disable-line jsx-a11y/media-has-caption */
+          <video
             ref={handleVideoRef}
             src={src}
             poster={preview}
@@ -835,7 +825,7 @@ export const Video: React.FC<{
             role='button'
             tabIndex={0}
             aria-label={alt}
-            title={alt}
+            title={fullscreen ? undefined : alt}
             lang={lang}
             onClick={handleClick}
             onKeyDownCapture={handleVideoKeyDown}

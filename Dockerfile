@@ -234,7 +234,7 @@ FROM media-build AS ffmpeg
 
 # ffmpeg version to compile, change with [--build-arg FFMPEG_VERSION="7.0.x"]
 # renovate: datasource=github-tags depName=FFmpeg/FFmpeg extractVersion=^n(?<version>\d+\.\d+(\.\d+)?)$
-ARG FFMPEG_VERSION=8.1.2
+ARG FFMPEG_VERSION=9.0.1
 # ffmpeg download URL, change with [--build-arg FFMPEG_URL="https://ffmpeg.org/releases"]
 ARG FFMPEG_URL=https://github.com/FFmpeg/FFmpeg/archive/refs/tags
 
@@ -399,7 +399,7 @@ RUN \
 
 RUN \
   # Precompile bootsnap code for faster Rails startup
-  bundle exec bootsnap precompile --gemfile app/ lib/;
+  bundle exec bootsnap precompile --gemfile app/ lib/ config/;
 
 RUN \
   # Pre-create and chown system volume to Mastodon user

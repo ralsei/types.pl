@@ -3,7 +3,7 @@ import type { FC, ReactNode } from 'react';
 
 import { AccountListItem } from '@/mastodon/components/account_list_item';
 import { Column } from '@/mastodon/components/column';
-import { ColumnBackButton } from '@/mastodon/components/column_back_button';
+import { ColumnBackButton } from '@/mastodon/components/column/back_button';
 import { LoadingIndicator } from '@/mastodon/components/loading_indicator';
 import ScrollableList from '@/mastodon/components/scrollable_list';
 import { BundleColumnError } from '@/mastodon/features/ui/components/bundle_column_error';
@@ -60,6 +60,7 @@ export const AccountList: FC<AccountListProps> = ({
           accountId={followerId}
           withBio={false}
           badge={withoutFollowsYouBadge ? false : null}
+          reference='profile'
         />
       )) ?? [];
 
@@ -70,6 +71,7 @@ export const AccountList: FC<AccountListProps> = ({
           accountId={prependAccountId}
           withBio={false}
           badge={withoutFollowsYouBadge ? false : null}
+          reference='profile'
         />,
       );
     }

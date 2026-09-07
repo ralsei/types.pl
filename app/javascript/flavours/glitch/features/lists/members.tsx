@@ -6,6 +6,9 @@ import { useParams, Link } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnSearchHeader } from '@/flavours/glitch/components/column/search_header';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import SquigglyArrow from '@/svg-icons/squiggly_arrow.svg?react';
 import { fetchRelationships } from 'flavours/glitch/actions/accounts';
@@ -22,9 +25,6 @@ import {
 import { Avatar } from 'flavours/glitch/components/avatar';
 import { VerifiedBadge } from 'flavours/glitch/components/badge';
 import { Button } from 'flavours/glitch/components/button';
-import { Column } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
-import { ColumnSearchHeader } from 'flavours/glitch/components/column_search_header';
 import { FollowersCounter } from 'flavours/glitch/components/counters';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';

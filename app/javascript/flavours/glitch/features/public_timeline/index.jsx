@@ -8,6 +8,8 @@ import { Helmet } from '@unhead/react/helmet';
 import { connect } from 'react-redux';
 
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import { DismissableBanner } from 'flavours/glitch/components/dismissable_banner';
 import { injectIntl } from '@/flavours/glitch/components/intl';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
@@ -17,8 +19,6 @@ import { canViewFeed } from 'flavours/glitch/permissions';
 import { addColumn, removeColumn, moveColumn } from '../../actions/columns';
 import { connectPublicStream } from '../../actions/streaming';
 import { expandPublicTimeline } from '../../actions/timelines';
-import Column from '../../components/column';
-import ColumnHeader from '../../components/column_header';
 import StatusListContainer from '../ui/containers/status_list_container';
 
 import ColumnSettingsContainer from './containers/column_settings_container';
@@ -79,10 +79,6 @@ class PublicTimeline extends PureComponent {
     dispatch(moveColumn(columnId, dir));
   };
 
-  handleHeaderClick = () => {
-    this.column.scrollTop();
-  };
-
   componentDidMount () {
     const { dispatch, onlyMedia, onlyRemote, allowLocalOnly } = this.props;
     const { signedIn } = this.props.identity;
@@ -118,10 +114,6 @@ class PublicTimeline extends PureComponent {
     }
   }
 
-  setRef = c => {
-    this.column = c;
-  };
-
   handleLoadMore = maxId => {
     const { dispatch, onlyMedia, onlyRemote, allowLocalOnly } = this.props;
 
@@ -146,7 +138,7 @@ class PublicTimeline extends PureComponent {
     );
 
     return (
-      <Column bindToDocument={!multiColumn} ref={this.setRef} label={intl.formatMessage(messages.title)}>
+      <Column bindToDocument={!multiColumn} label={intl.formatMessage(messages.title)}>
         <ColumnHeader
           icon='globe'
           iconComponent={PublicIcon}
@@ -154,9 +146,9 @@ class PublicTimeline extends PureComponent {
           title={intl.formatMessage(messages.title)}
           onPin={this.handlePin}
           onMove={this.handleMove}
-          onClick={this.handleHeaderClick}
           pinned={pinned}
           multiColumn={multiColumn}
+          scrollTopOnClick
         >
           <ColumnSettingsContainer columnId={columnId} />
         </ColumnHeader>

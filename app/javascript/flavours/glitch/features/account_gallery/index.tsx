@@ -7,11 +7,12 @@ import { List as ImmutableList, isList } from 'immutable';
 import { openModal } from '@/flavours/glitch/actions/modal';
 import { expandAccountMediaTimeline } from '@/flavours/glitch/actions/timelines';
 import { AccountHeader } from '@/flavours/glitch/components/account_header';
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import { LimitedAccountHint } from '@/flavours/glitch/components/limited_account_hint';
 import { RemoteHint } from '@/flavours/glitch/components/remote_hint';
 import ScrollableList from '@/flavours/glitch/components/scrollable_list';
 import { BundleColumnError } from '@/flavours/glitch/features/ui/components/bundle_column_error';
-import Column from '@/flavours/glitch/features/ui/components/column';
 import { useAccountId } from '@/flavours/glitch/hooks/useAccountId';
 import { useAccountVisibility } from '@/flavours/glitch/hooks/useAccountVisibility';
 import type { MediaAttachment } from '@/flavours/glitch/models/media_attachment';
@@ -214,12 +215,15 @@ export const AccountGallery: React.FC<{
   const forceEmptyState = suspended || blockedBy || hidden;
 
   return (
-    <Column
-      icon='user-circle'
-      iconComponent={PersonIcon}
-      heading={intl.formatMessage(messages.profile)}
-      alwaysShowBackButton
-    >
+    <Column>
+      <ColumnHeader
+        icon='user-circle'
+        iconComponent={PersonIcon}
+        title={intl.formatMessage(messages.profile)}
+        showBackButton
+        scrollTopOnClick
+      />
+
       <ScrollableList
         className='account-gallery__container'
         prepend={

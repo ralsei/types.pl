@@ -6,17 +6,16 @@ import { List as ImmutableList } from 'immutable';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { fetchQuotes } from '@/flavours/glitch/actions/interactions_typed';
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { Icon } from '@/flavours/glitch/components/icon';
+import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
+import StatusList from '@/flavours/glitch/components/status_list';
+import { useIdentity } from '@/flavours/glitch/identity_context';
+import { domain } from '@/flavours/glitch/initial_state';
+import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 import RefreshIcon from '@/material-icons/400-24px/refresh.svg?react';
-import { fetchQuotes } from 'flavours/glitch/actions/interactions_typed';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
-import { Icon } from 'flavours/glitch/components/icon';
-import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
-import StatusList from 'flavours/glitch/components/status_list';
-import { useIdentity } from 'flavours/glitch/identity_context';
-import { domain } from 'flavours/glitch/initial_state';
-import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
-
-import Column from '../ui/components/column';
 
 const messages = defineMessages({
   refresh: { id: 'refresh', defaultMessage: 'Refresh' },

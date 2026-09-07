@@ -10,15 +10,19 @@ import { debounce } from 'lodash';
 
 import { injectIntl } from '@/flavours/glitch/components/intl';
 import BlockIcon from '@/material-icons/400-24px/block-fill.svg?react';
-import { Account } from 'flavours/glitch/components/account';
-
-import { fetchBlocks, expandBlocks } from '../../actions/blocks';
-import { LoadingIndicator } from '../../components/loading_indicator';
-import ScrollableList from '../../components/scrollable_list';
-import Column from '../ui/components/column';
+import { fetchBlocks, expandBlocks } from '@/flavours/glitch/actions/blocks';
+import { Account } from '@/flavours/glitch/components/account';
+import { Column } from '@/flavours/glitch/components/column';
+import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
+import ScrollableList from '@/flavours/glitch/components/scrollable_list';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { Helmet } from '@unhead/react/helmet';
 
 const messages = defineMessages({
   heading: { id: 'column.blocks', defaultMessage: 'Blocked users' },
+  heading_redesign: { id: 'column.blocked_accounts', defaultMessage: 'Blocked Accounts' },
 });
 
 const mapStateToProps = state => ({
@@ -61,7 +65,12 @@ class Blocks extends ImmutablePureComponent {
     const emptyMessage = <FormattedMessage id='empty_column.blocks' defaultMessage="You haven't blocked any users yet." />;
 
     return (
-      <Column bindToDocument={!multiColumn} icon='ban' iconComponent={BlockIcon} heading={intl.formatMessage(messages.heading)} alwaysShowBackButton>
+      <Column bindToDocument={!multiColumn}>
+        {isRedesignEnabled() ? (
+          <ColumnHeader withBackButton={multiColumn && 'auto'} title={intl.formatMessage(messages.heading_redesign)} />
+        ) : (
+          <LegacyColumnHeader icon='ban' iconComponent={BlockIcon} title={intl.formatMessage(messages.heading)} showBackButton />
+        )}
         <ScrollableList
           scrollKey='blocks'
           onLoadMore={this.handleLoadMore}
@@ -74,6 +83,13 @@ class Blocks extends ImmutablePureComponent {
             <Account key={id} id={id} defaultAction='block' />,
           )}
         </ScrollableList>
+
+        <Helmet>
+          <title>
+            {intl.formatMessage(isRedesignEnabled() ? messages.heading_redesign : messages.heading)}
+          </title>
+          <meta name='robots' content='noindex' />
+        </Helmet>
       </Column>
     );
   }

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import { lazy, PureComponent, Suspense } from 'react';
 
 import { defineMessages } from 'react-intl';
 
@@ -21,15 +21,16 @@ import { Hotkeys } from 'mastodon/components/hotkeys';
 import { HoverCardController } from 'mastodon/components/hover_card_controller';
 import { PictureInPicture } from 'mastodon/features/picture_in_picture';
 import { identityContextPropShape, withIdentity } from 'mastodon/identity_context';
-import { layoutFromWindow } from 'mastodon/is_mobile';
+import { layoutFromWindow, transientSingleColumn } from 'mastodon/is_mobile';
 import { WithRouterPropTypes } from 'mastodon/utils/react_router';
+import { isRedesignEnabled } from '@/mastodon/utils/environment';
 import { checkAnnualReport } from '@/mastodon/reducers/slices/annual_report';
 
 import { uploadCompose, resetCompose, changeComposeSpoilerness } from '../../actions/compose';
 import { clearHeight } from '../../actions/height_cache';
 import { fetchServer, fetchServerTranslationLanguages } from '../../actions/server';
 import { expandHomeTimeline } from '../../actions/timelines';
-import { initialState, me, owner, singleUserMode, trendsEnabled, landingPage, localLiveFeedAccess, disableHoverCards, domain } from '../../initial_state';
+import { initialState, forceSingleColumn, me, owner, singleUserMode, trendsEnabled, landingPage, localLiveFeedAccess, disableHoverCards, domain } from '../../initial_state';
 
 import BundleColumnError from './components/bundle_column_error';
 import { NavigationBar } from './components/navigation_bar';
@@ -121,6 +122,7 @@ class SwitchingColumnsArea extends PureComponent {
     singleColumn: PropTypes.bool,
     layout: PropTypes.string.isRequired,
     forceOnboarding: PropTypes.bool,
+    minimalShell: PropTypes.bool,
   };
 
   componentDidMount () {
@@ -158,7 +160,7 @@ class SwitchingColumnsArea extends PureComponent {
   };
 
   render () {
-    const { children, singleColumn, forceOnboarding } = this.props;
+    const { children, singleColumn, forceOnboarding, minimalShell } = this.props;
     const { signedIn } = this.props.identity;
     const pathName = this.props.location.pathname;
 
@@ -185,12 +187,12 @@ class SwitchingColumnsArea extends PureComponent {
 
     return (
       <ColumnsContextProvider multiColumn={!singleColumn}>
-        <ColumnsArea ref={this.setRef} singleColumn={singleColumn} domain={domain} minimalShell={!signedIn && landingPage === 'overview' && pathName.startsWith('/overview')}>
+        <ColumnsArea ref={this.setRef} singleColumn={singleColumn} domain={domain} minimalShell={minimalShell}>
           <WrappedSwitch>
             <Redirect from='/' to={{pathname: rootRedirect, state: {...this.props.location.state, focusTarget: false}}} exact />
 
-            {singleColumn ? <Redirect from='/deck' to='/home' exact /> : null}
-            {singleColumn && pathName.startsWith('/deck/') ? <Redirect from={pathName} to={{...this.props.location, pathname: pathName.slice(5)}} /> : null}
+            {forceSingleColumn || transientSingleColumn ? <Redirect from='/deck' to='/home' exact /> : null}
+            {(forceSingleColumn || transientSingleColumn) && pathName.startsWith('/deck/') ? <Redirect from={pathName} to={{...this.props.location, pathname: pathName.slice(5)}} /> : null}
             {/* Redirect old bookmarks (without /deck) with home-like routes to the advanced interface */}
             {!singleColumn && pathName === '/home' ? <Redirect from='/home' to='/deck/getting-started' exact /> : null}
             {pathName === '/getting-started' ? <Redirect from='/getting-started' to={singleColumn ? '/home' : '/deck/getting-started'} exact /> : null}
@@ -268,7 +270,6 @@ class SwitchingColumnsArea extends PureComponent {
       </ColumnsContextProvider>
     );
   }
-
 }
 
 class UI extends PureComponent {
@@ -651,11 +652,12 @@ class UI extends PureComponent {
             singleColumn={layout === 'mobile' || layout === 'single-column'}
             layout={layout}
             forceOnboarding={firstLaunch && newAccount}
+            minimalShell={minimalShell}
           >
             {children}
           </SwitchingColumnsArea>
 
-          {!minimalShell && <NavigationBar />}
+          {!minimalShell && !isRedesignEnabled() && <NavigationBar />}
           {layout !== 'mobile' && <PictureInPicture />}
           <AlertsController />
           {!disableHoverCards && <HoverCardController />}

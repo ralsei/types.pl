@@ -11,10 +11,10 @@ import { Link, useParams } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
 import { NavigationFocusTarget } from '@/flavours/glitch/components/navigation_focus_target';
 import { apiGetTermsOfService } from 'flavours/glitch/api/instance';
 import type { ApiTermsOfServiceJSON } from 'flavours/glitch/api_types/instance';
-import { Column } from 'flavours/glitch/components/column';
 import { BundleColumnError } from 'flavours/glitch/features/ui/components/bundle_column_error';
 
 import { getColumnSkipLinkId } from '../ui/components/skip_links';

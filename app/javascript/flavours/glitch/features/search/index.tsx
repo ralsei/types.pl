@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
 
+import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column/header';
 import CollectionsIcon from '@/material-icons/400-24px/category.svg?react';
 import FindInPageIcon from '@/material-icons/400-24px/find_in_page.svg?react';
 import PeopleIcon from '@/material-icons/400-24px/group.svg?react';
@@ -12,9 +14,6 @@ import TagIcon from '@/material-icons/400-24px/tag.svg?react';
 import { submitSearch, expandSearch } from 'flavours/glitch/actions/search';
 import type { ApiSearchType } from 'flavours/glitch/api_types/search';
 import { Account } from 'flavours/glitch/components/account';
-import { Column } from 'flavours/glitch/components/column';
-import type { ColumnRef } from 'flavours/glitch/components/column';
-import { ColumnHeader } from 'flavours/glitch/components/column_header';
 import { CompatibilityHashtag as Hashtag } from 'flavours/glitch/components/hashtag';
 import { Icon } from 'flavours/glitch/components/icon';
 import ScrollableList from 'flavours/glitch/components/scrollable_list';
@@ -47,7 +46,9 @@ const hidePeek = <T,>(list: T[]) => {
 };
 
 const renderAccounts = (accountIds: string[]) =>
-  hidePeek<string>(accountIds).map((id) => <Account key={id} id={id} />);
+  hidePeek<string>(accountIds).map((id) => (
+    <Account key={id} id={id} reference='search' />
+  ));
 
 const renderHashtags = (hashtags: HashtagType[]) =>
   hidePeek<HashtagType>(hashtags).map((hashtag) => (
@@ -72,7 +73,6 @@ const typeFromParam = (param?: string): SearchType => {
 export const SearchResults: React.FC<{ multiColumn: boolean }> = ({
   multiColumn,
 }) => {
-  const columnRef = useRef<ColumnRef>(null);
   const intl = useIntl();
   const [q] = useSearchParam('q');
   const [type, setType] = useSearchParam('type');
@@ -92,10 +92,6 @@ export const SearchResults: React.FC<{ multiColumn: boolean }> = ({
       );
     }
   }, [dispatch, trimmedValue, mappedType]);
-
-  const handleHeaderClick = useCallback(() => {
-    columnRef.current?.scrollTop();
-  }, []);
 
   const handleSelectAll = useCallback(() => {
     setType(null);
@@ -243,15 +239,14 @@ export const SearchResults: React.FC<{ multiColumn: boolean }> = ({
   return (
     <Column
       bindToDocument={!multiColumn}
-      ref={columnRef}
       label={intl.formatMessage(messages.title, { q })}
     >
       <ColumnHeader
         icon={'search'}
         iconComponent={SearchIcon}
         title={intl.formatMessage(messages.title, { q })}
-        onClick={handleHeaderClick}
         multiColumn={multiColumn}
+        scrollTopOnClick
         appendContent={
           <>
             <div className='explore__search-header'>
