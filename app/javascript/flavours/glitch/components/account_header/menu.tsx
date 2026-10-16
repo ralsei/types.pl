@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import type { FC } from 'react';
 
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+
+import { DotsThreeIcon } from '@phosphor-icons/react';
 
 import {
   followAccount,
@@ -24,6 +26,13 @@ import {
 import { openModal } from '@/flavours/glitch/actions/modal';
 import { initMuteModal } from '@/flavours/glitch/actions/mutes';
 import { initReport } from '@/flavours/glitch/actions/reports';
+import { IconButton } from '@/flavours/glitch/components/button/redesign';
+import {
+  Menu,
+  MenuList,
+  MenuTrigger,
+  LegacyDropdownMenuItems,
+} from '@/flavours/glitch/components/menu';
 import {
   canAccountBeAdded,
   canAccountBeAddedByFollowers,
@@ -31,7 +40,7 @@ import {
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useIdentity } from '@/flavours/glitch/identity_context';
 import type { Account } from '@/flavours/glitch/models/account';
-import type { MenuItem } from '@/flavours/glitch/models/dropdown_menu';
+import type { MenuItem as DropdownMenuItem } from '@/flavours/glitch/models/dropdown_menu';
 import type { Relationship } from '@/flavours/glitch/models/relationship';
 import {
   PERMISSION_MANAGE_FEDERATION,
@@ -79,15 +88,37 @@ export const AccountMenu: FC<{ accountId: string }> = ({ accountId }) => {
       dispatch,
     });
   }, [account, signedIn, isMe, permissions, intl, relationship, dispatch]);
-  return (
-    <Dropdown
-      disabled={menuItems.length === 0}
-      items={menuItems}
-      icon='ellipsis-v'
-      iconComponent={MoreHorizIcon}
-      className={classes.buttonMenu}
-    />
-  );
+
+  if (isRedesignEnabled()) {
+    return (
+      <Menu>
+        <MenuTrigger
+          as={IconButton}
+          size='sm'
+          icon={DotsThreeIcon}
+          disabled={menuItems.length === 0}
+        >
+          <FormattedMessage
+            id='account.menu.label'
+            defaultMessage='More account options'
+          />
+        </MenuTrigger>
+        <MenuList>
+          <LegacyDropdownMenuItems items={menuItems} />
+        </MenuList>
+      </Menu>
+    );
+  } else {
+    return (
+      <Dropdown
+        disabled={menuItems.length === 0}
+        items={menuItems}
+        icon='ellipsis-v'
+        iconComponent={MoreHorizIcon}
+        className={classes.buttonMenu}
+      />
+    );
+  }
 };
 
 interface MenuItemsParams {
@@ -152,6 +183,10 @@ const messages = defineMessages({
     id: 'account.menu.add_to_list',
     defaultMessage: 'Add to list…',
   },
+  addToCustomFeed: {
+    id: 'account.menu.add_to_feed',
+    defaultMessage: 'Add to custom feed…',
+  },
   addToCollection: {
     id: 'account.menu.add_to_collection',
     defaultMessage: 'Add to collection…',
@@ -189,6 +224,14 @@ const messages = defineMessages({
     id: 'status.admin_domain',
     defaultMessage: 'Open moderation interface for {domain}',
   },
+  enableNotifications: {
+    id: 'account.notify_me',
+    defaultMessage: 'Notify me about new posts',
+  },
+  disableNotifications: {
+    id: 'account.stop_notifying_me',
+    defaultMessage: 'Stop notifying me about new posts',
+  },
   languages: {
     id: 'account.languages',
     defaultMessage: 'Change subscribed languages',
@@ -215,8 +258,8 @@ function getMenuItems({
   intl,
   relationship,
   dispatch,
-}: MenuItemsParams): MenuItem[] {
-  const items: MenuItem[] = [];
+}: MenuItemsParams): DropdownMenuItem[] {
+  const items: DropdownMenuItem[] = [];
   const isRemote = account.acct !== account.username;
   const remoteDomain = isRemote ? account.acct.split('@')[1] : null;
 
@@ -257,17 +300,19 @@ function getMenuItems({
 
   // Mention and direct message options
   if (signedIn && !account.suspended) {
-    items.push(null);
     if (!account.invalid_handle) {
       if (isRedesignEnabled()) {
-        items.push({
-          text: intl.formatMessage(messages.redesignMessage),
-          action: () => {
-            dispatch(directCompose(account));
-          },
-        });
+        if (!relationship?.following) {
+          items.push(null, {
+            text: intl.formatMessage(messages.redesignMessage),
+            action: () => {
+              dispatch(directCompose(account));
+            },
+          });
+        }
       } else {
         items.push(
+          null,
           {
             text: intl.formatMessage(messages.mention),
             action: () => {
@@ -294,7 +339,9 @@ function getMenuItems({
   // Add to list
   if (relationship?.following) {
     items.push({
-      text: intl.formatMessage(messages.addToList),
+      text: intl.formatMessage(
+        isRedesignEnabled() ? messages.addToCustomFeed : messages.addToList,
+      ),
       action: () => {
         dispatch(
           openModal({
@@ -366,6 +413,20 @@ function getMenuItems({
 
   // Timeline options
   if (relationship?.following && !relationship.muting) {
+    if (isRedesignEnabled()) {
+      items.push({
+        text: intl.formatMessage(
+          relationship.notifying
+            ? messages.disableNotifications
+            : messages.enableNotifications,
+        ),
+        action: () => {
+          dispatch(
+            followAccount(account.id, { notify: !relationship.notifying }),
+          );
+        },
+      });
+    }
     items.push(
       {
         text: intl.formatMessage(
@@ -375,7 +436,6 @@ function getMenuItems({
         ),
         action: () => {
           dispatch(
-            // @ts-expect-error this action is not typed yet
             followAccount(account.id, {
               reblogs: !relationship.showing_reblogs,
             }),

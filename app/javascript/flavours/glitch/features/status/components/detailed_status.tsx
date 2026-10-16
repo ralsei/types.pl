@@ -11,25 +11,26 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
+import StatusContent from '@/flavours/glitch/components/status/legacy/content';
+import { ContentWarning } from '@/flavours/glitch/components/status/legacy/content_warning';
+import { FilterWarning } from '@/flavours/glitch/components/status/legacy/filter_warning';
+import type { StatusLike } from '@/flavours/glitch/components/status/legacy/hashtag_bar';
+import { getHashtagBarForStatus } from '@/flavours/glitch/components/status/legacy/hashtag_bar';
+import { PictureInPicturePlaceholder } from '@/flavours/glitch/components/status/legacy/picture_in_picture_placeholder';
+import { QuotedStatus } from '@/flavours/glitch/components/status/legacy/quoted';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import HomeIcon from '@/material-icons/400-24px/home.svg?react';
 import { AnimatedNumber } from 'flavours/glitch/components/animated_number';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
 import { Avatar } from 'flavours/glitch/components/avatar';
-import { ContentWarning } from 'flavours/glitch/components/content_warning';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import { EditedTimestamp } from 'flavours/glitch/components/edited_timestamp';
-import { FilterWarning } from 'flavours/glitch/components/filter_warning';
 import { FormattedDateWrapper } from 'flavours/glitch/components/formatted_date';
-import type { StatusLike } from 'flavours/glitch/components/hashtag_bar';
-import { getHashtagBarForStatus } from 'flavours/glitch/components/hashtag_bar';
 import { Icon } from 'flavours/glitch/components/icon';
 import { IconLogo } from 'flavours/glitch/components/logo';
 import MediaGallery from 'flavours/glitch/components/media_gallery';
-import { MentionsPlaceholder } from 'flavours/glitch/components/mentions_placeholder';
 import { Permalink } from 'flavours/glitch/components/permalink';
-import { PictureInPicturePlaceholder } from 'flavours/glitch/components/picture_in_picture_placeholder';
-import StatusContent from 'flavours/glitch/components/status_content';
-import { QuotedStatus } from 'flavours/glitch/components/status_quoted';
+import { MentionsPlaceholder } from 'flavours/glitch/components/status/legacy/mentions_placeholder';
 import { VisibilityIcon } from 'flavours/glitch/components/visibility_icon';
 import { Audio } from 'flavours/glitch/features/audio';
 import { CollectionPreviewCard } from 'flavours/glitch/features/collections/components/collection_preview_card';
@@ -451,18 +452,33 @@ export const DetailedStatus: React.FC<{
       to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/favourites`}
       className='detailed-status__link'
     >
-      <FormattedMessage
-        id='status.favourites_count'
-        defaultMessage='{count, plural, one {{counter} favorite} other {{counter} favorites}}'
-        values={{
-          count: status.get('favourites_count'),
-          counter: (
-            <span className='detailed-status__favorites'>
-              <AnimatedNumber value={status.get('favourites_count')} />
-            </span>
-          ),
-        }}
-      />
+      {isRedesignEnabled() ? (
+        <FormattedMessage
+          id='status.likes_count'
+          defaultMessage='{count, plural, one {{counter} like} other {{counter} likes}}'
+          values={{
+            count: status.get('favourites_count'),
+            counter: (
+              <span className='detailed-status__favorites'>
+                <AnimatedNumber value={status.get('favourites_count')} />
+              </span>
+            ),
+          }}
+        />
+      ) : (
+        <FormattedMessage
+          id='status.favourites_count'
+          defaultMessage='{count, plural, one {{counter} favorite} other {{counter} favorites}}'
+          values={{
+            count: status.get('favourites_count'),
+            counter: (
+              <span className='detailed-status__favorites'>
+                <AnimatedNumber value={status.get('favourites_count')} />
+              </span>
+            ),
+          }}
+        />
+      )}
     </Link>
   );
 

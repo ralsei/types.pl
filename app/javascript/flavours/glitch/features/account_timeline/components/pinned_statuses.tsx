@@ -7,8 +7,8 @@ import classNames from 'classnames';
 import { Badge } from '@/flavours/glitch/components/badge';
 import { Button } from '@/flavours/glitch/components/button';
 import { Icon } from '@/flavours/glitch/components/icon';
-import { StatusHeader } from '@/flavours/glitch/components/status/header';
-import type { StatusHeaderRenderFn } from '@/flavours/glitch/components/status/header';
+import { StatusHeader } from '@/flavours/glitch/components/status/legacy/header';
+import type { StatusHeaderRenderFn } from '@/flavours/glitch/components/status/legacy/header';
 import IconPinned from '@/images/icons/icon_pinned.svg?react';
 
 import { useAccountContext } from '../hooks/useAccountContext';

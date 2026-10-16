@@ -178,12 +178,14 @@ export default tseslint.config([
     },
 
     rules: {
+      'formatjs/blocklist-elements': 'off', // CrowdIn supports `select` translation
       'formatjs/enforce-description': 'off', // description values not currently used
       'formatjs/enforce-id': 'off', // Explicit IDs are used in the project
       'formatjs/enforce-placeholders': 'off', // Issues in short_number.jsx
       'formatjs/no-invalid-icu': 'error',
       'formatjs/no-literal-string-in-jsx': 'off', // Should be looked at, but mainly flagging punctuation outside of strings
       'formatjs/no-multiple-plurals': 'off', // Should be looked at
+      'formatjs/prefer-full-sentence': 'off', // Multiple locations needs ICU/Intl unit updates, should enable after that
 
       'jsx-a11y/click-events-have-key-events': 'off',
       'jsx-a11y/label-has-associated-control': 'off',
@@ -295,7 +297,9 @@ export default tseslint.config([
 
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ['vitest.shims.d.ts'],
+        },
       },
     },
 
@@ -313,6 +317,7 @@ export default tseslint.config([
       'jsdoc/require-returns': 'off',
 
       'jsx-a11y/media-has-caption': 'off',
+      'jsx-a11y/no-autofocus': 'off',
 
       'react/prefer-stateless-function': 'warn',
       'react/function-component-definition': [
@@ -359,6 +364,12 @@ export default tseslint.config([
         },
       ],
       '@typescript-eslint/non-nullable-type-assertion-style': 'off',
+    },
+  },
+  {
+    files: ['**/*modal*.{j,t}sx'],
+    rules: {
+      'import/no-default-export': 'off',
     },
   },
   {

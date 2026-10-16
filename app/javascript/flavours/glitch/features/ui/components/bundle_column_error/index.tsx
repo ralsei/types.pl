@@ -6,8 +6,10 @@ import { Link } from 'react-router-dom';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
 import { CopyButton } from '@/flavours/glitch/components/copy_button';
 import { EmptyState } from '@/flavours/glitch/components/empty_state';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import { Button } from 'flavours/glitch/components/button';
 
 import classes from './styles.module.scss';
@@ -74,11 +76,15 @@ export const BundleColumnError: React.FC<BundleColumnErrorProps> = ({
 
   return (
     <Column bindToDocument={!multiColumn}>
+      {isRedesignEnabled() && <ColumnHeader title={title} />}
       <EmptyState
         image='error'
-        title={title}
+        title={isRedesignEnabled() ? null : title}
         message={body}
-        className={classes.error}
+        className={classNames(
+          classes.error,
+          isRedesignEnabled() && classes.errorRedesign,
+        )}
       >
         <div className={classes.actions}>
           {errorType === 'network' && onRetry && (

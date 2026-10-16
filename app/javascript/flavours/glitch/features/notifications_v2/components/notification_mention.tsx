@@ -2,8 +2,8 @@ import { FormattedMessage } from 'react-intl';
 
 import { isEqual } from 'lodash';
 
+import { StatusReplyIcon } from '@/flavours/glitch/components/status/icons';
 import AlternateEmailIcon from '@/material-icons/400-24px/alternate_email.svg?react';
-import ReplyIcon from '@/material-icons/400-24px/reply-fill.svg?react';
 import { me } from 'flavours/glitch/initial_state';
 import type { NotificationGroupMention } from 'flavours/glitch/models/notification_group';
 import { useAppSelector } from 'flavours/glitch/store';
@@ -59,7 +59,7 @@ export const NotificationMention: React.FC<{
   return (
     <NotificationWithStatus
       type='mention'
-      icon={isReply ? ReplyIcon : AlternateEmailIcon}
+      icon={isReply ? StatusReplyIcon : AlternateEmailIcon}
       iconId='reply'
       accountIds={notification.sampleAccountIds}
       count={notification.notifications_count}

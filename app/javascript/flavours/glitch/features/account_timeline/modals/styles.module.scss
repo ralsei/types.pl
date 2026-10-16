@@ -1,4 +1,4 @@
-@use '@/styles/mastodon/variables' as *;
+@use '@/flavours/glitch/styles/mastodon/variables' as *;
 
 .noteCallout {
   margin-bottom: 16px;
@@ -24,7 +24,7 @@
 
 .fieldName,
 .fieldValue {
-  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 
 .fieldValue {

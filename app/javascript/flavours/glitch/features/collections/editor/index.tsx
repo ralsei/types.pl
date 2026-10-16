@@ -14,7 +14,9 @@ import {
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import { Callout } from 'flavours/glitch/components/callout';
 import { LoadingIndicator } from 'flavours/glitch/components/loading_indicator';
@@ -119,13 +121,17 @@ export const CollectionEditorPage: React.FC<{
 
   return (
     <Column bindToDocument={!multiColumn} label={pageTitle}>
-      <ColumnHeader
-        title={pageTitle}
-        icon='list-ul'
-        iconComponent={ListAltIcon}
-        multiColumn={multiColumn}
-        showBackButton
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader title={pageTitle} withBackButton='auto' />
+      ) : (
+        <LegacyColumnHeader
+          title={pageTitle}
+          icon='list-ul'
+          iconComponent={ListAltIcon}
+          multiColumn={multiColumn}
+          showBackButton
+        />
+      )}
 
       <div className='scrollable'>
         {isLoading ? (

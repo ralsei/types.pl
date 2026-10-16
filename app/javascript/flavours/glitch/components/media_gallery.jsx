@@ -16,6 +16,8 @@ import { SpoilerButton } from 'flavours/glitch/components/spoiler_button';
 import { formatTime } from 'flavours/glitch/features/video';
 
 import { autoPlayGif, displayMedia, useBlurhash } from '../initial_state';
+import { isRedesignEnabled } from '../utils/environment';
+import { Button } from './button/redesign';
 
 class Item extends PureComponent {
 
@@ -338,6 +340,8 @@ class MediaGallery extends PureComponent {
       children = media.map((attachment, i) => <Item key={attachment.get('id')} autoplay={autoplay} onClick={this.handleClick} attachment={attachment} index={i} lang={lang} size={size} letterbox={letterbox} displayWidth={width} visible={visible || uncached} />);
     }
 
+    const ButtonComp = isRedesignEnabled() ? Button : 'button';
+
     return (
       <div className={computedClass} style={style} ref={this.handleRef}>
         {children}
@@ -346,7 +350,15 @@ class MediaGallery extends PureComponent {
 
         {(visible && !uncached) && (
           <div className='media-gallery__actions'>
-            <button className='media-gallery__actions__pill' onClick={this.handleOpen}><FormattedMessage id='media_gallery.hide' defaultMessage='Hide' /></button>
+            <ButtonComp
+              size='xs'
+              type='button'
+              variant='solid'
+              className='media-gallery__actions__pill'
+              onClick={this.handleOpen}
+            >
+              <FormattedMessage id='media_gallery.hide' defaultMessage='Hide' />
+            </ButtonComp>
           </div>
         )}
       </div>

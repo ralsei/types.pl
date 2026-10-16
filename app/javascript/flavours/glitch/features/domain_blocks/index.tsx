@@ -5,7 +5,9 @@ import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import BlockIcon from '@/material-icons/400-24px/block-fill.svg?react';
 import { apiGetDomainBlocks } from 'flavours/glitch/api/domain_blocks';
 import { Domain } from 'flavours/glitch/components/domain';
@@ -72,14 +74,21 @@ const Blocks: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
       bindToDocument={!multiColumn}
       label={intl.formatMessage(messages.heading)}
     >
-      <ColumnHeader
-        icon='ban'
-        iconComponent={BlockIcon}
-        title={intl.formatMessage(messages.heading)}
-        multiColumn={multiColumn}
-        showBackButton
-        scrollTopOnClick
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          withBackButton
+          title={intl.formatMessage(messages.heading)}
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='ban'
+          iconComponent={BlockIcon}
+          title={intl.formatMessage(messages.heading)}
+          multiColumn={multiColumn}
+          showBackButton
+          scrollTopOnClick
+        />
+      )}
 
       <ScrollableList
         scrollKey='domain_blocks'

@@ -2,14 +2,15 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
+import classNames from 'classnames';
 import { useLocation } from 'react-router';
 
 import {
   BellIcon,
-  ChatCircleIcon,
+  ChatCircleDotsIcon,
   HouseIcon,
+  InfoIcon,
   MagnifyingGlassIcon,
-  HamburgerIcon,
 } from '@phosphor-icons/react';
 import { animated, useSpring } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
@@ -19,87 +20,127 @@ import {
   openNavigation,
 } from '@/flavours/glitch/actions/navigation';
 import { Avatar } from '@/flavours/glitch/components/avatar';
-import { IconButton } from '@/flavours/glitch/components/button/redesign';
+import {
+  Button,
+  IconButton,
+} from '@/flavours/glitch/components/button/redesign';
+import { Menu, MenuList, MenuTrigger } from '@/flavours/glitch/components/menu';
 import { FOCUS_TARGET } from '@/flavours/glitch/components/navigation_focus_target';
 import { ComposeRedesignButton } from '@/flavours/glitch/features/compose/redesign/trigger';
 import { useAccount } from '@/flavours/glitch/hooks/useAccount';
 import { useIdentity } from '@/flavours/glitch/identity_context';
-import { selectUnreadNotificationGroupsCount } from '@/flavours/glitch/selectors/notifications';
+import { trendsEnabled } from '@/flavours/glitch/initial_state';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 
-import { RedesignNavigationPanel } from '.';
+import {
+  RedesignNavigationPanel,
+  useNotificationsCount,
+  handleSearchLinkClick,
+} from '.';
+import { AccountMenuItems } from './account_card_and_menu';
+import { LogoLockup } from './header';
 import classes from './mobile_nav.module.scss';
-import { MobileNavLink } from './navigation_link';
+import { MobileNavLink, MobileNavProfileButton } from './navigation_link';
 
 export const RedesignMobileNavigation: React.FC = () => {
   const dispatch = useAppDispatch();
-
   const { accountId, signedIn } = useIdentity();
   const account = useAccount(accountId);
 
-  const notificationsCount = useAppSelector(
-    selectUnreadNotificationGroupsCount,
-  );
+  const notificationsCount = useNotificationsCount();
 
-  const handleOpenNavigation = useCallback(() => {
+  const openMobileNav = useCallback(() => {
     dispatch(openNavigation());
   }, [dispatch]);
 
-  if (!signedIn) {
-    return null;
-  }
-
   return (
     <>
-      <nav className={classes.root}>
-        <ul className={classes.list}>
-          <MobileNavLink to='/home' iconComponent={HouseIcon}>
-            <FormattedMessage id='tabs_bar.home' defaultMessage='Home' />
-          </MobileNavLink>
-          <MobileNavLink
-            to={{
-              pathname: '/explore',
-              state: { focusTarget: FOCUS_TARGET.SEARCH },
-            }}
-            iconComponent={MagnifyingGlassIcon}
+      {signedIn ? (
+        <nav className={classes.root}>
+          <ul className={classNames(classes.floatingCard, classes.list)}>
+            <MobileNavLink to='/home' iconComponent={HouseIcon}>
+              <FormattedMessage id='tabs_bar.home' defaultMessage='Home' />
+            </MobileNavLink>
+            <MobileNavLink
+              to={{
+                pathname: trendsEnabled ? '/explore' : '/search',
+                state: { focusTarget: FOCUS_TARGET.SEARCH },
+              }}
+              iconComponent={MagnifyingGlassIcon}
+              onClick={handleSearchLinkClick}
+            >
+              <FormattedMessage id='tabs_bar.search' defaultMessage='Search' />
+            </MobileNavLink>
+            <MobileNavLink
+              to='/conversations'
+              iconComponent={ChatCircleDotsIcon}
+            >
+              <FormattedMessage
+                id='tabs_bar.messages'
+                defaultMessage='Messages'
+                description='Message refers to a direct message. For languages where this is confusing, "chat" or "direct message" can be used.'
+              />
+            </MobileNavLink>
+            <MobileNavLink
+              to='/notifications'
+              iconComponent={BellIcon}
+              withDot={notificationsCount > 0}
+            >
+              <FormattedMessage
+                id='tabs_bar.notifications'
+                defaultMessage='Notifications'
+              />
+            </MobileNavLink>
+            <Menu>
+              <MenuTrigger
+                as={MobileNavProfileButton}
+                avatar={
+                  <Avatar
+                    size={24}
+                    account={account}
+                    className={classes.avatar}
+                  />
+                }
+              >
+                <FormattedMessage
+                  id='tabs_bar.account_settings'
+                  defaultMessage='Account settings'
+                />
+              </MenuTrigger>
+              <MenuList placement='top-end' offset={8}>
+                <AccountMenuItems context='mobile' />
+              </MenuList>
+            </Menu>
+          </ul>
+          <ComposeRedesignButton inline />
+        </nav>
+      ) : (
+        // Logged out state:
+        <nav className={classes.root}>
+          <div
+            className={classNames(classes.floatingCard, classes.loggedOutInfo)}
           >
-            <FormattedMessage id='tabs_bar.search' defaultMessage='Search' />
-          </MobileNavLink>
-          <MobileNavLink to='/conversations' iconComponent={ChatCircleIcon}>
-            <FormattedMessage
-              id='tabs_bar.messages'
-              defaultMessage='Messages'
-              description='Message refers to a direct message. For languages where this is confusing, "chat" or "direct message" can be used.'
-            />
-          </MobileNavLink>
-          <MobileNavLink
-            to='/notifications'
-            iconComponent={BellIcon}
-            withDot={notificationsCount > 0}
-          >
-            <FormattedMessage
-              id='tabs_bar.notifications'
-              defaultMessage='Notifications'
-            />
-          </MobileNavLink>
-          <MobileNavLink
-            to={`/@${account?.acct}`}
-            customIcon={
-              <Avatar size={24} account={account} className={classes.avatar} />
-            }
-          >
-            <FormattedMessage id='tabs_bar.profile' defaultMessage='Profile' />
-          </MobileNavLink>
-        </ul>
-        <ComposeRedesignButton inline />
-        <IconButton // Silly placeholder – will be replaced with button in column header
-          icon={HamburgerIcon}
-          variant='solid'
-          onClick={handleOpenNavigation}
-        >
-          Menu
-        </IconButton>
-      </nav>
+            <LogoLockup className={classes.logoLockup} />
+            <Button
+              as='a'
+              href='/auth/sign_up'
+              variant='solid'
+              color='accent'
+              size='sm'
+              className={classes.signUpButton}
+            >
+              <FormattedMessage
+                id='server_banner.sign_up'
+                defaultMessage='Sign up'
+              />
+            </Button>
+            <IconButton size='sm' icon={InfoIcon} onClick={openMobileNav}>
+              <FormattedMessage id='server_banner.info' defaultMessage='Info' />
+            </IconButton>
+          </div>
+        </nav>
+      )}
+
       <SlideOutNavigation />
     </>
   );
@@ -217,6 +258,7 @@ const SlideOutNavigation: React.FC = () => {
       className={classes.slideOutWrapper}
       data-is-open={isOpen}
       ref={overlayRef}
+      inert={!isOpen}
     >
       <animated.div className={classes.slideOut} {...bind()} style={{ x }}>
         <RedesignNavigationPanel mode='slide-out' />

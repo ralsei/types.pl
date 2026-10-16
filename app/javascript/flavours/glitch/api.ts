@@ -1,5 +1,10 @@
-import type { AxiosResponse, Method, RawAxiosRequestHeaders } from 'axios';
-import axios from 'axios';
+import type {
+  AxiosError,
+  AxiosResponse,
+  Method,
+  RawAxiosRequestHeaders,
+} from 'axios';
+import { create as createAxiosInstance } from 'axios';
 import LinkHeader from 'http-link-header';
 
 import { getAccessToken } from './initial_state';
@@ -85,7 +90,7 @@ const authorizationTokenFromInitialState = (): RawAxiosRequestHeaders => {
 
 // eslint-disable-next-line import/no-default-export
 export default function api(withAuthorization = true) {
-  return axios.create({
+  const instance = createAxiosInstance({
     transitional: {
       clarifyTimeoutError: true,
     },
@@ -104,6 +109,22 @@ export default function api(withAuthorization = true) {
       },
     ],
   });
+
+  instance.interceptors.response.use(
+    (response: AxiosResponse) => {
+      if (response.headers.deprecation) {
+        console.warn(
+          `Deprecated request: ${response.config.method} ${response.config.url}`,
+        );
+      }
+      return response;
+    },
+    (error: AxiosError) => {
+      return Promise.reject(error);
+    },
+  );
+
+  return instance;
 }
 
 type ApiUrl = `v${1 | '1_alpha' | 2}/${string}`;

@@ -8,15 +8,27 @@ import { apiGetSearch } from '@/mastodon/api/search';
 import type { ApiMediaAttachmentJSON } from '@/mastodon/api_types/media_attachments';
 import type { ApiQuotePolicy } from '@/mastodon/api_types/quotes';
 import type { MediaAttachment } from '@/mastodon/models/media_attachment';
-import type { Status, StatusVisibility } from '@/mastodon/models/status';
+import type {
+  MediaAttachmentShape,
+  Status,
+  StatusVisibility,
+} from '@/mastodon/models/status';
 import type { RootState } from '@/mastodon/store';
 import {
   createDataLoadingThunk,
   createAppThunk,
 } from '@/mastodon/store/typed_functions';
 
+import { selectComposerIsChanged } from '../reducers/slices/composer';
+import { isRedesignEnabled } from '../utils/environment';
+
 import { showAlert } from './alerts';
-import { changeCompose, focusCompose, uploadCompose } from './compose';
+import {
+  changeCompose,
+  focusCompose,
+  replyCompose,
+  uploadCompose,
+} from './compose';
 import { importFetchedStatuses } from './importer';
 import { openModal } from './modal';
 
@@ -59,10 +71,13 @@ const simulateModifiedApiResponse = (
 ): SimulatedMediaAttachmentJSON => {
   const [x, y] = (params.focus ?? '').split(',');
 
+  const jsMedia = media.toJS() as MediaAttachmentShape;
+
   const data = {
-    ...media.toJS(),
+    ...jsMedia,
     ...params,
     meta: {
+      ...jsMedia.meta,
       focus: {
         x: parseFloat(x ?? '0'),
         y: parseFloat(y ?? '0'),
@@ -151,6 +166,37 @@ export const rearrangeComposeAttachments = createAction<string[]>(
   'compose/rearrangeAttachments',
 );
 
+export const replyComposeById = createAppThunk(
+  (
+    { statusId, force = false }: { statusId?: string; force?: boolean },
+    { dispatch, getState },
+  ) => {
+    if (!statusId) {
+      return;
+    }
+
+    let status = getState().statuses.get(statusId);
+    if (!status) {
+      return;
+    }
+
+    const touched = selectComposerIsChanged(getState());
+    if (touched && !force) {
+      dispatch(
+        openModal({ modalType: 'CONFIRM_REPLY', modalProps: { statusId } }),
+      );
+      return;
+    }
+
+    // Set the account as the reducer doesn't check the plain account field for ID.
+    const account = getState().accounts.get(status.get('account') as string);
+    if (account) {
+      status = status.set('account', account);
+    }
+    dispatch(replyCompose(status));
+  },
+);
+
 export const quoteCompose = createAppThunk(
   'compose/quoteComposeStatus',
   (status: Status, { dispatch }) => {
@@ -169,6 +215,8 @@ export const quoteComposeByStatus = createAppThunk(
       ['dismissed_banners', 'quote/quiet_post_hint'],
       false,
     );
+
+    const statusId = status.get('id') as string;
 
     if (composeState.get('id')) {
       dispatch(showAlert({ message: messages.quoteErrorEdit }));
@@ -200,6 +248,17 @@ export const quoteComposeByStatus = createAppThunk(
         openModal({
           modalType: 'CONFIRM_QUIET_QUOTE',
           modalProps: { status },
+        }),
+      );
+    } else if (
+      composeState.get('in_reply_to') &&
+      statusId &&
+      isRedesignEnabled()
+    ) {
+      dispatch(
+        openModal({
+          modalType: 'COMPOSER_ADD_QUOTE',
+          modalProps: { statusId },
         }),
       );
     } else {

@@ -117,10 +117,14 @@ export const MODAL_COMPONENTS = {
   'COMPOSER_DRAFT_DELETE': () => import('@/flavours/glitch/features/compose/redesign/modal_cancel'),
   'COMPOSER_REARRANGE': () => import('@/flavours/glitch/features/compose/redesign/modal_rearrange'),
   'COMPOSER_SWITCH_TO_POST': () => import('@/flavours/glitch/features/compose/redesign/modal_switch'),
+  'COMPOSER_ADD_QUOTE': () => import('@/flavours/glitch/features/compose/redesign/modal_quote'),
+  'COMPOSER_ADD_CONTENT_WARNING': () => import('@/flavours/glitch/features/compose/redesign/modal_sensitive'),
   'NOTIFICATION_SETTINGS': () => import('@/flavours/glitch/features/notifications_v2/components/notification_settings_modal'),
+  'NOTIFICATION_REQUESTS_SETTINGS': () => import('@/flavours/glitch/features/notifications/components/notification_requests_settings').then(module => ({default: module.NotificationRequestsSettingsModal})),
+  'HASHTAG_SETTINGS': () => import('@/flavours/glitch/features/hashtag_timeline/components/column_settings_modal'),
 };
 
-/** @arg {keyof import('@/flavours/glitch/features/account_edit/modals')} type */
+/** @param {keyof import('@/flavours/glitch/features/account_edit/modals')} type */
 function accountEditModal(type) {
   return () => import('@/flavours/glitch/features/account_edit/modals').then(module => ({ default: module[type] }));
 }

@@ -6,7 +6,7 @@ import ChatIcon from '@/material-icons/400-24px/chat.svg?react';
 import DownloadIcon from '@/material-icons/400-24px/download.svg?react';
 import HeadphonesIcon from '@/material-icons/400-24px/headphones.svg?react';
 
-import { Button, IconButton, ToggleButton } from './redesign';
+import { Button, IconButton, ToggleButton, ToggleIconButton } from './redesign';
 
 const iconArgType = {
   control: 'select',
@@ -92,14 +92,9 @@ export const IconOnly: Story = {
 };
 
 export const Link: Story = {
-  render(args) {
-    if (args.as === 'link') {
-      return <Button {...args} to='/example' />;
-    }
-    return <Button {...args} />;
-  },
   args: {
     as: 'link',
+    to: '/example',
   },
 };
 
@@ -107,5 +102,19 @@ export const Toggle: Story = {
   render(args) {
     const [active, { onToggle }] = useToggle();
     return <ToggleButton {...args} active={active} onClick={onToggle} />;
+  },
+};
+
+export const ToggleIcon: Story = {
+  render(args) {
+    const [active, { onToggle }] = useToggle();
+    return (
+      <ToggleIconButton
+        {...args}
+        active={active}
+        onClick={onToggle}
+        icon={args.leadingIcon ?? ChatIcon}
+      />
+    );
   },
 };

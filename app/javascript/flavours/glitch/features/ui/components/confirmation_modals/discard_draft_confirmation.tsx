@@ -2,9 +2,8 @@ import { useCallback } from 'react';
 
 import { defineMessages, useIntl } from 'react-intl';
 
-import { replyCompose } from 'flavours/glitch/actions/compose';
+import { replyComposeById } from '@/flavours/glitch/actions/compose_typed';
 import { editStatus } from 'flavours/glitch/actions/statuses';
-import type { Status } from 'flavours/glitch/models/status';
 import { useAppDispatch, useAppSelector } from 'flavours/glitch/store';
 
 import type { BaseConfirmationModalProps } from './confirmation_modal';
@@ -73,14 +72,14 @@ const DiscardDraftConfirmationModal: React.FC<
 
 export const ConfirmReplyModal: React.FC<
   {
-    status: Status;
+    statusId: string;
   } & BaseConfirmationModalProps
-> = ({ status, onClose }) => {
+> = ({ statusId, onClose }) => {
   const dispatch = useAppDispatch();
 
   const onConfirm = useCallback(() => {
-    dispatch(replyCompose(status));
-  }, [dispatch, status]);
+    dispatch(replyComposeById({ statusId, force: true }));
+  }, [dispatch, statusId]);
 
   return (
     <DiscardDraftConfirmationModal onConfirm={onConfirm} onClose={onClose} />

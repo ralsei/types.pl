@@ -5,7 +5,9 @@ import { useParams } from 'react-router-dom';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import TrendingUpIcon from '@/material-icons/400-24px/trending_up.svg?react';
 import { expandLinkTimeline } from 'flavours/glitch/actions/timelines';
 import StatusListContainer from 'flavours/glitch/features/ui/containers/status_list_container';
@@ -42,15 +44,18 @@ export const LinkTimeline: React.FC<{
 
   return (
     <Column bindToDocument={!multiColumn} label={story?.title}>
-      <ColumnHeader
-        icon='explore'
-        iconComponent={TrendingUpIcon}
-        title={story?.title}
-        multiColumn={multiColumn}
-        showBackButton
-        scrollTopOnClick
-      />
-
+      {isRedesignEnabled() ? (
+        <ColumnHeader withBackButton title={story?.title} />
+      ) : (
+        <LegacyColumnHeader
+          icon='explore'
+          iconComponent={TrendingUpIcon}
+          title={story?.title}
+          multiColumn={multiColumn}
+          showBackButton
+          scrollTopOnClick
+        />
+      )}
       <StatusListContainer
         timelineId={`link:${decodedUrl}`}
         onLoadMore={handleLoadMore}

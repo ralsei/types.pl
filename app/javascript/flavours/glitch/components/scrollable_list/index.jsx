@@ -27,7 +27,7 @@ const listenerOptions = supportsPassiveEvents ? { passive: true } : false;
 /**
  *
  * @param {import('flavours/glitch/store').RootState} state
- * @param {*} props
+ * @param {{ scrollKey: string }} props
  */
 const mapStateToProps = (state, { scrollKey }) => {
   return {

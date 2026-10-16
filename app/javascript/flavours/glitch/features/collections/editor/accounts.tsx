@@ -22,9 +22,9 @@ import {
 } from 'flavours/glitch/components/form_fields';
 import { useComboboxItemProps } from 'flavours/glitch/components/form_fields/combobox_field';
 import {
-  ListItemContent,
-  ListItemWrapper,
-} from 'flavours/glitch/components/list_item';
+  LockupContent,
+  LockupWrapper,
+} from 'flavours/glitch/components/lockup';
 import {
   Article,
   ItemList,
@@ -88,11 +88,11 @@ const SuggestedAccountItem: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <li {...comboboxItemProps} className={classes.suggestion}>
-      <ListItemWrapper icon={<Avatar account={account} size={40} />}>
-        <ListItemContent subtitle={handle}>
+      <LockupWrapper icon={<Avatar account={account} size={40} />}>
+        <LockupContent subtitle={handle}>
           <DisplayName account={account} variant='simple' />
-        </ListItemContent>
-      </ListItemWrapper>
+        </LockupContent>
+      </LockupWrapper>
     </li>
   );
 };
@@ -167,11 +167,11 @@ const renderGroupTitle = (groupKey: GroupKey, titleId: string) => {
 
   return (
     <li role='presentation'>
-      <ListItemWrapper className={classes.suggestionGroup}>
-        <ListItemContent id={titleId} subtitle={description}>
+      <LockupWrapper className={classes.suggestionGroup}>
+        <LockupContent id={titleId} subtitle={description}>
           {title}
-        </ListItemContent>
-      </ListItemWrapper>
+        </LockupContent>
+      </LockupWrapper>
     </li>
   );
 };

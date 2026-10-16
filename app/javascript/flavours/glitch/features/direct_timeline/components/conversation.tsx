@@ -11,8 +11,11 @@ import type {
   Record as ImmutableRecord,
 } from 'immutable';
 
+import { replyComposeById } from '@/flavours/glitch/actions/compose_typed';
 import { LinkedDisplayName } from '@/flavours/glitch/components/display_name';
 import { AnimateEmojiProvider } from '@/flavours/glitch/components/emoji/context';
+import { StatusReplyIcon } from '@/flavours/glitch/components/status/icons';
+import StatusContent from '@/flavours/glitch/components/status/legacy/content';
 import type { Account } from '@/flavours/glitch/models/account';
 import type { StatusShape } from '@/flavours/glitch/models/status';
 import {
@@ -21,13 +24,10 @@ import {
   useAppSelector,
 } from '@/flavours/glitch/store';
 import MoreHorizIcon from '@/material-icons/400-24px/more_horiz.svg?react';
-import ReplyIcon from '@/material-icons/400-24px/reply.svg?react';
-import { replyCompose } from 'flavours/glitch/actions/compose';
 import {
   markConversationRead,
   deleteConversation,
 } from 'flavours/glitch/actions/conversations';
-import { openModal } from 'flavours/glitch/actions/modal';
 import {
   muteStatus,
   unmuteStatus,
@@ -39,7 +39,6 @@ import { Dropdown } from 'flavours/glitch/components/dropdown_menu';
 import { Hotkeys } from 'flavours/glitch/components/hotkeys';
 import { IconButton } from 'flavours/glitch/components/icon_button';
 import { RelativeTimestamp } from 'flavours/glitch/components/relative_timestamp';
-import StatusContent from 'flavours/glitch/components/status_content';
 import { makeGetStatus } from 'flavours/glitch/selectors';
 
 const messages = defineMessages({
@@ -126,22 +125,7 @@ export const Conversation: React.FC<{
   }, [dispatch, id]);
 
   const handleReply = useCallback(() => {
-    dispatch((_, getState) => {
-      const state = getState();
-      const composeText = state.compose.get('text');
-      const text = typeof composeText === 'string' ? composeText.trim() : '';
-
-      if (text.length !== 0) {
-        dispatch(
-          openModal({
-            modalType: 'CONFIRM_REPLY',
-            modalProps: { status: lastStatus },
-          }),
-        );
-      } else {
-        dispatch(replyCompose(lastStatus));
-      }
-    });
+    dispatch(replyComposeById({ statusId: lastStatus?.get('id') }));
   }, [dispatch, lastStatus]);
 
   const handleDelete = useCallback(() => {
@@ -270,7 +254,7 @@ export const Conversation: React.FC<{
               className='status__action-bar-button'
               title={intl.formatMessage(messages.reply)}
               icon='reply'
-              iconComponent={ReplyIcon}
+              iconComponent={StatusReplyIcon}
               onClick={handleReply}
             />
 

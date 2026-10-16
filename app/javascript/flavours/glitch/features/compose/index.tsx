@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, Suspense, lazy } from 'react';
 
 import { useIntl, defineMessages } from 'react-intl';
 
@@ -9,7 +9,10 @@ import type { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader } from '@/flavours/glitch/components/column_header';
+import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import elephantUIPlane from '@/images/elephant_ui_plane.svg';
 import EditIcon from '@/material-icons/400-24px/edit_square.svg?react';
 import PeopleIcon from '@/material-icons/400-24px/group.svg?react';
@@ -236,20 +239,29 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
       bindToDocument={!multiColumn}
       label={intl.formatMessage(navbarMessages.publish)}
     >
-      <ColumnHeader
-        icon='pencil'
-        iconComponent={EditIcon}
-        title={intl.formatMessage(navbarMessages.publish)}
-        multiColumn={multiColumn}
-        showBackButton
-      />
-
-      <div className='scrollable'>
-        <ComposeFormContainer
-          // This is fine on this single-purpose view
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          withBackButton
+          title={intl.formatMessage(navbarMessages.publish)}
         />
+      ) : (
+        <LegacyColumnHeader
+          icon='pencil'
+          iconComponent={EditIcon}
+          title={intl.formatMessage(navbarMessages.publish)}
+          multiColumn={multiColumn}
+          showBackButton
+        />
+      )}
+
+      <div className='scrollable scrollable--flex'>
+        {isRedesignEnabled() ? (
+          <Suspense fallback={<LoadingIndicator />}>
+            <ComposeLazyForm autoFocus headless />
+          </Suspense>
+        ) : (
+          <ComposeFormContainer autoFocus />
+        )}
       </div>
 
       <Helmet>
@@ -258,6 +270,12 @@ const Compose: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
     </Column>
   );
 };
+
+const ComposeLazyForm = lazy(() =>
+  import('./redesign/index').then(({ RedesignComposeForm }) => ({
+    default: RedesignComposeForm,
+  })),
+);
 
 // eslint-disable-next-line import/no-default-export
 export default Compose;

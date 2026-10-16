@@ -119,10 +119,7 @@ export const ComposePoll: React.FC = () => {
     useCallback(
       (event) => {
         dispatch(
-          changePollSettings(
-            Number.parseInt(event.target.value) / 1000,
-            multiple,
-          ),
+          changePollSettings(Number.parseInt(event.target.value), multiple),
         );
       },
       [dispatch, multiple],
@@ -260,7 +257,6 @@ const ComposePollOption: React.FC<{
           number: index + 1,
         })}
         maxLength={50}
-        // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={index === 0}
         data-index={index}
         spellCheck

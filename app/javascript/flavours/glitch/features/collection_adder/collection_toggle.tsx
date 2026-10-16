@@ -3,9 +3,9 @@ import { useId } from 'react';
 import type { ApiCollectionJSON } from '@/flavours/glitch/api_types/collections';
 import { Toggle } from '@/flavours/glitch/components/form_fields';
 import {
-  ListItemContent,
-  ListItemWrapper,
-} from '@/flavours/glitch/components/list_item';
+  LockupContent,
+  LockupWrapper,
+} from '@/flavours/glitch/components/lockup';
 import {
   AvatarGrid,
   CollectionInfo,
@@ -34,7 +34,7 @@ export const CollectionToggle: React.FC<CollectionToggleProps> = ({
   const infoId = `${uniqueId}-info`;
 
   return (
-    <ListItemWrapper
+    <LockupWrapper
       className={classes.wrapper}
       icon={
         <AvatarGrid
@@ -52,7 +52,7 @@ export const CollectionToggle: React.FC<CollectionToggleProps> = ({
         />
       }
     >
-      <ListItemContent
+      <LockupContent
         as='label'
         htmlFor={toggleId}
         subtitle={
@@ -66,7 +66,7 @@ export const CollectionToggle: React.FC<CollectionToggleProps> = ({
         }
       >
         {collection.name}
-      </ListItemContent>
-    </ListItemWrapper>
+      </LockupContent>
+    </LockupWrapper>
   );
 };

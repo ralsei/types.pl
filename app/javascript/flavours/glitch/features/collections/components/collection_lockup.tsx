@@ -2,10 +2,7 @@ import { FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 
-import {
-  ListItemLink,
-  ListItemWrapper,
-} from '@/flavours/glitch/components/list_item';
+import { LockupLink, LockupWrapper } from '@/flavours/glitch/components/lockup';
 import WarningIcon from '@/material-icons/400-24px/warning.svg?react';
 import type { ApiCollectionJSON } from 'flavours/glitch/api_types/collections';
 import { AvatarById } from 'flavours/glitch/components/avatar';
@@ -68,7 +65,7 @@ export const CollectionLockup: React.FC<CollectionLockupProps> = ({
   const { id, name } = collection;
 
   return (
-    <ListItemWrapper
+    <LockupWrapper
       className={classNames(classes.wrapper, className)}
       icon={
         <AvatarGrid
@@ -78,7 +75,7 @@ export const CollectionLockup: React.FC<CollectionLockupProps> = ({
       }
       sideContent={sideContent}
     >
-      <ListItemLink
+      <LockupLink
         as={headingLevel}
         to={getCollectionPath(id)}
         id={titleId}
@@ -92,8 +89,8 @@ export const CollectionLockup: React.FC<CollectionLockupProps> = ({
         subtitleId={subtitleId}
       >
         {name}
-      </ListItemLink>
-    </ListItemWrapper>
+      </LockupLink>
+    </LockupWrapper>
   );
 };
 

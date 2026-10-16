@@ -8,7 +8,13 @@ import { List as ImmutableList } from 'immutable';
 import { Helmet } from '@unhead/react/helmet';
 
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
+import {
+  ColumnHeader,
+  ColumnSettingsMenu,
+} from '@/flavours/glitch/components/column_header';
+import { MultiColumnMenuItems } from '@/flavours/glitch/components/column_header/multicolumn_settings';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import PeopleIcon from '@/material-icons/400-24px/group.svg?react';
 import {
   addColumn,
@@ -192,16 +198,36 @@ export const Directory: React.FC<{
       bindToDocument={!multiColumn}
       label={intl.formatMessage(messages.title)}
     >
-      <ColumnHeader
-        icon='address-book-o'
-        iconComponent={PeopleIcon}
-        title={intl.formatMessage(messages.title)}
-        onPin={handlePin}
-        onMove={handleMove}
-        pinned={pinned}
-        multiColumn={multiColumn}
-        scrollTopOnClick
-      />
+      {isRedesignEnabled() ? (
+        <ColumnHeader
+          title={intl.formatMessage(messages.title)}
+          withBackButton={multiColumn && !pinned && 'auto'}
+          extraButtons={
+            multiColumn && (
+              <ColumnSettingsMenu
+                labelPrefix={intl.formatMessage(messages.title)}
+              >
+                <MultiColumnMenuItems
+                  pinned={pinned}
+                  onPin={handlePin}
+                  onMove={handleMove}
+                />
+              </ColumnSettingsMenu>
+            )
+          }
+        />
+      ) : (
+        <LegacyColumnHeader
+          icon='address-book-o'
+          iconComponent={PeopleIcon}
+          title={intl.formatMessage(messages.title)}
+          onPin={handlePin}
+          onMove={handleMove}
+          pinned={pinned}
+          multiColumn={multiColumn}
+          scrollTopOnClick
+        />
+      )}
 
       {multiColumn && !pinned ? (
         <ScrollContainer scrollKey='directory'>

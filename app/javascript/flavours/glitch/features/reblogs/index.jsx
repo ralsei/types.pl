@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Helmet } from '@unhead/react/helmet';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import ImmutablePureComponent from 'react-immutable-pure-component';
+import { ImmutablePureComponent } from 'react-immutable-pure-component';
 import { connect } from 'react-redux';
 
 import { debounce } from 'lodash';
@@ -15,14 +15,18 @@ import RepeatIcon from '@/material-icons/400-24px/repeat.svg?react';
 import { fetchReblogs, expandReblogs } from '@/flavours/glitch/actions/interactions';
 import { Account } from '@/flavours/glitch/components/account';
 import { Column } from '@/flavours/glitch/components/column';
-import { ColumnHeader } from '@/flavours/glitch/components/column/header';
+import { ColumnHeader as LegacyColumnHeader } from '@/flavours/glitch/components/column/header';
 import { Icon }  from '@/flavours/glitch/components/icon';
 import { injectIntl } from '@/flavours/glitch/components/intl';
 
 import { LoadingIndicator } from '@/flavours/glitch/components/loading_indicator';
 import ScrollableList from '@/flavours/glitch/components/scrollable_list';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
+import { ColumnHeader, ColumnHeaderButton } from '@/flavours/glitch/components/column_header';
+import { ArrowClockwiseIcon } from '@phosphor-icons/react';
 
 const messages = defineMessages({
+  title: { id: 'status.boosts_title', defaultMessage: 'Post Boosts' },
   heading: { id: 'column.reblogged_by', defaultMessage: 'Boosted by' },
   refresh: { id: 'refresh', defaultMessage: 'Refresh' },
 });
@@ -74,17 +78,29 @@ class Reblogs extends ImmutablePureComponent {
 
     return (
       <Column bindToDocument={!multiColumn}>
-        <ColumnHeader
-          icon='retweet'
-          iconComponent={RepeatIcon}
-          title={intl.formatMessage(messages.heading)}
-          showBackButton
-          multiColumn={multiColumn}
-          scrollTopOnClick
-          extraButton={(
-            <button type='button' className='column-header__button' title={intl.formatMessage(messages.refresh)} aria-label={intl.formatMessage(messages.refresh)} onClick={this.handleRefresh}><Icon id='refresh' icon={RefreshIcon} /></button>
-          )}
-        />
+        {isRedesignEnabled() ? (
+          <ColumnHeader
+            withBackButton
+            title={intl.formatMessage(messages.title)}
+            extraButtons={
+              <ColumnHeaderButton icon={ArrowClockwiseIcon} onClick={this.handleRefresh}>
+                {intl.formatMessage(messages.refresh)}
+              </ColumnHeaderButton>
+            }
+          />
+        ) : (
+          <LegacyColumnHeader
+            icon='retweet'
+            iconComponent={RepeatIcon}
+            title={intl.formatMessage(messages.heading)}
+            showBackButton
+            multiColumn={multiColumn}
+            scrollTopOnClick
+            extraButton={(
+              <button type='button' className='column-header__button' title={intl.formatMessage(messages.refresh)} aria-label={intl.formatMessage(messages.refresh)} onClick={this.handleRefresh}><Icon id='refresh' icon={RefreshIcon} /></button>
+            )}
+          />
+        )}
 
         <ScrollableList
           scrollKey='reblogs'

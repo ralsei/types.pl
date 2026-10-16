@@ -4,7 +4,7 @@ import type { FC } from 'react';
 import { Map } from 'immutable';
 
 import { quoteComposeCancel } from '@/flavours/glitch/actions/compose_typed';
-import { QuotedStatus } from '@/flavours/glitch/components/status_quoted';
+import { QuotedStatus } from '@/flavours/glitch/components/status/legacy/quoted';
 import { useAppDispatch, useAppSelector } from '@/flavours/glitch/store';
 
 import { QuotePlaceholder } from './quote_placeholder';

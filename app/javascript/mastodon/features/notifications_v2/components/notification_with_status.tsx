@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 
 import classNames from 'classnames';
 
+import { replyComposeById } from '@/mastodon/actions/compose_typed';
 import { LinkedDisplayName } from '@/mastodon/components/display_name';
-import { replyComposeById } from 'mastodon/actions/compose';
+import { isRedesignEnabled } from '@/mastodon/utils/environment';
 import { toggleReblog, toggleFavourite } from 'mastodon/actions/interactions';
 import {
   navigateToStatus,
@@ -12,7 +13,7 @@ import {
 import { Hotkeys } from 'mastodon/components/hotkeys';
 import type { IconProp } from 'mastodon/components/icon';
 import { Icon } from 'mastodon/components/icon';
-import { StatusQuoteManager } from 'mastodon/components/status_quoted';
+import { Status } from 'mastodon/components/status';
 import { getStatusHidden } from 'mastodon/selectors/filters';
 import { useAppSelector, useAppDispatch } from 'mastodon/store';
 
@@ -68,7 +69,7 @@ export const NotificationWithStatus: React.FC<{
       },
 
       reply: () => {
-        dispatch(replyComposeById(statusId));
+        dispatch(replyComposeById({ statusId }));
       },
 
       boost: () => {
@@ -97,6 +98,8 @@ export const NotificationWithStatus: React.FC<{
           {
             'notification-ungrouped--unread': unread,
             'notification-ungrouped--direct': isPrivateMention,
+            'notification-ungrouped--redesign':
+              isRedesignEnabled() && isRedesignEnabled(),
           },
         )}
         tabIndex={0}
@@ -108,7 +111,7 @@ export const NotificationWithStatus: React.FC<{
           <span>{label}</span>
         </h2>
 
-        <StatusQuoteManager
+        <Status
           id={statusId}
           contextType='notifications'
           withDismiss

@@ -257,12 +257,15 @@ en:
         setting_display_media_default: Default
         setting_display_media_hide_all: Hide all
         setting_display_media_show_all: Show all
+        setting_display_own_boosts: Show my own boosts in my main feed
+        setting_display_own_posts: Show my own posts in my main feed
         setting_emoji_style: Emoji style
         setting_expand_spoilers: Always expand posts marked with content warnings
         setting_hide_network: Hide your social graph
         setting_missing_alt_text_modal: Warn me before posting media without alt text
         setting_quick_boosting: Enable quick boosting
         setting_reduce_motion: Reduce motion in animations
+        setting_split_default_privacy_discoverable: Make my posts discoverable in public feed & search results
         setting_system_font_ui: Use system's default font
         setting_system_scrollbars_ui: Use system's default scrollbar
         setting_theme: Site theme
@@ -272,6 +275,7 @@ en:
         setting_use_pending_items: Slow mode
         severity: Severity
         sign_in_token_attempt: Security code
+        sign_in_token_resend: Resend security code
         title: Title
         type: Import type
         username: Username

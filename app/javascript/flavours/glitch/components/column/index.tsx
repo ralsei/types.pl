@@ -5,9 +5,11 @@ import classNames from 'classnames';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { getColumnSkipLinkId } from '@/flavours/glitch/features/ui/components/skip_links';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 import { scrollTop } from 'flavours/glitch/scroll';
 
 import { ColumnContext, useColumnIndexContext } from './context';
+import classes from './styles.module.scss';
 
 interface ColumnProps {
   children?: React.ReactNode;
@@ -66,7 +68,11 @@ export const Column: React.FC<ColumnProps> = ({
       role='region'
       ref={nodeRef}
       onScroll={handleScroll}
-      className={classNames('column', className)}
+      className={classNames(
+        isRedesignEnabled() ? classes.root : 'column',
+        className,
+      )}
+      data-column-root // Used by hotkey handling code
       aria-label={label}
       aria-labelledby={
         label === undefined ? getColumnSkipLinkId(columnIndex) : undefined

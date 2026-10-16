@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import { isMap } from 'immutable';
 
+import { decodeIDNA } from '@/flavours/glitch/utils/links';
 import DescriptionIcon from '@/material-icons/400-24px/description-fill.svg?react';
 import OpenInNewIcon from '@/material-icons/400-24px/open_in_new.svg?react';
 import PlayArrowIcon from '@/material-icons/400-24px/play_arrow-fill.svg?react';
@@ -18,7 +19,6 @@ import type {
   CardShape,
   Card as CardType,
 } from 'flavours/glitch/models/status';
-import { decode as decodeIDNA } from 'flavours/glitch/utils/idna';
 
 const getHostname = (url: string) => {
   const parser = document.createElement('a');

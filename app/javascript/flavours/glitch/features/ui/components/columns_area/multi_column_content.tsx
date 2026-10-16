@@ -4,6 +4,7 @@ import type { List, Record } from 'immutable';
 
 import { ColumnIndexContext } from '@/flavours/glitch/components/column/context';
 import { useAppSelector } from '@/flavours/glitch/store';
+import { isRedesignEnabled } from '@/flavours/glitch/utils/environment';
 
 import {
   Compose,
@@ -75,6 +76,10 @@ export const MultiColumnContent: React.FC<{
         const other = params?.other ?? {};
         const uuid = column.get('uuid');
         const id = column.get('id');
+
+        if (isRedesignEnabled() && id === 'COMPOSE') {
+          return null;
+        }
 
         return (
           <ColumnIndexContext.Provider value={index} key={uuid}>

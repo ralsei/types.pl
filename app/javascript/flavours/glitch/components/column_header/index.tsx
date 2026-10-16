@@ -5,12 +5,12 @@ import { FormattedMessage } from 'react-intl';
 import classNames from 'classnames';
 import { useLocation } from 'react-router';
 
-import { ArrowLeftIcon, ListIcon } from '@phosphor-icons/react';
+import { ArrowLeftIcon, ArrowUpIcon, ListIcon } from '@phosphor-icons/react';
+import type { DistributedOmit } from 'type-fest';
 
 import { openNavigation } from '@/flavours/glitch/actions/navigation';
 import { getColumnSkipLinkId } from '@/flavours/glitch/features/ui/components/skip_links';
 import { useBreakpoint } from '@/flavours/glitch/features/ui/hooks/useBreakpoint';
-import { RenderIntoTabsBarPortal } from '@/flavours/glitch/features/ui/util/columns_context';
 import { useAppDispatch } from '@/flavours/glitch/store';
 import { hasReactChildren } from '@/flavours/glitch/utils/has_react_children';
 
@@ -26,12 +26,13 @@ import classes from './styles.module.scss';
 export { ColumnSettingsMenu } from './column_settings_menu';
 
 export interface ColumnHeaderProps {
-  title: string;
+  title: React.ReactNode;
   // Set to auto to display the back button based on
   // the `fromMastodon` location state
   withBackButton?: boolean | 'auto';
   withUnreadMarker?: boolean;
   extraButtons?: React.ReactNode;
+  extraStickyContent?: React.ReactNode;
   className?: string;
 }
 
@@ -40,6 +41,7 @@ export const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   withBackButton,
   withUnreadMarker,
   extraButtons,
+  extraStickyContent,
   className,
   ...props
 }: ColumnHeaderProps) => {
@@ -49,14 +51,39 @@ export const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   const hasBackButton =
     withBackButton === true ||
     (withBackButton === 'auto' && location.state?.fromMastodon);
+  const hasExtraStickyContent = hasReactChildren(extraStickyContent);
+
+  const handleHeaderClick = useCallback<React.MouseEventHandler>(
+    (e) => {
+      // Only scroll to top when clicking outside
+      // of the leftButton/rightButtons containers
+      if (
+        e.target instanceof Element &&
+        !e.target.matches(`
+          .${classes.leftButton},
+          .${classes.leftButton} *,
+          .${classes.rightButtons},
+          .${classes.rightButtons} *`)
+      ) {
+        scrollTop();
+      }
+    },
+    [scrollTop],
+  );
 
   return (
-    <RenderIntoTabsBarPortal>
-      <header
-        {...props}
-        className={classNames(className, classes.root)}
-        data-has-unread={withUnreadMarker}
-      >
+    <header
+      {...props}
+      className={classNames(
+        className,
+        classes.root,
+        hasExtraStickyContent && classes.withStickyContent,
+      )}
+    >
+      {/* eslint-disable-next-line
+          jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+        */}
+      <div className={classes.layout} onClick={handleHeaderClick}>
         {hasBackButton ? <BackButton /> : <MobileMenuButton />}
         <NavigationFocusTarget className={classes.title}>
           <button
@@ -65,26 +92,35 @@ export const ColumnHeader: React.FC<ColumnHeaderProps> = ({
             id={getColumnSkipLinkId(columnIndex)}
           >
             {title}
-            {withUnreadMarker && (
-              <span className='sr-only'>
-                {' '}
-                <FormattedMessage
-                  id='column.has_unread_content'
-                  defaultMessage='(has unread content)'
-                />
-              </span>
-            )}
           </button>
         </NavigationFocusTarget>
         {hasReactChildren(extraButtons) && (
           <div className={classes.rightButtons}>{extraButtons}</div>
         )}
-      </header>
-    </RenderIntoTabsBarPortal>
+        {withUnreadMarker && (
+          <Button
+            size='sm'
+            color='accent'
+            variant='solid'
+            onClick={scrollTop}
+            leadingIcon={ArrowUpIcon}
+            className={classes.unreadButton}
+          >
+            <FormattedMessage
+              id='column_header.newer_posts'
+              defaultMessage='Newer posts'
+            />
+          </Button>
+        )}
+      </div>
+      {hasExtraStickyContent && (
+        <div className={classes.extraStickyContent}>{extraStickyContent}</div>
+      )}
+    </header>
   );
 };
 
-type ColumnHeaderButtonProps = IconButtonProps & {
+type ColumnHeaderButtonProps = DistributedOmit<IconButtonProps, 'size'> & {
   showTextOnDesktop?: boolean;
 };
 
@@ -99,14 +135,14 @@ export const ColumnHeaderButton: React.FC<ColumnHeaderButtonProps> = ({
 
   if (showTextOnDesktop && !isMobile) {
     return (
-      <Button {...props} variant={variant}>
+      <Button {...props} variant={variant} size='sm'>
         {children}
       </Button>
     );
   }
 
   return (
-    <IconButton icon={icon} variant={variant} {...props}>
+    <IconButton icon={icon} {...props} variant={variant} size='sm'>
       {children}
     </IconButton>
   );
